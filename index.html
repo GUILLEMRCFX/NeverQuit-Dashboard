@@ -1043,11 +1043,89 @@
 .btn-reset--gray {
     background: #9AA0A6 !important;
 }
+        /* ─── LANGUAGE SELECTOR ─── */
+        .lang-globe-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #181B20;
+            border: 1px solid rgba(230,232,235,0.15);
+            color: #9AA0A6;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+        }
+        .lang-globe-btn:hover { border-color: #2ECC71; color: #2ECC71; transform: scale(1.08); }
+        .lang-globe-btn.open { border-color: #2ECC71; color: #2ECC71; }
+
+        .lang-dropdown {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 9998;
+            background: #181B20;
+            border: 1px solid rgba(230,232,235,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            transform: translateY(-8px) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .lang-dropdown.visible {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+        .lang-opt {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.25rem;
+            color: #9AA0A6;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .lang-opt:hover { background: rgba(46,204,113,0.08); color: #E6E8EB; }
+        .lang-opt.active { color: #2ECC71; }
+        .lang-opt .flag { font-size: 1rem; }
+        .lang-opt:not(:last-child) { border-bottom: 1px solid rgba(230,232,235,0.05); }
+
+        /* ─── LOGIN CURSOR CANVAS ─── */
+        #loginCursorCanvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+
+        @media (max-width:968px) { .lang-globe-btn { top:10px; right:10px; } }
     </style>
 </head>
 <body>
+    <!-- Globe Language Selector -->
+    <button class="lang-globe-btn" id="langGlobeBtn" onclick="toggleLangDropdown()" title="Language / Idioma">🌐</button>
+    <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-opt active" id="opt-es" onclick="setLanguage('es')"><span class="flag">🇪🇸</span> Español</button>
+        <button class="lang-opt" id="opt-en" onclick="setLanguage('en')"><span class="flag">🇬🇧</span> English</button>
+    </div>
+
     <!-- Login Screen -->
     <div id="loginOverlay" class="login-overlay">
+        <canvas id="loginCursorCanvas"></canvas>
         <div class="login-box">
             <div class="login-header">
                 <h1>NEVER QUIT</h1>
@@ -1246,6 +1324,175 @@
     </div>
 
     <script>
+// ============================================
+// LOGIN CURSOR EFFECT — Particle Constellation
+// ============================================
+(function initLoginCursor() {
+    const overlay = document.getElementById('loginOverlay');
+    const canvas  = document.getElementById('loginCursorCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let W, H, mouse = { x: -999, y: -999 };
+    const PARTICLES = [];
+    const PARTICLE_COUNT = 110;
+    const CONNECTION_DIST = 130;
+    const COLORS = ['#2ECC71','#27AE60','#1abc9c','#58d68d','#48c774'];
+
+    function resize() {
+        W = canvas.width  = overlay.offsetWidth;
+        H = canvas.height = overlay.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        PARTICLES.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.45,
+            vy: (Math.random() - 0.5) * 0.45,
+            r: Math.random() * 2.2 + 0.8,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            alpha: Math.random() * 0.5 + 0.2
+        });
+    }
+
+    const SPARKS = [];
+
+    overlay.addEventListener('mousemove', function(e) {
+        const rect = overlay.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        for (let i = 0; i < 3; i++) {
+            SPARKS.push({
+                x: mouse.x + (Math.random() - 0.5) * 10,
+                y: mouse.y + (Math.random() - 0.5) * 10,
+                vx: (Math.random() - 0.5) * 2.5,
+                vy: (Math.random() - 0.5) * 2.5 - 0.8,
+                life: 1.0,
+                decay: Math.random() * 0.03 + 0.025,
+                r: Math.random() * 3 + 1,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)]
+            });
+        }
+    });
+
+    function loop() {
+        ctx.clearRect(0, 0, W, H);
+        if (mouse.x > 0) {
+            const grd = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 180);
+            grd.addColorStop(0, 'rgba(46,204,113,0.12)');
+            grd.addColorStop(0.5, 'rgba(46,204,113,0.04)');
+            grd.addColorStop(1, 'rgba(46,204,113,0)');
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.arc(mouse.x, mouse.y, 180, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        for (let i = 0; i < PARTICLES.length; i++) {
+            const p = PARTICLES[i];
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+            if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+            const dx = p.x - mouse.x, dy = p.y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 80) { const force = (80 - dist) / 80 * 0.5; p.x += (dx / dist) * force; p.y += (dy / dist) * force; }
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill(); ctx.globalAlpha = 1;
+        }
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < PARTICLES.length; i++) {
+            for (let j = i + 1; j < PARTICLES.length; j++) {
+                const dx = PARTICLES[i].x - PARTICLES[j].x, dy = PARTICLES[i].y - PARTICLES[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < CONNECTION_DIST) {
+                    ctx.strokeStyle = `rgba(46,204,113,${(1 - dist / CONNECTION_DIST) * 0.18})`;
+                    ctx.globalAlpha = 1; ctx.beginPath();
+                    ctx.moveTo(PARTICLES[i].x, PARTICLES[i].y); ctx.lineTo(PARTICLES[j].x, PARTICLES[j].y); ctx.stroke();
+                }
+            }
+            const dx = PARTICLES[i].x - mouse.x, dy = PARTICLES[i].y - mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < CONNECTION_DIST * 1.3) {
+                ctx.strokeStyle = `rgba(46,204,113,${(1 - dist / (CONNECTION_DIST * 1.3)) * 0.4})`;
+                ctx.lineWidth = 0.8; ctx.beginPath();
+                ctx.moveTo(PARTICLES[i].x, PARTICLES[i].y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+            }
+        }
+        for (let i = SPARKS.length - 1; i >= 0; i--) {
+            const s = SPARKS[i];
+            s.x += s.vx; s.y += s.vy; s.life -= s.decay;
+            if (s.life <= 0) { SPARKS.splice(i, 1); continue; }
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2);
+            ctx.fillStyle = s.color; ctx.globalAlpha = s.life * 0.85; ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(loop);
+    }
+    loop();
+})();
+
+// ============================================
+// i18n
+// ============================================
+const i18n = {
+    es: {
+        app: { name:"NEVER QUIT", fullName:"NEVER QUIT DASHBOARD", tagline:"Sistema de Gestión de Capital Profesional" },
+        login: { subtitle:"Dashboard de Gestión Profesional", username:"Usuario", password:"Contraseña", usernamePlaceholder:"Introduce tu usuario", passwordPlaceholder:"Introduce tu contraseña", submit:"Entrar al Dashboard", error:"Usuario o contraseña incorrectos", devMode:"🔧 Modo Desarrollo (Skip Login)" },
+        modal: { resetTitle:"⚠️ Confirmar Reset", resetConfirm:"¿Estás seguro de que quieres eliminar todos los datos? Esta acción <strong>no se puede deshacer</strong>.", resetItems:"Se borrarán:", itemChallenges:"Todas las challenges", itemPayouts:"Todos los payouts", itemHistory:"Todo el historial", typeReset:"Escribe RESET para confirmar:", cancel:"Cancelar", confirmDelete:"Sí, Eliminar Todo" },
+        year: { label:"AÑO ACTIVO:" },
+        actions: { resetData:"🔄 Reset Datos", logout:"🚪 Salir" },
+        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" }
+    },
+    en: {
+        app: { name:"NEVER QUIT", fullName:"NEVER QUIT DASHBOARD", tagline:"Professional Capital Management System" },
+        login: { subtitle:"Professional Management Dashboard", username:"Username", password:"Password", submit:"Enter Dashboard", error:"Incorrect username or password", devMode:"🔧 Dev Mode (Skip Login)" },
+        modal: { resetTitle:"⚠️ Confirm Reset", resetConfirm:"Are you sure you want to delete all data? This action <strong>cannot be undone</strong>.", resetItems:"Will be deleted:", itemChallenges:"All challenges", itemPayouts:"All payouts", itemHistory:"All history", typeReset:"Type RESET to confirm:", cancel:"Cancel", confirmDelete:"Yes, Delete Everything" },
+        year: { label:"ACTIVE YEAR:" },
+        actions: { resetData:"🔄 Reset Data", logout:"🚪 Logout" },
+        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" }
+    }
+};
+
+let currentLanguage = localStorage.getItem('neverQuitLanguage') || 'es';
+
+function getTranslation(key) {
+    const keys = key.split('.');
+    let value = i18n[currentLanguage];
+    for (const k of keys) { if (value) value = value[k]; }
+    return value || null;
+}
+
+let langDropdownOpen = false;
+function toggleLangDropdown() {
+    langDropdownOpen = !langDropdownOpen;
+    document.getElementById('langDropdown').classList.toggle('visible', langDropdownOpen);
+    document.getElementById('langGlobeBtn').classList.toggle('open', langDropdownOpen);
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('#langDropdown') && !e.target.closest('#langGlobeBtn') && langDropdownOpen) {
+        langDropdownOpen = false;
+        document.getElementById('langDropdown').classList.remove('visible');
+        document.getElementById('langGlobeBtn').classList.remove('open');
+    }
+});
+function setLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('neverQuitLanguage', lang);
+    document.getElementById('opt-es').classList.toggle('active', lang === 'es');
+    document.getElementById('opt-en').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const tr = getTranslation(key);
+        if (tr) el.innerHTML = tr;
+    });
+    if (langDropdownOpen) toggleLangDropdown();
+}
+window.toggleLangDropdown = toggleLangDropdown;
+window.setLanguage = setLanguage;
+
         // === GLOBAL UTILS ===
         function $(id) { return document.getElementById(id); }
 
