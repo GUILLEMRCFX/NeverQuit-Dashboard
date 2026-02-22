@@ -1539,7 +1539,19 @@ const i18n = {
             pending:"Pendiente", reached:"✅ Alcanzado",
             projection:"proyección basada en ritmo actual",
             selfFunded:"SISTEMA AUTO-FINANCIADO", roiAverage:"ROI PROMEDIO",
-            monthNames:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+            monthNames:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
+            monthNamesFull:["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
+            ceoMode:"Modo: PRO", noHistory:"Sin historial todavía",
+            progressMetrics:"◇ MÉTRICAS DE PROGRESO", progressCalculated:"Calculado desde el historial de cambios de estado",
+            avgAttempts:"AVG. INTENTOS HASTA FONDEO", phasesPerAccount:"fases por cuenta fondeada",
+            avgDaysPhase1:"AVG. DÍAS EN PHASE 1", toPassPhase1:"hasta superar Phase 1",
+            avgDaysPhase2:"AVG. DÍAS EN PHASE 2", toGetFunded:"hasta conseguir fondeo",
+            efficiencyChart:"% de lo invertido recuperado mediante payouts · Datos reales mes a mes",
+            quickestFunding:"FONDEO MÁS RÁPIDO", payoutsByFirm:"◇ PAYOUTS POR PROP FIRM",
+            avgFundingTime:"En promedio, fondeaste cuentas en {n} días",
+            noHistoryDetail:"Cuando tengas challenges y payouts, aquí verás tu evolución global",
+            capitalMultiple:"MÚLTIPLO DE CAPITAL", evolutionByYear:"◇ EVOLUCIÓN POR AÑO",
+            recoveryTrend:"◇ TENDENCIA ACUMULADA DE RECUPERACIÓN"
         }
     },
     en: {
@@ -1568,7 +1580,19 @@ const i18n = {
             pending:"Pending", reached:"✅ Reached",
             projection:"projection based on current pace",
             selfFunded:"SELF-FUNDED SYSTEM", roiAverage:"AVERAGE ROI",
-            monthNames:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+            monthNames:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+            monthNamesFull:["January","February","March","April","May","June","July","August","September","October","November","December"],
+            ceoMode:"Mode: PRO", noHistory:"No history yet",
+            progressMetrics:"◇ PROGRESS METRICS", progressCalculated:"Calculated from phase change history",
+            avgAttempts:"AVG. ATTEMPTS TO FUNDING", phasesPerAccount:"phases per funded account",
+            avgDaysPhase1:"AVG. DAYS IN PHASE 1", toPassPhase1:"to pass Phase 1",
+            avgDaysPhase2:"AVG. DAYS IN PHASE 2", toGetFunded:"to get funded",
+            efficiencyChart:"% of invested amount recovered via payouts · Real month-by-month data",
+            quickestFunding:"QUICKEST FUNDING", payoutsByFirm:"◇ PAYOUTS BY PROP FIRM",
+            avgFundingTime:"On average, you funded accounts in {n} days",
+            noHistoryDetail:"Once you have challenges and payouts, you'll see your global evolution here",
+            capitalMultiple:"CAPITAL MULTIPLE", evolutionByYear:"◇ YEARLY EVOLUTION",
+            recoveryTrend:"◇ CUMULATIVE RECOVERY TREND"
         }
     }
 };
@@ -1782,7 +1806,7 @@ window.setLanguage = setLanguage;
         function applyTranslations() {
             document.querySelectorAll('[data-i18n]').forEach(function(el) {
                 var key = el.getAttribute('data-i18n');
-                var value = t(key);
+                var value = getTranslation(key);
                 if (!value) return;
                 if (key === 'modal.resetConfirm' || key === 'modal.resetBody') {
                     el.innerHTML = value;
@@ -2973,13 +2997,13 @@ window.setLanguage = setLanguage;
             const ceoViewHtml = `
                 <div class="dashboard-header">
                     <h2>CEO VIEW · ALL TIME</h2>
-                    <div class="subtitle">Modo: PRO</div>
+                    <div class="subtitle">${t('ceoMode')}</div>
                 </div>
                 ${allAccounts.length === 0 ? `
                 <div style="text-align:center;padding:3rem;color:#9AA0A6;border:1px dashed rgba(230,232,235,0.15);border-radius:12px;margin-bottom:2rem;">
                     <div style="font-size:3rem;margin-bottom:1rem;">📈</div>
-                    <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;">Sin historial todavía</div>
-                    <div style="font-size:0.9rem;">Cuando tengas challenges y payouts, aquí verás tu evolución global</div>
+                    <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem;">${t('noHistory')}</div>
+                    <div style="font-size:0.9rem;">${t('noHistoryDetail')}</div>
                 </div>` : ''}
 
                 <div class="kpi-grid">
@@ -2992,7 +3016,7 @@ window.setLanguage = setLanguage;
                         <div class="kpi-value success">€${totalInvested.toLocaleString()}</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">MÚLTIPLO DE CAPITAL</div>
+                        <div class="kpi-label">${t('capitalMultiple')}</div>
                         <div class="kpi-value">${capitalMultiple.toFixed(2)}x</div>
                     </div>
                     <div class="kpi-card">
@@ -3002,7 +3026,7 @@ window.setLanguage = setLanguage;
                 </div>
 
                 <div class="table-container">
-                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 700;">◇ EVOLUCIÓN POR AÑO</h3>
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 700;">${t('evolutionByYear')}</h3>
                     <div class="chart-container" style="max-width: 800px;">
                         <canvas id="ceoLineChart"></canvas>
                     </div>
@@ -3010,23 +3034,23 @@ window.setLanguage = setLanguage;
 
                 ${hasExamenData ? `
                 <div class="table-container">
-                    <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 700;">◇ MÉTRICAS DE PROGRESO (historial de fases)</h3>
-                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 1.5rem;">Calculado desde el historial de cambios de estado</div>
+                    <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 700;">${t('progressMetrics')}</h3>
+                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 1.5rem;">${t('progressCalculated')}</div>
                     <div class="kpi-grid" style="margin-bottom: 0;">
                         <div class="kpi-card">
-                            <div class="kpi-label">AVG. INTENTOS HASTA FONDEO</div>
+                            <div class="kpi-label">${t('avgAttempts')}</div>
                             <div class="kpi-value">${avgAttemptsToFund > 0 ? avgAttemptsToFund.toFixed(1) : '—'}</div>
-                            <div class="kpi-subtitle">fases por cuenta fondeada</div>
+                            <div class="kpi-subtitle">${t('phasesPerAccount')}</div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-label">AVG. DÍAS EN PHASE 1</div>
+                            <div class="kpi-label">${t('avgDaysPhase1')}</div>
                             <div class="kpi-value">${avgDaysPhase1 > 0 ? Math.round(avgDaysPhase1) : '—'} <span style="font-size: 1rem;">${t('days')}</span></div>
-                            <div class="kpi-subtitle">hasta superar Phase 1</div>
+                            <div class="kpi-subtitle">${t('toPassPhase1')}</div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-label">AVG. DÍAS EN PHASE 2</div>
+                            <div class="kpi-label">${t('avgDaysPhase2')}</div>
                             <div class="kpi-value">${avgDaysPhase2 > 0 ? Math.round(avgDaysPhase2) : '—'} <span style="font-size: 1rem;">${t('days')}</span></div>
-                            <div class="kpi-subtitle">hasta conseguir fondeo</div>
+                            <div class="kpi-subtitle">${t('toGetFunded')}</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">ENTRADAS EN HISTORIAL</div>
@@ -3061,7 +3085,7 @@ window.setLanguage = setLanguage;
                                         
                                         return `
                                             <tr>
-                                                <td>${new Date(payout.payoutDate).toLocaleDateString('es-ES')}</td>
+                                                <td>${new Date(payout.payoutDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES')}</td>
                                                 <td style="font-weight: 600;">${accountNumber}</td>
                                                 <td>${propFirm}</td>
                                                 <td style="font-weight: 700; color: #2ECC71;">€${payout.amount.toLocaleString()}</td>
@@ -3252,8 +3276,8 @@ window.setLanguage = setLanguage;
                 </div>
 
                 <div class="table-container">
-                    <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 700;">◇ TENDENCIA ACUMULADA DE RECUPERACIÓN</h3>
-                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 1.5rem;">% de lo invertido recuperado mediante payouts · Datos reales mes a mes</div>
+                    <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 700;">${t('recoveryTrend')}</h3>
+                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 1.5rem;">${t('efficiencyChart')}</div>
                     <div class="chart-container" style="max-width: 800px;">
                         <canvas id="autofinancingChart"></canvas>
                     </div>
@@ -3324,7 +3348,7 @@ window.setLanguage = setLanguage;
                     sortedKeys.forEach(key => {
                         cumulative += monthMap[key];
                         const [yr, mo] = key.split('-');
-                        const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                        const monthNames = getTranslation('dash.monthNames');
                         monthLabels.push(`${monthNames[parseInt(mo)-1]} ${yr}`);
                         // Ratio acumulado sobre lo invertido (%)
                         monthData.push(totalInvestedAll > 0 ? parseFloat(((cumulative / totalInvestedAll) * 100).toFixed(1)) : 0);
@@ -3464,12 +3488,12 @@ window.setLanguage = setLanguage;
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(41, 128, 185, 0.05)); border: 1px solid rgba(52, 152, 219, 0.2);">
                         <div class="kpi-value" style="font-size: 2.5rem; color: #F39C12;">${quickestFunding > 0 ? quickestFunding + ' <span style="font-size: 1.2rem;">DAYS</span>' : '—'}</div>
-                        <div class="kpi-label">FONDEO MÁS RÁPIDO</div>
+                        <div class="kpi-label">${t('quickestFunding')}</div>
                     </div>
                 </div>
 
                 <div class="table-container">
-                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 700;">◇ PAYOUTS POR PROP FIRM</h3>
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 700;">${t('payoutsByFirm')}</h3>
                     <div class="chart-container" style="max-width: 600px;">
                         <canvas id="wrappedPayoutsChart"></canvas>
                     </div>
@@ -3521,7 +3545,7 @@ window.setLanguage = setLanguage;
                     <div class="achievement-icon">⚡</div>
                     <div class="achievement-content">
                         <h4>${Math.round(avgTimeToFunding)} DAYS TIEMPO PROMEDIO HASTA FONDEO</h4>
-                        <p>En promedio, fondeaste cuentas en ${Math.round(avgTimeToFunding)} días</p>
+                        <p>${t('avgFundingTime').replace('{n}', Math.round(avgTimeToFunding))}</p>
                     </div>
                 </div>` : ''}
 
@@ -3873,7 +3897,7 @@ window.setLanguage = setLanguage;
 
             if (period === 'monthly') {
                 const month = parseInt(document.getElementById('wrappedMonth').value);
-                const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                const monthNames = getTranslation('dash.monthNamesFull');
                 periodText = `${monthNames[month]} ${year}`;
                 filterData = filterData.filter(a => new Date(a.purchaseDate).getMonth() === month);
                 filterPayouts = filterPayouts.filter(p => new Date(p.payoutDate).getMonth() === month);
