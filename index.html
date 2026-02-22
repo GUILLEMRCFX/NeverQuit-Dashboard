@@ -1508,6 +1508,34 @@
             background: none;
             border: none;
         }
+
+        /* ── Gravitational Field ───────────────────────── */
+        /* Polygon parallax background layer */
+        #polygon-bg {
+            position: absolute;
+            inset: -30px; /* oversize so 8px translate never clips edge */
+            background:
+                radial-gradient(ellipse at 15% 25%, rgba(46,204,113,0.07) 0%, transparent 52%),
+                radial-gradient(ellipse at 85% 72%, rgba(52,152,219,0.05) 0%, transparent 52%),
+                radial-gradient(ellipse at 50% 50%, rgba(46,204,113,0.02) 0%, transparent 68%);
+            z-index: 0;
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        /* Perspective container — wraps the disc */
+        #blackhole-logo {
+            perspective: 700px;
+            perspective-origin: center center;
+        }
+
+        /* The disc itself — receives rotateX/Y + scale from JS */
+        .logo-disc {
+            transform-style: preserve-3d;
+            will-change: transform;
+            transform-origin: center center;
+            /* No CSS transition — LERP in JS handles all smoothing */
+        }
     </style>
 </head>
 <body class="login-active">
@@ -1520,11 +1548,14 @@
 
     <!-- Login Screen -->
     <div id="loginOverlay" class="login-overlay">
+        <div id="polygon-bg"></div>
         <canvas id="loginCursorCanvas"></canvas>
         <div class="login-box">
-            <div class="login-header">
-                <h1>NEVER QUIT</h1>
-                <p>Dashboard de Gestión Profesional</p>
+            <div class="login-header" id="blackhole-logo">
+                <div class="logo-disc">
+                    <h1>NEVER QUIT</h1>
+                    <p>Dashboard de Gestión Profesional</p>
+                </div>
             </div>
             
             <div id="loginError" class="login-error">
@@ -1825,6 +1856,86 @@
         requestAnimationFrame(loop);
     }
     loop();
+})();
+
+// ============================================
+// GRAVITATIONAL FIELD — Cinematic logo effect
+// Gravity tilt ±4° · parallax 8px · micro-pull scale 1.025
+// Desktop only. LERP smoothing. Pure RAF loop.
+// ============================================
+(function initGravitationalField() {
+    // Hard disable on mobile — logo stays static
+    if (window.innerWidth < 768) return;
+
+    const logo = document.getElementById('blackhole-logo');
+    const disc = document.querySelector('.logo-disc');
+    const bg   = document.getElementById('polygon-bg');
+    if (!logo || !disc || !bg) return;
+
+    // Normalised cursor position in [-1, 1] along each axis
+    let mouseX = 0, mouseY = 0;
+    // Raw client coords for distance-based scale calculation
+    let mouseClientX = window.innerWidth  / 2;
+    let mouseClientY = window.innerHeight / 2;
+    // Smoothed (LERP) values
+    let curX = 0, curY = 0, curScale = 1;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        mouseClientX = e.clientX;
+        mouseClientY = e.clientY;
+    });
+
+    // Linear interpolation helper
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    let animId;
+
+    function animate() {
+        // Smooth approach — 0.05 factor = very fluid, cinematic feel
+        curX = lerp(curX, mouseX, 0.05);
+        curY = lerp(curY, mouseY, 0.05);
+
+        // 3D tilt — max ±4°
+        const rotX = curY * -4;
+        const rotY = curX *  4;
+
+        // Distance-based micro-pull: closer cursor → subtle scale up (max 1.025)
+        const rect      = logo.getBoundingClientRect();
+        const cx        = rect.left + rect.width  / 2;
+        const cy        = rect.top  + rect.height / 2;
+        const dx        = mouseClientX - cx;
+        const dy        = mouseClientY - cy;
+        const dist      = Math.sqrt(dx * dx + dy * dy);
+        const tScale    = 1 + Math.max(0, 1 - dist / 400) * 0.025;
+        curScale        = lerp(curScale, tScale, 0.08);
+
+        // Apply — disc handles tilt + scale; bg handles parallax
+        disc.style.transform =
+            `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${curScale})`;
+        bg.style.transform =
+            `translate(${curX * 8}px, ${curY * 8}px)`;
+
+        animId = requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Cancel RAF cleanly when login overlay fades out (avoid ghost loops)
+    const loginEl = document.getElementById('loginOverlay');
+    if (loginEl) {
+        const obs = new MutationObserver(() => {
+            if (loginEl.classList.contains('hidden')) {
+                cancelAnimationFrame(animId);
+                // Reset disc so it doesn't freeze mid-tilt if overlay is shown again
+                disc.style.transform = '';
+                bg.style.transform   = '';
+                obs.disconnect();
+            }
+        });
+        obs.observe(loginEl, { attributes: true, attributeFilter: ['class'] });
+    }
 })();
 
 // ============================================
