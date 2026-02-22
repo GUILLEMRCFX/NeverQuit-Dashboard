@@ -1552,6 +1552,94 @@
             transform-origin: center center;
             /* No CSS transition — LERP in JS handles all smoothing */
         }
+
+        /* ═══════════════════════════════════════════════════════
+           GOLDEN MODE — Max Allocation assolit
+           ═══════════════════════════════════════════════════════ */
+
+        /* KPI cards: vora daurada subtil */
+        .golden-mode .kpi-card {
+            border-color: rgba(212, 175, 55, 0.3) !important;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.08) !important;
+        }
+        .golden-mode .kpi-card:hover {
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.18) !important;
+            border-color: rgba(255, 215, 0, 0.45) !important;
+        }
+
+        /* Valors KPI: daurats */
+        .golden-mode .kpi-value {
+            color: #FFD700 !important;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+        }
+        /* Mantenir verd pels que s'especifiquen explícitament amb classe success si cal — no tocar el color verd de status */
+
+        /* Títols de les vistes */
+        .golden-mode .view-header h2,
+        .golden-mode .dashboard-header h2 {
+            color: #FFD700 !important;
+            text-shadow: 0 0 24px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Table containers: vora daurada */
+        .golden-mode .table-container {
+            border-color: rgba(212, 175, 55, 0.2) !important;
+        }
+        .golden-mode .table-container h3 {
+            color: #FFD700 !important;
+        }
+
+        /* Tab activa: daurat */
+        .golden-mode .tab.active {
+            background: linear-gradient(135deg, #B8960C, #FFD700) !important;
+            color: #121417 !important;
+        }
+
+        /* Header del dashboard */
+        .golden-mode .header h1 {
+            color: #FFD700 !important;
+            text-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+
+        /* Barra de progrés d'allocació */
+        .alloc-bar-track {
+            width: 100%;
+            height: 10px;
+            background: rgba(230,232,235,0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 0.75rem 0;
+        }
+        .alloc-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #27AE60, #2ECC71);
+            transition: width 0.6s ease;
+        }
+        .alloc-bar-fill.golden {
+            background: linear-gradient(90deg, #B8960C, #FFD700, #FFF2A0) !important;
+            box-shadow: 0 0 12px rgba(255,215,0,0.5);
+        }
+
+        /* Trophy overlay */
+        #goldenTrophyOverlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        #goldenTrophyOverlay .trophy-icon {
+            position: absolute;
+            font-size: inherit;
+            user-select: none;
+            animation: trophyFloat 8s ease-in-out infinite;
+        }
+        @keyframes trophyFloat {
+            0%, 100% { transform: translateY(0px) rotate(var(--rot)); opacity: var(--opa); }
+            50%       { transform: translateY(-12px) rotate(var(--rot)); opacity: calc(var(--opa) * 1.4); }
+        }
     </style>
 </head>
 <body class="login-active">
@@ -3722,7 +3810,8 @@ window.setLanguage = setLanguage;
                 newsTrading_Funded: 'Restricción 2min antes/después (Standard)',
                 note_funded: 'Sin restricción en Swing Account',
                 minTradingDays: 4,
-                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K'],
+                maxAllocation: 400000
             },
             'Alpha Capital Group': {
                 profitTarget_P1: 8,
@@ -3733,7 +3822,8 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Trades 2min antes/después deben durar +2min',
                 minTradingDays: 3,
-                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K'],
+                maxAllocation: 200000
             },
             'The5ers': {
                 profitTarget_P1: 8,
@@ -3745,7 +3835,8 @@ window.setLanguage = setLanguage;
                 newsTrading_Funded: 'Permitido sin restricciones',
                 note_funded: 'Escalado progresivo hasta 100% profit split',
                 minTradingDays: 3,
-                sizes: ['10K', '25K', '50K', '100K']
+                sizes: ['10K', '25K', '50K', '100K'],
+                maxAllocation: 400000
             },
             'FundedNext': {
                 profitTarget_P1: 8,
@@ -3756,7 +3847,8 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Permitido sin restricciones',
                 minTradingDays: 5,
-                sizes: ['6K', '15K', '25K', '50K', '100K']
+                sizes: ['6K', '15K', '25K', '50K', '100K'],
+                maxAllocation: 300000
             },
             'Orion Funded': {
                 profitTarget_P1: 10,
@@ -3767,7 +3859,8 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Consultar reglas específicas',
                 minTradingDays: 3,
-                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K'],
+                maxAllocation: 400000
             },
             'Bullfy': {
                 profitTarget_P1: 10,
@@ -3778,7 +3871,8 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Consultar reglas específicas',
                 minTradingDays: 3,
-                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K'],
+                maxAllocation: 400000
             },
             'MyForexFunds': {
                 profitTarget_P1: 8,
@@ -3790,9 +3884,72 @@ window.setLanguage = setLanguage;
                 newsTrading_Funded: 'Firma temporalmente cerrada',
                 note: '⚠️ CERRADA desde 2023 - Reapertura esperada 2026',
                 minTradingDays: 3,
-                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K'],
+                maxAllocation: 400000
             }
         };
+
+        // ─── MAX ALLOCATION HELPERS ──────────────────────────────────────────
+        // Retorna el capital total fondeado (en €) per una firma (comptes FUNDED)
+        function getFirmFundedCapital(firmName) {
+            return data.master_comptes
+                .filter(a => a.propFirm === firmName && a.status === 'FUNDED')
+                .reduce((sum, a) => {
+                    const k = parseInt(a.accountSize.replace('K', '')) || 0;
+                    return sum + k * 1000;
+                }, 0);
+        }
+
+        // Activa/desactiva el golden mode al dashboard sencer
+        function checkAndApplyGoldenMode() {
+            // Guard: PROP_FIRMS_CONFIG pot no estar definida si es crida molt aviat
+            try { if (!PROP_FIRMS_CONFIG) return; } catch(e) { return; }
+
+            const firmsAtMax = Object.keys(PROP_FIRMS_CONFIG).filter(firm => {
+                const maxAlloc = PROP_FIRMS_CONFIG[firm].maxAllocation || 400000;
+                return getFirmFundedCapital(firm) >= maxAlloc;
+            });
+
+            const isGolden = firmsAtMax.length > 0;
+            document.body.classList.toggle('golden-mode', isGolden);
+
+            // Gestionar overlay de trofeus
+            let overlay = document.getElementById('goldenTrophyOverlay');
+            if (isGolden && !overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'goldenTrophyOverlay';
+                // Posicions i rotacions aleatòries però fixes (seed basat en firma)
+                const trophies = [
+                    { x:5,  y:8,  s:6,  o:0.025, r:-12, d:0    },
+                    { x:22, y:3,  s:3.5,o:0.018, r:6,   d:1.5  },
+                    { x:48, y:6,  s:8,  o:0.020, r:-5,  d:3    },
+                    { x:70, y:2,  s:4,  o:0.022, r:10,  d:0.8  },
+                    { x:88, y:7,  s:5.5,o:0.018, r:-8,  d:2.2  },
+                    { x:10, y:40, s:4,  o:0.015, r:15,  d:4    },
+                    { x:35, y:55, s:7,  o:0.022, r:-4,  d:1    },
+                    { x:60, y:45, s:3.5,o:0.016, r:8,   d:3.5  },
+                    { x:80, y:50, s:5,  o:0.020, r:-10, d:2    },
+                    { x:92, y:38, s:3,  o:0.014, r:5,   d:5    },
+                    { x:15, y:80, s:6,  o:0.022, r:-7,  d:0.5  },
+                    { x:40, y:88, s:4.5,o:0.018, r:12,  d:2.8  },
+                    { x:65, y:82, s:8,  o:0.025, r:-3,  d:1.8  },
+                    { x:85, y:90, s:3.5,o:0.016, r:9,   d:3.2  },
+                    { x:50, y:25, s:5,  o:0.020, r:-14, d:4.5  },
+                    { x:28, y:72, s:3,  o:0.013, r:4,   d:6    },
+                    { x:75, y:68, s:4,  o:0.017, r:-6,  d:2.5  },
+                    { x:95, y:65, s:5.5,o:0.019, r:11,  d:1.2  },
+                    { x:3,  y:62, s:3,  o:0.014, r:-9,  d:3.8  },
+                    { x:55, y:70, s:6.5,o:0.021, r:7,   d:0.3  }
+                ];
+                overlay.innerHTML = trophies.map(t =>
+                    `<div class="trophy-icon" style="left:${t.x}%;top:${t.y}%;font-size:${t.s}rem;--opa:${t.o};--rot:${t.r}deg;animation-delay:${t.d}s;">🏆</div>`
+                ).join('');
+                document.body.appendChild(overlay);
+            } else if (!isGolden && overlay) {
+                overlay.remove();
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         // Render Prop Firm View
         // === RENDER: PROP FIRM VIEW ===
@@ -3803,6 +3960,13 @@ window.setLanguage = setLanguage;
 
             // CORRECCIÓN: Obtener configuración de la firma
             const firmConfig = PROP_FIRMS_CONFIG[selectedFirm] || PROP_FIRMS_CONFIG['FTMO'];
+
+            // Max Allocation — capital fondeado TOTAL (all-time, no filtre d'any)
+            const maxAlloc      = firmConfig.maxAllocation || 400000;
+            const fundedCapital = getFirmFundedCapital(selectedFirm);
+            const allocPct      = Math.min(100, (fundedCapital / maxAlloc) * 100);
+            const isAtMax       = fundedCapital >= maxAlloc;
+            const remaining     = Math.max(0, maxAlloc - fundedCapital);
 
             const yearAccounts = filterByYear(data.master_comptes, propFirmTimeFilter).filter(a => a.propFirm === selectedFirm);
             const yearPayouts  = filterByYear(data.payouts, propFirmTimeFilter).filter(p => {
@@ -3927,15 +4091,45 @@ window.setLanguage = setLanguage;
                             `<li style="margin-top: 0.75rem; font-size: 0.85rem; color: #F39C12; padding: 0.5rem; background: rgba(243,156,18,0.1); border-radius: 6px;">
                                 ${firmConfig.note}
                             </li>` : ''}
-                        ${firmConfig.note_funded && !firmConfig.note ? 
+                        ${firmConfig.note_funded && !firmConfig.note ?
                             `<li style="margin-top: 0.75rem; font-size: 0.85rem; color: #2ECC71;">
                                 <strong>💡 Nota:</strong> ${firmConfig.note_funded}
                             </li>` : ''}
                     </ul>
                 </div>
+
+                <!-- MAX ALLOCATION PROGRESS -->
+                <div class="table-container" style="${isAtMax ? 'border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.04);' : ''}">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700; ${isAtMax ? 'color:#FFD700;' : ''}">
+                        ${isAtMax ? '🏆 MAX ALLOCATION ASSOLIT' : '◇ MAX ALLOCATION'}
+                    </h3>
+
+                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#9AA0A6; margin-bottom:0.4rem;">
+                        <span>Capital fondeado: <strong style="color:${isAtMax ? '#FFD700' : '#E6E8EB'}">€${fundedCapital.toLocaleString()}</strong></span>
+                        <span>Màxim: <strong style="color:#9AA0A6">€${maxAlloc.toLocaleString()}</strong></span>
+                    </div>
+
+                    <div class="alloc-bar-track">
+                        <div class="alloc-bar-fill ${isAtMax ? 'golden' : ''}" style="width:${allocPct.toFixed(1)}%"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+                        <span style="font-size:0.82rem; color:${isAtMax ? '#FFD700' : '#9AA0A6'}; font-weight:600;">
+                            ${isAtMax
+                                ? '✦ Ets al límit màxim amb aquesta prop firm!'
+                                : `Falta: <strong style="color:#E6E8EB">€${remaining.toLocaleString()}</strong> · ${(100 - allocPct).toFixed(0)}% restant`}
+                        </span>
+                        <span style="font-size:1rem; font-weight:700; color:${isAtMax ? '#FFD700' : '#2ECC71'};">
+                            ${allocPct.toFixed(0)}%
+                        </span>
+                    </div>
+                </div>
             `;
 
             document.getElementById('propfirm').innerHTML = propFirmHtml;
+
+            // Aplicar golden mode si cal
+            checkAndApplyGoldenMode();
 
             // Re-attach event listener after re-rendering
             setTimeout(() => {
@@ -4077,6 +4271,33 @@ window.setLanguage = setLanguage;
                     </div>
                 </div>` : ''}
 
+                <!-- MAX ALLOCATION PER PROP FIRM -->
+                <div class="table-container">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 700;">◇ MAX ALLOCATION PER PROP FIRM</h3>
+                    <div class="kpi-grid">
+                        ${Object.keys(PROP_FIRMS_CONFIG).map(firm => {
+                            const maxAlloc  = PROP_FIRMS_CONFIG[firm].maxAllocation || 400000;
+                            const funded    = getFirmFundedCapital(firm);
+                            const pct       = Math.min(100, (funded / maxAlloc) * 100);
+                            const atMax     = funded >= maxAlloc;
+                            const remaining = Math.max(0, maxAlloc - funded);
+                            return `
+                                <div class="kpi-card" style="${atMax ? 'border-color:rgba(255,215,0,0.45);background:rgba(255,215,0,0.04);' : ''}">
+                                    <div class="kpi-label" style="${atMax ? 'color:#FFD700;' : ''}">${atMax ? '🏆 ' : ''}${firm}</div>
+                                    <div class="kpi-value" style="${atMax ? 'color:#FFD700;text-shadow:0 0 12px rgba(255,215,0,0.3);' : ''}">${pct.toFixed(0)}%</div>
+                                    <div class="alloc-bar-track" style="margin-top:0.5rem;">
+                                        <div class="alloc-bar-fill ${atMax ? 'golden' : ''}" style="width:${pct.toFixed(1)}%"></div>
+                                    </div>
+                                    <div class="kpi-subtitle" style="margin-top:0.4rem;">
+                                        €${funded.toLocaleString()} / €${maxAlloc.toLocaleString()}
+                                        ${atMax ? '' : `· falta €${remaining.toLocaleString()}`}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
                 <div class="table-container">
                     <h3 style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700;">◇ ÚLTIMOS PAYOUTS</h3>
                     ${allPayouts.length === 0 ? '<div class="empty-state">No hay payouts registrados</div>' : `
@@ -4113,6 +4334,9 @@ window.setLanguage = setLanguage;
             `;
 
             document.getElementById('ceoview').innerHTML = ceoViewHtml;
+
+            // Aplicar golden mode si alguna firma ha assolit max allocation
+            checkAndApplyGoldenMode();
 
             // CEO Line Chart
             const ctx = document.getElementById('ceoLineChart');
@@ -4739,6 +4963,8 @@ window.setLanguage = setLanguage;
             updateUI();
             // Inicializar midas de compte correctes per la prop firm per defecte
             updateAccountSizes();
+            // Comprovar golden mode al carregar
+            checkAndApplyGoldenMode();
         }
 
         function openHofLightbox(src) {
@@ -4816,6 +5042,9 @@ window.setLanguage = setLanguage;
         }
 
         function updateUI() {
+            // Comprovar i aplicar golden mode en cada actualització de dades
+            checkAndApplyGoldenMode();
+
             // Update account selects
             // Para Update Challenge: excluir SUSPENDED (estado terminal, sin transiciones posibles)
             const allActiveAccounts = data.master_comptes.filter(a => a.status !== 'SUSPENDED');
