@@ -1519,7 +1519,28 @@ const i18n = {
         modal: { resetTitle:"⚠️ Confirmar Reset", resetConfirm:"¿Estás seguro de que quieres eliminar todos los datos? Esta acción <strong>no se puede deshacer</strong>.", resetItems:"Se borrarán:", itemChallenges:"Todas las challenges", itemPayouts:"Todos los payouts", itemHistory:"Todo el historial", typeReset:"Escribe RESET para confirmar:", cancel:"Cancelar", confirmDelete:"Sí, Eliminar Todo" },
         year: { label:"AÑO ACTIVO:" },
         actions: { resetData:"🔄 Reset Datos", logout:"🚪 Salir" },
-        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" }
+        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
+        dash: {
+            updated:"Actualizado", of:"de", total:"total", costs:"Costos", payments:"pagos",
+            fundedAccounts:"cuentas fondeadas", noActiveAccounts:"Sin cuentas activas",
+            payoutsReceived:"↳ Payouts recibidos", myAccounts:"◇ MIS CUENTAS — ALL TIME",
+            colAccount:"Cuenta", colSize:"Tamaño", colCost:"Coste", colDate:"Fecha",
+            colPctActive:"% Activas", totalActive:"Total activas", noSuspended:"Sin suspendidas",
+            closedAccounts:"cerradas", suspended:"suspendida", excludedFemSg:"excluida", excludedFemPl:"excluidas",
+            noChallenges:"Sin challenges — crea una en Control Center",
+            phase1WinRate:"◇ TASA DE ÉXITO PHASE 1", phase2WinRate:"TASA DE ÉXITO PHASE 2",
+            propFirmNoAccounts:"Sin cuentas de {firm} en el período seleccionado",
+            rendimiento:"Rendimiento", avgTimeToFunding:"TIEMPO PROMEDIO A FONDEO",
+            days:"días", wrappedSubtitle:"TU AÑO DE TRADING EN REVISIÓN",
+            noDataCreate:"Crea tu primera challenge en Control Center para ver tu Wrapped",
+            noDataPeriod:"Sin datos para el período seleccionado",
+            bestPropFirmRoi:"BEST PROP FIRM ROI", allTime:"All-time",
+            viewAllTime:"All-time business snapshot",
+            pending:"Pendiente", reached:"✅ Alcanzado",
+            projection:"proyección basada en ritmo actual",
+            selfFunded:"SISTEMA AUTO-FINANCIADO", roiAverage:"ROI PROMEDIO",
+            monthNames:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+        }
     },
     en: {
         app: { name:"NEVER QUIT", fullName:"NEVER QUIT DASHBOARD", tagline:"Professional Capital Management System" },
@@ -1527,7 +1548,28 @@ const i18n = {
         modal: { resetTitle:"⚠️ Confirm Reset", resetConfirm:"Are you sure you want to delete all data? This action <strong>cannot be undone</strong>.", resetItems:"Will be deleted:", itemChallenges:"All challenges", itemPayouts:"All payouts", itemHistory:"All history", typeReset:"Type RESET to confirm:", cancel:"Cancel", confirmDelete:"Yes, Delete Everything" },
         year: { label:"ACTIVE YEAR:" },
         actions: { resetData:"🔄 Reset Data", logout:"🚪 Logout" },
-        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" }
+        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
+        dash: {
+            updated:"Updated", of:"of", total:"total", costs:"Costs", payments:"payments",
+            fundedAccounts:"funded accounts", noActiveAccounts:"No active accounts",
+            payoutsReceived:"↳ Payouts received", myAccounts:"◇ MY ACCOUNTS — ALL TIME",
+            colAccount:"Account", colSize:"Size", colCost:"Cost", colDate:"Date",
+            colPctActive:"% Active", totalActive:"Total active", noSuspended:"No suspended",
+            closedAccounts:"closed", suspended:"suspended", excludedFemSg:"excluded", excludedFemPl:"excluded",
+            noChallenges:"No challenges — create one in Control Center",
+            phase1WinRate:"◇ PHASE 1 WIN RATE", phase2WinRate:"PHASE 2 WIN RATE",
+            propFirmNoAccounts:"No accounts for {firm} in the selected period",
+            rendimiento:"Performance", avgTimeToFunding:"AVG TIME TO FUNDING",
+            days:"days", wrappedSubtitle:"YOUR TRADING YEAR IN REVIEW",
+            noDataCreate:"Create your first challenge in Control Center to see your Wrapped",
+            noDataPeriod:"No data for the selected period",
+            bestPropFirmRoi:"BEST PROP FIRM ROI", allTime:"All-time",
+            viewAllTime:"All-time business snapshot",
+            pending:"Pending", reached:"✅ Reached",
+            projection:"projection based on current pace",
+            selfFunded:"SELF-FUNDED SYSTEM", roiAverage:"AVERAGE ROI",
+            monthNames:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        }
     }
 };
 
@@ -1545,6 +1587,8 @@ function getTranslation(key) {
     for (const k of keys) { if (value) value = value[k]; }
     return value || null;
 }
+// Shorthand for dash translations
+function t(key) { return getTranslation('dash.' + key) || key; }
 
 function setLanguage(lang) {
     currentLanguage = lang;
@@ -1557,6 +1601,8 @@ function setLanguage(lang) {
         const tr = getTranslation(key);
         if (tr) el.innerHTML = tr;
     });
+    // Re-render active dashboard tab to apply translated strings
+    if (typeof window._dashUpdateUI === 'function') window._dashUpdateUI();
 }
 window.setLanguage = setLanguage;
 
@@ -2194,30 +2240,30 @@ window.setLanguage = setLanguage;
             const overviewHtml = `
                 <div class="dashboard-header">
                     <h2>OVERVIEW</h2>
-                    <span class="view-label">All-time business snapshot</span>
-                    <div class="subtitle" style="margin-top:0.5rem;">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <span class="view-label">${t('viewAllTime')}</span>
+                    <div class="subtitle" style="margin-top:0.5rem;">${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                 </div>
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div class="kpi-label">Active Funded Capital</div>
                         <div class="kpi-value success">${(activeFundedCapital).toLocaleString()} €</div>
-                        <div class="kpi-subtitle">${activeFunded} funded cuentas</div>
+                        <div class="kpi-subtitle">${activeFunded} ${t('fundedAccounts')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">Total Payouts</div>
                         <div class="kpi-value success">${totalPayouts.toLocaleString()} €</div>
-                        <div class="kpi-subtitle">${yearPayouts.length} pagos</div>
+                        <div class="kpi-subtitle">${yearPayouts.length} ${t('payments')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">Active Funded Accounts</div>
                         <div class="kpi-value">${activeFunded}</div>
-                        <div class="kpi-subtitle">de ${yearAccounts.length} total</div>
+                        <div class="kpi-subtitle">${t('of')} ${yearAccounts.length} ${t('total')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">ROI Annual</div>
                         <div class="kpi-value ${roi > 0 ? 'success' : roi < 0 ? 'danger' : ''}">${roi > 0 ? '+' : ''}${roi.toFixed(0)}%</div>
-                        <div class="kpi-subtitle">Costos: ${totalCosts.toLocaleString()} €</div>
+                        <div class="kpi-subtitle">${t('costs')}: ${totalCosts.toLocaleString()} €</div>
                     </div>
                 </div>
 
@@ -2229,7 +2275,7 @@ window.setLanguage = setLanguage;
                                 <tr>
                                     <th>Status</th>
                                     <th>Count</th>
-                                    <th>% Activas</th>
+                                    <th>${t('colPctActive')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2252,12 +2298,12 @@ window.setLanguage = setLanguage;
                                 <tr style="opacity: 0.5;">
                                     <td><span class="status-badge suspended">SUSPENDED</span></td>
                                     <td>${suspendedCount}</td>
-                                    <td style="color: #9AA0A6; font-style: italic;">cerradas</td>
+                                    <td style="color: #9AA0A6; font-style: italic;">${t('closedAccounts')}</td>
                                 </tr>` : ''}
                             </tbody>
                         </table>
                         <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #9AA0A6;">
-                            Total activas: ${activeAccountsOnly.length} · ${suspendedCount > 0 ? `${suspendedCount} suspendida${suspendedCount > 1 ? 's' : ''} excluida${suspendedCount > 1 ? 's' : ''}` : 'Sin suspendidas'}
+                            ${t('totalActive')}: ${activeAccountsOnly.length} · ${suspendedCount > 0 ? `${suspendedCount} ${t('suspended')}${suspendedCount > 1 ? 's' : ''} ${suspendedCount > 1 ? t('excludedFemPl') : t('excludedFemSg')}` : t('noSuspended')}
                         </div>
                     </div>
 
@@ -2267,7 +2313,7 @@ window.setLanguage = setLanguage;
                             <canvas id="activeAccountsChart"></canvas>
                         </div>
                         <div style="text-align: center; margin-top: 1rem; color: #9AA0A6; font-size: 0.85rem;">
-                            Total Activo: ${activeAccountsOnly.length}
+                            Total: ${activeAccountsOnly.length}
                         </div>
                     </div>
                 </div>
@@ -2292,11 +2338,11 @@ window.setLanguage = setLanguage;
                             + '<td style="font-weight:600;">' + acc.accountSize + '</td>'
                             + '<td><span class="status-badge ' + statusClass + '">' + acc.status + '</span></td>'
                             + '<td style="color:#E74C3C;">-€' + acc.challengeCost.toLocaleString() + '</td>'
-                            + '<td style="color:#9AA0A6;">' + new Date(acc.purchaseDate).toLocaleDateString('es-ES') + '</td>'
+                            + '<td style="color:#9AA0A6;">' + new Date(acc.purchaseDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES') + '</td>'
                             + '</tr>';
                         if (payoutsForAcc > 0) {
                             row += '<tr style="background:rgba(46,204,113,0.03);' + rowStyle + '">'
-                                + '<td colspan="4" style="padding-top:0.3rem;padding-bottom:0.5rem;color:#9AA0A6;font-size:0.8rem;padding-left:2.5rem;">↳ Payouts recibidos</td>'
+                                + '<td colspan="4" style="padding-top:0.3rem;padding-bottom:0.5rem;color:#9AA0A6;font-size:0.8rem;padding-left:2.5rem;">' + t('payoutsReceived') + '</td>'
                                 + '<td style="color:#2ECC71;padding-top:0.3rem;padding-bottom:0.5rem;">+€' + payoutsForAcc.toLocaleString() + '</td>'
                                 + '<td></td></tr>';
                         }
@@ -2304,9 +2350,9 @@ window.setLanguage = setLanguage;
                     }).join('');
 
                 accountsTableHtml = '<div class="table-container" style="margin-top:1.5rem;">'
-                    + '<h3 style="margin-bottom:1rem;font-size:1.1rem;font-weight:700;">◇ MIS CUENTAS — ALL TIME</h3>'
+                    + '<h3 style="margin-bottom:1rem;font-size:1.1rem;font-weight:700;">' + t('myAccounts') + '</h3>'
                     + '<table><thead><tr>'
-                    + '<th>Cuenta</th><th>Prop Firm</th><th>Tamaño</th><th>Status</th><th>Coste</th><th>Fecha</th>'
+                    + '<th>' + t('colAccount') + '</th><th>Prop Firm</th><th>' + t('colSize') + '</th><th>Status</th><th>' + t('colCost') + '</th><th>' + t('colDate') + '</th>'
                     + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
             }
 
@@ -2316,7 +2362,7 @@ window.setLanguage = setLanguage;
             const ctx = document.getElementById('activeAccountsChart');
             if (ctx && activeAccountsOnly.length === 0) {
                 ctx.closest('.table-container').querySelector('.chart-container').innerHTML =
-                    '<div style="text-align:center;padding:2rem;color:#9AA0A6;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><div>Sin cuentas activas</div></div>';
+                    '<div style="text-align:center;padding:2rem;color:#9AA0A6;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><div>' + t('noActiveAccounts') + '</div></div>';
             } else if (ctx && activeAccountsOnly.length > 0) {
                 if (window.activeChart && typeof window.activeChart.destroy === 'function') {
                     window.activeChart.destroy();
@@ -2401,8 +2447,8 @@ window.setLanguage = setLanguage;
             const performanceHtml = `
                 <div class="view-header">
                     <h2>PERFORMANCE</h2>
-                    ${totalChallenges === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin challenges — crea una en Control Center</div>` : ''}
-                    <div class="subtitle">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    ${totalChallenges === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">${t('noChallenges')}</div>` : ''}
+                    <div class="subtitle">${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                     <div class="time-filter">
                         <select id="performanceTimeFilter" onchange="performanceTimeFilter=this.value;renderPerformance();">
                             ${buildYearOptions(performanceTimeFilter)}
@@ -2412,12 +2458,12 @@ window.setLanguage = setLanguage;
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-label">◇ TASA DE ÉXITO PHASE 1</div>
+                        <div class="kpi-label">${t('phase1WinRate')}</div>
                         <div class="kpi-value success">${phase1WinRate.toFixed(0)}%</div>
-                        <div class="kpi-subtitle">${passedPhase1} de ${totalChallenges}</div>
+                        <div class="kpi-subtitle">${passedPhase1} ${t('of')} ${totalChallenges}</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">TASA DE ÉXITO PHASE 2</div>
+                        <div class="kpi-label">${t('phase2WinRate')}</div>
                         <div class="kpi-value success">${phase2WinRate.toFixed(0)}%</div>
                         <div class="kpi-subtitle">${fundedCount} funded</div>
                     </div>
@@ -2739,8 +2785,8 @@ window.setLanguage = setLanguage;
             const propFirmHtml = `
                 <div class="view-header">
                     <h2>PROP FIRM · ${selectedFirm}</h2>
-                    ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">Sin cuentas de ${selectedFirm} en el período seleccionado</div>` : ''}
-                    <div class="subtitle">Rendimiento · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">${t('propFirmNoAccounts').replace('{firm}', selectedFirm)}</div>` : ''}
+                    <div class="subtitle">${t('rendimiento')} · ${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                     <div class="time-filter">
                         <select id="propFirmTimeFilter" onchange="propFirmTimeFilter=this.value;renderPropFirm();">
                             ${buildYearOptions(propFirmTimeFilter)}
@@ -2974,12 +3020,12 @@ window.setLanguage = setLanguage;
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">AVG. DÍAS EN PHASE 1</div>
-                            <div class="kpi-value">${avgDaysPhase1 > 0 ? Math.round(avgDaysPhase1) : '—'} <span style="font-size: 1rem;">días</span></div>
+                            <div class="kpi-value">${avgDaysPhase1 > 0 ? Math.round(avgDaysPhase1) : '—'} <span style="font-size: 1rem;">${t('days')}</span></div>
                             <div class="kpi-subtitle">hasta superar Phase 1</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">AVG. DÍAS EN PHASE 2</div>
-                            <div class="kpi-value">${avgDaysPhase2 > 0 ? Math.round(avgDaysPhase2) : '—'} <span style="font-size: 1rem;">días</span></div>
+                            <div class="kpi-value">${avgDaysPhase2 > 0 ? Math.round(avgDaysPhase2) : '—'} <span style="font-size: 1rem;">${t('days')}</span></div>
                             <div class="kpi-subtitle">hasta conseguir fondeo</div>
                         </div>
                         <div class="kpi-card">
@@ -3106,24 +3152,24 @@ window.setLanguage = setLanguage;
             const selfFundedPercentage = totalInvested > 0 ? Math.min((totalWithdrawn / totalInvested) * 100, 100) : 0;
 
             // Break-even timing — calcular dinámicamente
-            let breakEvenMonth = 'Pendiente';
+            let breakEvenMonth = t('pending');
             if (totalInvested > 0 && totalWithdrawn > 0) {
                 if (totalWithdrawn >= totalInvested) {
-                    breakEvenMonth = '✅ Alcanzado';
+                    breakEvenMonth = t('reached');
                 } else {
                     // Calcular proyección basada en la tasa mensual de los últimos 3 meses
                     const last3Months = data.payouts
                         .filter(p => p.payoutDate)
                         .sort((a, b) => new Date(b.payoutDate) - new Date(a.payoutDate))
                         .slice(0, 10);
-                    const recentMonthlyRate = last3Months.length > 0 
-                        ? last3Months.reduce((s, p) => s + p.amount, 0) / 3 
+                    const recentMonthlyRate = last3Months.length > 0
+                        ? last3Months.reduce((s, p) => s + p.amount, 0) / 3
                         : 0;
                     if (recentMonthlyRate > 0) {
                         const monthsRemaining = Math.ceil((totalInvested - totalWithdrawn) / recentMonthlyRate);
                         const breakDate = new Date();
                         breakDate.setMonth(breakDate.getMonth() + monthsRemaining);
-                        const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                        const monthNames = getTranslation('dash.monthNames');
                         breakEvenMonth = `${monthNames[breakDate.getMonth()]} ${breakDate.getFullYear()}`;
                     }
                 }
@@ -3132,8 +3178,8 @@ window.setLanguage = setLanguage;
             const efficiencyHtml = `
                 <div class="view-header">
                     <h2>CAPITAL EFFICIENCY</h2>
-                    ${allAccounts.length === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin datos — crea tu primera challenge</div>` : ''}
-                    <div class="subtitle">Rendimiento · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    ${allAccounts.length === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">${t('noChallenges')}</div>` : ''}
+                    <div class="subtitle">${t('rendimiento')} · ${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                     <div class="time-filter">
                         <select id="efficiencyTimeFilter" onchange="efficiencyTimeFilter=this.value;renderCapitalEfficiency();">
                             ${buildYearOptions(efficiencyTimeFilter)}
@@ -3147,17 +3193,17 @@ window.setLanguage = setLanguage;
                         <div class="kpi-value success">${withdrawnToInvestedRatio.toFixed(2)}x</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">TIEMPO PROMEDIO A FONDEO</div>
-                        <div class="kpi-value">${Math.round(avgTimeToFunding)} <span style="font-size: 1rem;">días</span></div>
+                        <div class="kpi-label">${t('avgTimeToFunding')}</div>
+                        <div class="kpi-value">${Math.round(avgTimeToFunding)} <span style="font-size: 1rem;">${t('days')}</span></div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">SISTEMA AUTO-FINANCIADO</div>
+                        <div class="kpi-label">${t('selfFunded')}</div>
                         <div class="kpi-value success">${selfFundedPercentage.toFixed(0)}%</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">TIMING BREAK-EVEN</div>
                         <div class="kpi-value" style="font-size: 1.4rem;">${breakEvenMonth}</div>
-                        <div class="kpi-subtitle">proyección basada en ritmo actual</div>
+                        <div class="kpi-subtitle">${t('projection')}</div>
                     </div>
                 </div>
 
@@ -3391,7 +3437,7 @@ window.setLanguage = setLanguage;
             const wrappedHtml = `
                 <div class="wrapped-header" style="position:relative;">
                     <div class="wrapped-title">PROP FIRM WRAPPED${wrappedTimeFilter !== "ALL_TIME" ? " · " + wrappedTimeFilter : ""}</div>
-                    <div class="wrapped-subtitle">TU AÑO DE TRADING EN REVISIÓN</div>
+                    <div class="wrapped-subtitle">${t('wrappedSubtitle')}</div>
                     <div style="margin-top: 1rem;">
                         <select id="wrappedYearSelect" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;"
                             onchange="wrappedTimeFilter=this.value;renderWrapped();">
@@ -3403,8 +3449,8 @@ window.setLanguage = setLanguage;
                 ${yearAccounts.length === 0 ? `
                 <div style="text-align:center; padding: 3rem; color: #9AA0A6; border: 1px dashed rgba(230,232,235,0.15); border-radius: 12px; margin-bottom: 2rem;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Sin datos para el período seleccionado</div>
-                    <div style="font-size: 0.9rem;">Crea tu primera challenge en Control Center para ver tu Wrapped</div>
+                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">${t('noDataPeriod')}</div>
+                    <div style="font-size: 0.9rem;">${t('noDataCreate')}</div>
                 </div>` : ''}
 
                 <div class="kpi-grid">
@@ -3414,7 +3460,7 @@ window.setLanguage = setLanguage;
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.05), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(243, 156, 18, 0.2);">
                         <div class="kpi-value warning" style="font-size: 2.5rem;">${(totalPayouts > 0 && totalInvested > 0) ? (avgROI >= 0 ? "+" : "") + avgROI.toFixed(0) + "%" : "—"}</div>
-                        <div class="kpi-label">ROI PROMEDIO</div>
+                        <div class="kpi-label">${t('roiAverage')}</div>
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(41, 128, 185, 0.05)); border: 1px solid rgba(52, 152, 219, 0.2);">
                         <div class="kpi-value" style="font-size: 2.5rem; color: #F39C12;">${quickestFunding > 0 ? quickestFunding + ' <span style="font-size: 1.2rem;">DAYS</span>' : '—'}</div>
@@ -3721,6 +3767,7 @@ window.setLanguage = setLanguage;
             renderCapitalEfficiency();
             renderWrapped();
         }
+        window._dashUpdateUI = updateUI; // expose for setLanguage re-render
 
         // === EVENTS: UI / TABS ===
         // Tab navigation
@@ -3728,7 +3775,7 @@ window.setLanguage = setLanguage;
             tab.addEventListener('click', function() {
                 const tabName = this.getAttribute('data-tab');
                 
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 
                 this.classList.add('active');
