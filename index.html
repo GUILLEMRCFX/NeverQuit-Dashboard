@@ -470,7 +470,7 @@
             border-radius: 12px;
             font-size: 0.95rem;
             font-weight: 600;
-            z-index: 9999;
+            z-index: 10001; /* above lang-switch (9999) and login overlay (10000) */
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             animation: slideInRight 0.3s ease-out;
             max-width: 400px;
@@ -1216,6 +1216,143 @@
             opacity: 0; transition: opacity 1.2s ease;
         }
 
+        /* ─── HISTORY FAB & PANEL ─────────────────────────────────── */
+        #historyFab {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            z-index: 9990;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        #historyFab:hover { transform: scale(1.08); }
+
+        #historyBadge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #E74C3C;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #historyPanel {
+            position: fixed;
+            bottom: 84px;
+            left: 20px;
+            width: 360px;
+            max-height: 70vh;
+            background: #181B20;
+            border: 1px solid rgba(230,232,235,0.1);
+            border-radius: 16px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 9989;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #historyPanel.open {
+            display: flex;
+            animation: slideUpPanel 0.25s ease-out;
+        }
+        @keyframes slideUpPanel {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .hp-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(230,232,235,0.08);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #E6E8EB;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .hp-close {
+            background: none;
+            border: none;
+            color: #9AA0A6;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0 0.25rem;
+            line-height: 1;
+        }
+        .hp-close:hover { color: #E6E8EB; }
+        .hp-body {
+            overflow-y: auto;
+            flex: 1;
+            padding: 0.75rem 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: #2ECC71 rgba(230,232,235,0.05);
+        }
+        .hp-body::-webkit-scrollbar { width: 4px; }
+        .hp-body::-webkit-scrollbar-thumb { background: #2ECC71; border-radius: 2px; }
+        .hp-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #2ECC71;
+            margin: 0.75rem 0 0.4rem;
+        }
+        .hp-section-title:first-child { margin-top: 0; }
+        .hp-empty {
+            color: #9AA0A6;
+            font-size: 0.78rem;
+            font-style: italic;
+            padding: 0.25rem 0;
+        }
+        .hp-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.5rem 0.6rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 0.4rem;
+            font-size: 0.78rem;
+            color: #C0C7D0;
+            transition: background 0.15s;
+        }
+        .hp-entry:hover { background: rgba(255,255,255,0.06); }
+        .hp-entry-info { flex: 1; line-height: 1.5; }
+        .hp-entry-info strong { color: #E6E8EB; font-size: 0.8rem; }
+        .hp-entry-info span  { display: block; }
+        .hp-del {
+            background: none;
+            border: none;
+            color: #E74C3C;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0 0.2rem;
+            flex-shrink: 0;
+            opacity: 0.6;
+            transition: opacity 0.15s;
+            line-height: 1;
+            margin-top: 2px;
+        }
+        .hp-del:hover { opacity: 1; }
     </style>
 </head>
 <body>
@@ -1294,6 +1431,7 @@
             <h1>NEVER QUIT DASHBOARD</h1>
             <p>Sistema de Gestión de Capital Profesional</p>
             <div class="header-actions">
+                <span id="headerUsername" style="color:#9AA0A6;font-size:0.8rem;font-weight:600;letter-spacing:0.04em;"></span>
                 <button class="btn-reset" onclick="openResetModal()">🔄 Reset Datos</button>
                 <button class="btn-reset btn-reset--gray" onclick="logout()">🚪 Salir</button>
             </div>
@@ -1357,16 +1495,12 @@
                     <div class="card-title">Update Challenge</div>
                     <div class="form-group">
                         <label>Account</label>
-                        <select id="updateAccountId"></select>
+                        <select id="updateAccountId" onchange="onUpdateAccountChange()"></select>
                     </div>
                     <div class="form-group">
                         <label>New Status</label>
-                        <select id="updateNewStatus">
-                            <option>PHASE 1</option>
-                            <option>PHASE 2</option>
-                            <option>FUNDED</option>
-                            <option>SUSPENDED</option>
-                        </select>
+                        <select id="updateNewStatus"></select>
+                        <div id="statusTransitionHint" style="margin-top: 0.5rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;"></div>
                     </div>
                     <div class="form-group">
                         <label>Status Date</label>
@@ -1725,11 +1859,14 @@ window.setLanguage = setLanguage;
         // LOGIN SYSTEM - DEBE ESTAR DISPONIBLE INMEDIATAMENTE
         // ============================================
         
-        // Credenciales (en producción, esto debería estar en un backend)
-        const VALID_CREDENTIALS = {
-            'admin': 'admin123',
-            'demo': 'demo123'
-        };
+        // Credenciales ofuscadas (pendiente: mover a backend)
+        function _checkCredential(u, p) {
+            const v = {
+                [atob('YWRtaW4=')]: atob('YWRtaW4xMjM='),
+                [atob('ZGVtbw==')]: atob('ZGVtbzEyMw==')
+            };
+            return v[u] !== undefined && v[u] === p;
+        }
 
         function handleLogin(event) {
             event.preventDefault();
@@ -1739,13 +1876,15 @@ window.setLanguage = setLanguage;
             const errorDiv = $('loginError');
             
             // Validar credenciales
-            if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+            if (_checkCredential(username, password)) {
                 // Login exitoso
                 localStorage.setItem('neverQuitLoggedIn', 'true');
                 localStorage.setItem('neverQuitUsername', username);
                 
                 // Ocultar login con animación
                 $('loginOverlay').classList.add('hidden');
+                const _hdr = document.getElementById('headerUsername');
+                if (_hdr) _hdr.textContent = `◇ ${username.toUpperCase()}`;
                 initDashParticles();
 
                 // Inicializar dashboard después de un delay
@@ -1805,7 +1944,15 @@ window.setLanguage = setLanguage;
             
         // Verificar si ya está logueado
         const isLoggedIn = localStorage.getItem('neverQuitLoggedIn') === 'true';
-        
+
+        // Mostrar usuario en header
+        function setHeaderUsername() {
+            const el = document.getElementById('headerUsername');
+            const user = localStorage.getItem('neverQuitUsername');
+            if (el && user) el.textContent = `◇ ${user.toUpperCase()}`;
+        }
+        setHeaderUsername();
+
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
@@ -1907,6 +2054,15 @@ window.setLanguage = setLanguage;
         let lastAction = null;
         let undoTimeout = null;
 
+        // ─── PERSISTENT ACTION HISTORY ───────────────────────────────────────────
+        let actionHistory = { challenges: [], statuses: [], payouts: [] };
+        (function loadActionHistory() {
+            try {
+                const raw = localStorage.getItem('nqActionHistory');
+                if (raw) actionHistory = JSON.parse(raw);
+            } catch(e) {}
+        })();
+
         function saveLastAction(type, actionData) {
             lastAction = {
                 type: type,
@@ -1975,48 +2131,184 @@ window.setLanguage = setLanguage;
             if (btn) btn.remove();
             
             switch(action.type) {
-                case 'CREATE_CHALLENGE':
-                    // Eliminar la última cuenta creada
+                case 'CREATE_CHALLENGE': {
                     const accountIndex = data.master_comptes.findIndex(a => a.id === action.data.id);
                     if (accountIndex !== -1) {
                         const account = data.master_comptes[accountIndex];
                         data.master_comptes.splice(accountIndex, 1);
-                        saveData();
+                        // Sync: remove from persistent history
+                        const hi = actionHistory.challenges.map((c,i)=>({c,i})).reverse().find(({c})=>c.accountId===action.data.id);
+                        if (hi !== undefined) actionHistory.challenges.splice(hi.i, 1);
+                        saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
                         showAlert(`Challenge eliminada: ${account.accountNumber || account.id}`, 'success');
                     }
                     break;
-                    
-                case 'UPDATE_CHALLENGE':
-                    // Restaurar estado anterior
+                }
+                case 'UPDATE_CHALLENGE': {
                     const updateAccount = data.master_comptes.find(a => a.id === action.data.accountId);
                     if (updateAccount) {
                         updateAccount.status = action.data.previousStatus;
                         updateAccount.lastStatusDate = action.data.previousDate;
                         updateAccount.active = action.data.previousActive;
-                        
-                        // Eliminar última entrada de examens
-                        if (data.examens.length > 0) {
-                            data.examens.pop();
-                        }
-                        
-                        saveData();
+                        // Remove the matching examen by accountId + phase (last occurrence)
+                        const exPairs = data.examens.map((e, i) => ({ e, i })).reverse();
+                        const exHit   = exPairs.find(({ e }) => e.accountId === action.data.accountId && e.phase === action.data.newStatus);
+                        if (exHit !== undefined) data.examens.splice(exHit.i, 1);
+                        // Sync: remove from persistent history
+                        const si = actionHistory.statuses.map((s,i)=>({s,i})).reverse()
+                            .find(({s})=>s.accountId===action.data.accountId && s.newStatus===action.data.newStatus);
+                        if (si !== undefined) actionHistory.statuses.splice(si.i, 1);
+                        saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
                         showAlert(`Estado restaurado a: ${action.data.previousStatus}`, 'success');
                     }
                     break;
-                    
-                case 'REGISTER_PAYOUT':
-                    // Eliminar el último payout
+                }
+                case 'REGISTER_PAYOUT': {
                     const payoutIndex = data.payouts.findIndex(p => p.id === action.data.id);
                     if (payoutIndex !== -1) {
                         data.payouts.splice(payoutIndex, 1);
-                        saveData();
+                        // Sync: remove from persistent history
+                        const pi = actionHistory.payouts.findIndex(p => p.id === action.data.id);
+                        if (pi !== -1) actionHistory.payouts.splice(pi, 1);
+                        saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
                         showAlert(`Payout eliminado: €${action.data.amount.toLocaleString()}`, 'success');
                     }
                     break;
+                }
             }
+        }
+
+        // ─── HISTORY PANEL FUNCTIONS ─────────────────────────────────────────────
+
+        function saveActionHistory() {
+            localStorage.setItem('nqActionHistory', JSON.stringify(actionHistory));
+        }
+
+        function updateHistoryBadge() {
+            const badge = document.getElementById('historyBadge');
+            if (!badge) return;
+            const total = actionHistory.challenges.length
+                        + actionHistory.statuses.length
+                        + actionHistory.payouts.length;
+            badge.textContent = total;
+            badge.style.display = total > 0 ? 'flex' : 'none';
+        }
+
+        function toggleHistoryPanel() {
+            const panel = document.getElementById('historyPanel');
+            if (!panel) return;
+            const opening = panel.classList.toggle('open');
+            if (opening) renderHistoryPanel();
+        }
+
+        function renderHistoryPanel() {
+            const body = document.getElementById('historyPanelBody');
+            if (!body) return;
+
+            function fmtDate(d) { return d ? d.split('-').reverse().join('/') : '—'; }
+
+            // Section: Challenges Created
+            let html = '<div class="hp-section-title">Challenges Created</div>';
+            if (actionHistory.challenges.length === 0) {
+                html += '<div class="hp-empty">Sin entradas</div>';
+            } else {
+                [...actionHistory.challenges].reverse().forEach((c, ri) => {
+                    const i = actionHistory.challenges.length - 1 - ri;
+                    html += `<div class="hp-entry">
+                        <div class="hp-entry-info">
+                            <strong>#${c.accountNumber}</strong>
+                            <span>${c.propFirm} · ${c.accountSize}</span>
+                            <span>€${c.challengeCost.toLocaleString()} · ${fmtDate(c.purchaseDate)}</span>
+                        </div>
+                        <button class="hp-del" onclick="deleteHistoryEntry('challenges',${i})" title="Deshacer creación">✕</button>
+                    </div>`;
+                });
+            }
+
+            // Section: Status Updates
+            html += '<div class="hp-section-title">Status Updates</div>';
+            if (actionHistory.statuses.length === 0) {
+                html += '<div class="hp-empty">Sin entradas</div>';
+            } else {
+                [...actionHistory.statuses].reverse().forEach((s, ri) => {
+                    const i = actionHistory.statuses.length - 1 - ri;
+                    html += `<div class="hp-entry">
+                        <div class="hp-entry-info">
+                            <strong>#${s.accountNumber}</strong>
+                            <span>${s.propFirm}</span>
+                            <span>${s.previousStatus} → ${s.newStatus} · ${fmtDate(s.statusDate)}</span>
+                        </div>
+                        <button class="hp-del" onclick="deleteHistoryEntry('statuses',${i})" title="Revertir estado">✕</button>
+                    </div>`;
+                });
+            }
+
+            // Section: Payouts
+            html += '<div class="hp-section-title">Payouts</div>';
+            if (actionHistory.payouts.length === 0) {
+                html += '<div class="hp-empty">Sin entradas</div>';
+            } else {
+                [...actionHistory.payouts].reverse().forEach((p, ri) => {
+                    const i = actionHistory.payouts.length - 1 - ri;
+                    html += `<div class="hp-entry">
+                        <div class="hp-entry-info">
+                            <strong>#${p.accountNumber}</strong>
+                            <span>${p.propFirm} · €${p.amount.toLocaleString()}</span>
+                            <span>${p.status} · ${fmtDate(p.payoutDate)}</span>
+                        </div>
+                        <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="Eliminar payout">✕</button>
+                    </div>`;
+                });
+            }
+
+            body.innerHTML = html;
+        }
+
+        function deleteHistoryEntry(type, index) {
+            if (type === 'challenges') {
+                const entry = actionHistory.challenges[index];
+                if (!entry) return;
+                data.master_comptes = data.master_comptes.filter(a => a.id !== entry.accountId);
+                data.payouts        = data.payouts.filter(p => p.accountId !== entry.accountId);
+                data.examens        = data.examens.filter(e => e.accountId !== entry.accountId);
+                // Also remove linked history entries
+                actionHistory.statuses  = actionHistory.statuses.filter(s => s.accountId !== entry.accountId);
+                actionHistory.payouts   = actionHistory.payouts.filter(p => p.accountId !== entry.accountId);
+                actionHistory.challenges.splice(index, 1);
+                showAlert(`Challenge eliminada: #${entry.accountNumber}`, 'success');
+
+            } else if (type === 'statuses') {
+                const entry = actionHistory.statuses[index];
+                if (!entry) return;
+                const account = data.master_comptes.find(a => a.id === entry.accountId);
+                if (account) {
+                    account.status         = entry.previousStatus;
+                    account.lastStatusDate = entry.previousDate;
+                    account.active         = entry.previousStatus !== 'SUSPENDED';
+                    // Remove matching examen entry
+                    const pairs = data.examens.map((e, i) => ({ e, i })).reverse();
+                    const hit   = pairs.find(({ e }) => e.accountId === entry.accountId && e.phase === entry.newStatus);
+                    if (hit !== undefined) data.examens.splice(hit.i, 1);
+                }
+                actionHistory.statuses.splice(index, 1);
+                showAlert(`Estado revertido a: ${entry.previousStatus}`, 'success');
+
+            } else if (type === 'payouts') {
+                const entry = actionHistory.payouts[index];
+                if (!entry) return;
+                data.payouts = data.payouts.filter(p => p.id !== entry.id);
+                actionHistory.payouts.splice(index, 1);
+                showAlert(`Payout eliminado: €${entry.amount.toLocaleString()}`, 'success');
+            }
+
+            saveData();
+            saveActionHistory();
+            updateHistoryBadge();
+            renderHistoryPanel();
+            updateUI();
         }
 
         // Modal functions
@@ -2146,7 +2438,20 @@ window.setLanguage = setLanguage;
 
             data.master_comptes.push(newAccount);
             saveData();
-            
+
+            // Push to persistent history
+            actionHistory.challenges.push({
+                accountId:     internalId,
+                accountNumber: accountNumber,
+                propFirm:      propFirm,
+                accountSize:   accountSize,
+                challengeCost: challengeCost,
+                purchaseDate:  purchaseDate
+            });
+            if (actionHistory.challenges.length > 20) actionHistory.challenges.shift();
+            saveActionHistory();
+            updateHistoryBadge();
+
             // Guardar para deshacer
             saveLastAction('CREATE_CHALLENGE', {
                 id: internalId,
@@ -2160,6 +2465,58 @@ window.setLanguage = setLanguage;
             document.getElementById('createAccountNumber').value = '';
             
             updateUI();
+        }
+
+        // ─── STATUS TRANSITION SYSTEM ────────────────────────────────────────────
+        const STATUS_TRANSITIONS = {
+            "PHASE 1":  ["PHASE 2", "SUSPENDED"],
+            "PHASE 2":  ["FUNDED",  "SUSPENDED"],
+            "FUNDED":   ["SUSPENDED"],
+            "SUSPENDED": []
+        };
+
+        const STATUS_COLORS = {
+            "PHASE 1":  "#3498DB",
+            "PHASE 2":  "#F39C12",
+            "FUNDED":   "#2ECC71",
+            "SUSPENDED":"#E74C3C"
+        };
+
+        function onUpdateAccountChange() {
+            const accountId = document.getElementById('updateAccountId').value;
+            const statusSelect = document.getElementById('updateNewStatus');
+            const hint = document.getElementById('statusTransitionHint');
+
+            if (!accountId) {
+                statusSelect.innerHTML = '';
+                statusSelect.disabled = true;
+                hint.textContent = '';
+                return;
+            }
+
+            const account = data.master_comptes.find(a => a.id === accountId);
+            if (!account) return;
+
+            const currentStatus = account.status;
+            const allowed = STATUS_TRANSITIONS[currentStatus] || [];
+
+            if (allowed.length === 0) {
+                // Terminal state
+                statusSelect.innerHTML = '<option>SUSPENDED</option>';
+                statusSelect.disabled = true;
+                hint.innerHTML = `<span style="color: #E74C3C;">⛔ SUSPENDED — Final state. No further transitions allowed.</span>`;
+            } else {
+                statusSelect.disabled = false;
+                statusSelect.innerHTML = allowed.map(s =>
+                    `<option value="${s}">${s}</option>`
+                ).join('');
+
+                // Build hint badges
+                const badges = allowed.map(s =>
+                    `<span style="background: ${STATUS_COLORS[s]}22; color: ${STATUS_COLORS[s]}; border: 1px solid ${STATUS_COLORS[s]}55; border-radius: 4px; padding: 1px 7px;">${s}</span>`
+                ).join(' ');
+                hint.innerHTML = `<span style="color: ${STATUS_COLORS[currentStatus]};">${currentStatus}</span> → ${badges}`;
+            }
         }
 
         // Update challenge
@@ -2181,11 +2538,25 @@ window.setLanguage = setLanguage;
 
             const account = data.master_comptes.find(a => a.id === accountId);
             if (account) {
+                // ─── STRICT TRANSITION VALIDATION ────────────────────────
+                const currentStatus = account.status;
+                const allowedNext = STATUS_TRANSITIONS[currentStatus] || [];
+
+                if (allowedNext.length === 0) {
+                    showAlert(`⛔ SUSPENDED — Final state. No further transitions allowed.`, 'error');
+                    return;
+                }
+                if (!allowedNext.includes(newStatus)) {
+                    showAlert(`⛔ Transition not allowed: ${currentStatus} → ${newStatus}`, 'error');
+                    return;
+                }
+                // ─────────────────────────────────────────────────────────
+
                 // Guardar estado anterior para deshacer
                 const previousStatus = account.status;
                 const previousDate = account.lastStatusDate;
                 const previousActive = account.active;
-                
+
                 account.status = newStatus;
                 account.lastStatusDate = statusDate;
                 account.active = newStatus !== 'SUSPENDED';
@@ -2199,7 +2570,21 @@ window.setLanguage = setLanguage;
                 });
                 
                 saveData();
-                
+
+                // Push to persistent history
+                actionHistory.statuses.push({
+                    accountId:      accountId,
+                    accountNumber:  account.accountNumber || account.id,
+                    propFirm:       account.propFirm || '',
+                    previousStatus: previousStatus,
+                    previousDate:   previousDate,
+                    newStatus:      newStatus,
+                    statusDate:     statusDate
+                });
+                if (actionHistory.statuses.length > 20) actionHistory.statuses.shift();
+                saveActionHistory();
+                updateHistoryBadge();
+
                 // Guardar para deshacer
                 saveLastAction('UPDATE_CHALLENGE', {
                     accountId: accountId,
@@ -2260,7 +2645,21 @@ window.setLanguage = setLanguage;
 
             data.payouts.push(newPayout);
             saveData();
-            
+
+            // Push to persistent history
+            actionHistory.payouts.push({
+                id:            newPayout.id,
+                accountId:     accountId,
+                accountNumber: account ? (account.accountNumber || account.id) : accountId,
+                propFirm:      account ? (account.propFirm || '') : '',
+                amount:        amount,
+                payoutDate:    payoutDate,
+                status:        status
+            });
+            if (actionHistory.payouts.length > 20) actionHistory.payouts.shift();
+            saveActionHistory();
+            updateHistoryBadge();
+
             // Guardar para deshacer
             saveLastAction('REGISTER_PAYOUT', {
                 id: newPayout.id,
@@ -2312,6 +2711,20 @@ window.setLanguage = setLanguage;
             return opts;
         }
         // ─────────────────────────────────────────────────────────────
+
+        // ─── SHARED WIN-RATE HELPER ──────────────────────────────────────────────
+        // Single source of truth used by Performance, CEO View and Wrapped Generator.
+        // Phase 1 WR: accounts that cleared Phase 1 (now in PHASE 2 or FUNDED) / total
+        // Phase 2 WR: FUNDED / accounts that reached Phase 2 (PHASE 2 + FUNDED)
+        function calcWinRates(accounts) {
+            const total      = accounts.length;
+            const funded     = accounts.filter(a => a.status === 'FUNDED').length;
+            const inPhase2   = accounts.filter(a => a.status === 'PHASE 2').length;
+            const passedP1   = inPhase2 + funded;   // cleared Phase 1
+            const p1Rate     = total    > 0 ? (passedP1 / total   * 100) : 0;
+            const p2Rate     = passedP1 > 0 ? (funded   / passedP1 * 100) : 0;
+            return { phase1: p1Rate, phase2: p2Rate, passedPhase1: passedP1, fundedCount: funded, inPhase2 };
+        }
 
         // Render Overview
         // === RENDER: OVERVIEW ===
@@ -2536,19 +2949,9 @@ window.setLanguage = setLanguage;
             const totalChallenges = yearAccounts.length;
             const phase1CurrentCount = yearAccounts.filter(a => a.status === 'PHASE 1').length;
             const phase2CurrentCount = yearAccounts.filter(a => a.status === 'PHASE 2').length;
-            const fundedCount = yearAccounts.filter(a => a.status === 'FUNDED').length;
             const suspendedCount = yearAccounts.filter(a => a.status === 'SUSPENDED').length;
-            
-            // Win rates CORREGIDOS
-            // Phase 1 Win Rate: % de challenges que SUPERAN Phase 1 (llegan a Phase 2 o FUNDED)
-            // Todas empiezan en Phase 1, así que las que lo superan son: Phase 2 + Funded
-            const passedPhase1 = phase2CurrentCount + fundedCount;
-            const phase1WinRate = totalChallenges > 0 ? (passedPhase1 / totalChallenges * 100) : 0;
-            
-            // Phase 2 Win Rate: De las que llegaron a Phase 2, cuántas se fondean
-            // Total que llegaron a Phase 2 = las que están ahora en Phase 2 + las que ya están Funded
-            const reachedPhase2 = phase2CurrentCount + fundedCount;
-            const phase2WinRate = reachedPhase2 > 0 ? (fundedCount / reachedPhase2 * 100) : 0;
+
+            const { phase1: phase1WinRate, phase2: phase2WinRate, passedPhase1, fundedCount } = calcWinRates(yearAccounts);
             
             const totalCosts = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
@@ -3535,10 +3938,7 @@ window.setLanguage = setLanguage;
 
             // Win rates
             const totalChallenges = yearAccounts.length;
-            const phase1WinRate = totalChallenges > 0 ? 
-                (yearAccounts.filter(a => a.status !== 'PHASE 1' && a.status !== 'SUSPENDED').length / totalChallenges * 100) : 0;
-            const passedPhase1 = yearAccounts.filter(a => a.status === 'PHASE 2' || a.status === 'FUNDED').length;
-            const phase2WinRate = passedPhase1 > 0 ? (fundedAccounts / passedPhase1 * 100) : 0;
+            const { phase1: phase1WinRate, phase2: phase2WinRate } = calcWinRates(yearAccounts);
 
             // Avg time to funding
             const avgTimeToFunding = fundedAccountsWithDays.length > 0 
@@ -3833,8 +4233,8 @@ window.setLanguage = setLanguage;
 
         function updateUI() {
             // Update account selects
-            // Para Update Challenge: mostrar TODAS las cuentas activas (que el usuario ha creado)
-            const allActiveAccounts = data.master_comptes.filter(a => a.active);
+            // Para Update Challenge: excluir SUSPENDED (estado terminal, sin transiciones posibles)
+            const allActiveAccounts = data.master_comptes.filter(a => a.status !== 'SUSPENDED');
             
             // Para Register Payout: mostrar SOLO cuentas FUNDED
             const fundedAccounts = data.master_comptes.filter(a => a.status === 'FUNDED' && a.active);
@@ -3845,12 +4245,22 @@ window.setLanguage = setLanguage;
                 if (allActiveAccounts.length === 0) {
                     updateSelect.innerHTML = '<option value="">No hay cuentas disponibles</option>';
                 } else {
+                    const statusOrder = { 'PHASE 1': 0, 'PHASE 2': 1, 'FUNDED': 2, 'SUSPENDED': 3 };
+                    const sortedAccounts = [...allActiveAccounts].sort((a, b) =>
+                        (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
+                    );
                     updateSelect.innerHTML = '<option value="">Selecciona una cuenta...</option>' +
-                        allActiveAccounts.map(a => {
-                            const displayNumber = a.accountNumber || a.id;
-                            return `<option value="${a.id}">${displayNumber} - ${a.propFirm} (${a.status})</option>`;
+                        sortedAccounts.map(a => {
+                            const num = a.accountNumber || a.id;
+                            const size = a.accountSize || '?';
+                            const firm = a.propFirm || '?';
+                            const status = a.status;
+                            const suspended = status === 'SUSPENDED' ? ' ⛔' : '';
+                            return `<option value="${a.id}">#${num} | ${size} | ${firm} — ${status}${suspended}</option>`;
                         }).join('');
                 }
+                // Reset status select + hint whenever accounts are reloaded
+                onUpdateAccountChange();
             }
 
             // Payout dropdown - solo cuentas FUNDED
@@ -3874,6 +4284,8 @@ window.setLanguage = setLanguage;
             renderCEOView();
             renderCapitalEfficiency();
             renderWrapped();
+
+            updateHistoryBadge();
         }
         window._dashUpdateUI = updateUI; // expose for setLanguage re-render
 
@@ -3997,8 +4409,9 @@ window.setLanguage = setLanguage;
                 const month = parseInt(document.getElementById('wrappedMonth').value);
                 const monthNames = getTranslation('dash.monthNamesFull');
                 periodText = `${monthNames[month]} ${year}`;
-                filterData = filterData.filter(a => new Date(a.purchaseDate).getMonth() === month);
-                filterPayouts = filterPayouts.filter(p => new Date(p.payoutDate).getMonth() === month);
+                // Filter by BOTH month AND year (year already resolved above, defaults to current year for ALL_TIME)
+                filterData    = filterData.filter(a    => { const d = new Date(a.purchaseDate); return d.getMonth() === month && d.getFullYear() === year; });
+                filterPayouts = filterPayouts.filter(p => { const d = new Date(p.payoutDate);   return d.getMonth() === month && d.getFullYear() === year; });
             }
 
             // Calculate metrics
@@ -4020,12 +4433,9 @@ window.setLanguage = setLanguage;
             metrics.netprofit = metrics.payouts - metrics.invested;
             metrics.multiple = metrics.invested > 0 ? (metrics.payouts / metrics.invested) : 0;
 
-            const totalChallenges = filterData.length;
-            const passedPhase1 = filterData.filter(a => a.status === 'PHASE 2' || a.status === 'FUNDED').length;
-            metrics.winrate = totalChallenges > 0 ? (passedPhase1 / totalChallenges * 100) : 0;
-            
-            const reachedPhase2 = filterData.filter(a => a.status === 'PHASE 2').length + metrics.funded;
-            metrics.winrate2 = reachedPhase2 > 0 ? (metrics.funded / reachedPhase2 * 100) : 0;
+            const { phase1: wr1, phase2: wr2 } = calcWinRates(filterData);
+            metrics.winrate  = wr1;
+            metrics.winrate2 = wr2;
 
             const fundedWithDays = filterData
                 .filter(a => a.status === 'FUNDED')
@@ -4315,6 +4725,7 @@ window.setLanguage = setLanguage;
         // ============================================
         window.createChallenge = createChallenge;
         window.updateChallenge = updateChallenge;
+        window.onUpdateAccountChange = onUpdateAccountChange;
         window.registerPayout = registerPayout;
         window.openResetModal = openResetModal;
         window.closeResetModal = closeResetModal;
@@ -4323,6 +4734,9 @@ window.setLanguage = setLanguage;
         window.downloadWrapped = downloadWrapped;
         window.generateWrappedPreview = generateWrappedPreview;
         window.selectDesign = selectDesign;
+        // History panel
+        window.toggleHistoryPanel = toggleHistoryPanel;
+        window.deleteHistoryEntry = deleteHistoryEntry;
 
         // ============================================
         // SWIPE FUNCTIONALITY
@@ -4447,5 +4861,21 @@ window.setLanguage = setLanguage;
         }); // Fin DOMContentLoaded
 
     </script>
+
+    <!-- ─── HISTORY FAB ───────────────────────────────────────────────── -->
+    <button id="historyFab" onclick="toggleHistoryPanel()" title="Historial de acciones">
+        🕒
+        <span id="historyBadge" style="display:none;">0</span>
+    </button>
+
+    <!-- ─── HISTORY PANEL ────────────────────────────────────────────── -->
+    <div id="historyPanel">
+        <div class="hp-header">
+            <span>Historial de Acciones</span>
+            <button class="hp-close" onclick="toggleHistoryPanel()">✕</button>
+        </div>
+        <div class="hp-body" id="historyPanelBody"></div>
+    </div>
+
 </body>
 </html>
