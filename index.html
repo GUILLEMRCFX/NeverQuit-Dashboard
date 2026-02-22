@@ -1775,7 +1775,7 @@
                     <div class="card-title">Create Challenge</div>
                     <div class="form-group">
                         <label>Prop Firm</label>
-                        <select id="createPropFirm">
+                        <select id="createPropFirm" onchange="updateAccountSizes()">
                             <option>FTMO</option>
                             <option>Alpha Capital Group</option>
                             <option>Orion Funded</option>
@@ -1788,6 +1788,7 @@
                     <div class="form-group">
                         <label>Account Size</label>
                         <select id="createAccountSize">
+                            <option>5K</option>
                             <option>10K</option>
                             <option>25K</option>
                             <option selected>50K</option>
@@ -2810,6 +2811,26 @@ window.setLanguage = setLanguage;
             }, 3000);
         }
 
+        // Actualiza el desplegable de midas según la prop firm seleccionada
+        function updateAccountSizes() {
+            const firm = document.getElementById('createPropFirm').value;
+            const sizeSelect = document.getElementById('createAccountSize');
+            if (!sizeSelect) return;
+
+            const config = PROP_FIRMS_CONFIG[firm];
+            const sizes = (config && config.sizes) ? config.sizes : ['5K', '10K', '25K', '50K', '100K', '200K'];
+
+            const currentVal = sizeSelect.value;
+            sizeSelect.innerHTML = sizes.map(s =>
+                `<option value="${s}"${s === currentVal ? ' selected' : ''}>${s}</option>`
+            ).join('');
+
+            // Si la mida anterior no existe en la nueva firma, selecciona la primera disponible
+            if (!sizes.includes(currentVal)) {
+                sizeSelect.value = sizes[0];
+            }
+        }
+
         // Crear challenge
         // === EVENTS: CREATE / UPDATE / PAYOUT ===
         function createChallenge() {
@@ -2836,7 +2857,7 @@ window.setLanguage = setLanguage;
             }
 
             // CORRECCIÓN: Validar que el accountSize sea un tamaño reconocido
-            const validSizes = ['10K', '25K', '50K', '100K', '200K'];
+            const validSizes = ['5K', '6K', '10K', '15K', '25K', '50K', '100K', '200K'];
             if (!validSizes.includes(accountSize)) {
                 showAlert('⚠️ Tamaño de cuenta no válido', 'error');
                 return;
@@ -3689,8 +3710,7 @@ window.setLanguage = setLanguage;
         }
 
         // CONFIGURACIÓN DE PROP FIRMS CON REGLAS REALES (2025-2026)
-        // prices = coste del challenge en EUR/USD según tamaño de cuenta
-        // sizes  = tamaños de cuenta disponibles para cada firma
+        // sizes = tamaños de cuenta disponibles para cada firma (actualiza el desplegable del formulario)
         const PROP_FIRMS_CONFIG = {
             'FTMO': {
                 profitTarget_P1: 10,
@@ -3702,8 +3722,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Funded: 'Restricción 2min antes/después (Standard)',
                 note_funded: 'Sin restricción en Swing Account',
                 minTradingDays: 4,
-                sizes: ['10K', '25K', '50K', '100K', '200K'],
-                prices: { '10K': 89, '25K': 250, '50K': 345, '100K': 540, '200K': 1080 }
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
             },
             'Alpha Capital Group': {
                 profitTarget_P1: 8,
@@ -3714,8 +3733,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Trades 2min antes/después deben durar +2min',
                 minTradingDays: 3,
-                sizes: ['10K', '25K', '50K', '100K', '200K'],
-                prices: { '10K': 97, '25K': 197, '50K': 297, '100K': 497, '200K': 997 }
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
             },
             'The5ers': {
                 profitTarget_P1: 8,
@@ -3727,8 +3745,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Funded: 'Permitido sin restricciones',
                 note_funded: 'Escalado progresivo hasta 100% profit split',
                 minTradingDays: 3,
-                sizes: ['10K', '25K', '50K', '100K'],
-                prices: { '10K': 78, '25K': 195, '50K': 309, '100K': 545 }
+                sizes: ['10K', '25K', '50K', '100K']
             },
             'FundedNext': {
                 profitTarget_P1: 8,
@@ -3739,8 +3756,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Permitido sin restricciones',
                 minTradingDays: 5,
-                sizes: ['6K', '15K', '25K', '50K', '100K'],
-                prices: { '6K': 59, '15K': 119, '25K': 199, '50K': 299, '100K': 549 }
+                sizes: ['6K', '15K', '25K', '50K', '100K']
             },
             'Orion Funded': {
                 profitTarget_P1: 10,
@@ -3751,8 +3767,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Consultar reglas específicas',
                 minTradingDays: 3,
-                sizes: ['10K', '25K', '50K', '100K', '200K'],
-                prices: { '10K': 149, '25K': 249, '50K': 349, '100K': 499, '200K': 899 }
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
             },
             'Bullfy': {
                 profitTarget_P1: 10,
@@ -3763,8 +3778,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Consultar reglas específicas',
                 minTradingDays: 3,
-                sizes: ['10K', '25K', '50K', '100K', '200K'],
-                prices: { '10K': 49, '25K': 99, '50K': 179, '100K': 299, '200K': 499 }
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
             },
             'MyForexFunds': {
                 profitTarget_P1: 8,
@@ -3776,8 +3790,7 @@ window.setLanguage = setLanguage;
                 newsTrading_Funded: 'Firma temporalmente cerrada',
                 note: '⚠️ CERRADA desde 2023 - Reapertura esperada 2026',
                 minTradingDays: 3,
-                sizes: ['10K', '25K', '50K', '100K', '200K'],
-                prices: { '10K': 49, '25K': 99, '50K': 199, '100K': 349, '200K': 649 }
+                sizes: ['5K', '10K', '25K', '50K', '100K', '200K']
             }
         };
 
@@ -4724,6 +4737,8 @@ window.setLanguage = setLanguage;
         function initializeDashboard() {
             // Actualizar UI inicial
             updateUI();
+            // Inicializar midas de compte correctes per la prop firm per defecte
+            updateAccountSizes();
         }
 
         function openHofLightbox(src) {
