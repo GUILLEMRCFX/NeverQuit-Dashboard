@@ -113,6 +113,8 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
@@ -1076,67 +1078,43 @@
     background: #9AA0A6 !important;
 }
         /* ─── LANGUAGE SELECTOR ─── */
-        .lang-globe-btn {
+        /* ─── LANGUAGE SELECTOR (ES | EN) ─── */
+        .lang-switch {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 9999;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #181B20;
-            border: 1px solid rgba(230,232,235,0.15);
-            color: #9AA0A6;
-            font-size: 1.3rem;
-            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.25s;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            background: rgba(24, 27, 32, 0.9);
+            border: 1px solid rgba(230, 232, 235, 0.1);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
         }
-        .lang-globe-btn:hover { border-color: #2ECC71; color: #2ECC71; transform: scale(1.08); }
-        .lang-globe-btn.open { border-color: #2ECC71; color: #2ECC71; }
-
-        .lang-dropdown {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            z-index: 9998;
-            background: #181B20;
-            border: 1px solid rgba(230,232,235,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            transform: translateY(-8px) scale(0.95);
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-        .lang-dropdown.visible {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: all;
-        }
-        .lang-opt {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.75rem 1.25rem;
-            color: #9AA0A6;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
+        .lang-switch-opt {
             background: none;
-            width: 100%;
-            text-align: left;
+            border: none;
+            color: #9AA0A6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            padding: 0.1rem 0.35rem;
+            transition: color 0.2s;
         }
-        .lang-opt:hover { background: rgba(46,204,113,0.08); color: #E6E8EB; }
-        .lang-opt.active { color: #2ECC71; }
-        .lang-opt .flag { font-size: 1rem; }
-        .lang-opt:not(:last-child) { border-bottom: 1px solid rgba(230,232,235,0.05); }
+        .lang-switch-opt:hover { color: #E6E8EB; }
+        .lang-switch-opt.active { color: #2ECC71; }
+        .lang-switch-sep {
+            color: rgba(230,232,235,0.18);
+            font-size: 0.75rem;
+            padding: 0 0.05rem;
+            pointer-events: none;
+            user-select: none;
+        }
+        @media (max-width:968px) { .lang-switch { top:10px; right:10px; } }
 
         /* ─── LOGIN CURSOR CANVAS ─── */
         #loginCursorCanvas {
@@ -1144,15 +1122,21 @@
             pointer-events: none; z-index: 1;
         }
 
-        @media (max-width:968px) { .lang-globe-btn { top:10px; right:10px; } }
+        /* ─── DASHBOARD BACKGROUND PARTICLES ─── */
+        #dashParticles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            opacity: 0; transition: opacity 1.2s ease;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Globe Language Selector -->
-    <button class="lang-globe-btn" id="langGlobeBtn" onclick="toggleLangDropdown()" title="Language / Idioma">🌐</button>
-    <div class="lang-dropdown" id="langDropdown">
-        <button class="lang-opt active" id="opt-es" onclick="setLanguage('es')"><span class="flag">🇪🇸</span> Español</button>
-        <button class="lang-opt" id="opt-en" onclick="setLanguage('en')"><span class="flag">🇬🇧</span> English</button>
+    <!-- Language Selector: ES | EN -->
+    <div class="lang-switch">
+        <button class="lang-switch-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
+        <span class="lang-switch-sep">|</span>
+        <button class="lang-switch-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
     </div>
 
     <!-- Login Screen -->
@@ -1189,6 +1173,8 @@
         </div>
     </div>
 
+    <!-- Dashboard background particle canvas -->
+    <canvas id="dashParticles"></canvas>
     <div class="container">
         <!-- Modal de confirmación -->
         <div id="resetModal" class="modal-overlay">
@@ -1459,6 +1445,71 @@
 })();
 
 // ============================================
+// DASHBOARD BACKGROUND PARTICLES
+// ============================================
+let dashParticlesRunning = false;
+function initDashParticles() {
+    if (dashParticlesRunning) return;
+    dashParticlesRunning = true;
+    const canvas = document.getElementById('dashParticles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    const COLORS = ['#2ECC71','#27AE60','#1abc9c','#58d68d'];
+    const COUNT  = 55;
+    const CONN   = 140;
+    const pts = [];
+
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < COUNT; i++) {
+        pts.push({
+            x:  Math.random() * W,
+            y:  Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: (Math.random() - 0.5) * 0.25,
+            r:  Math.random() * 1.6 + 0.6,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            alpha: Math.random() * 0.18 + 0.06
+        });
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < pts.length; i++) {
+            const p = pts[i];
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+            if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
+        }
+        ctx.lineWidth = 0.4;
+        for (let i = 0; i < pts.length; i++) {
+            for (let j = i + 1; j < pts.length; j++) {
+                const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+                const d  = Math.sqrt(dx * dx + dy * dy);
+                if (d < CONN) {
+                    ctx.strokeStyle = `rgba(46,204,113,${(1 - d / CONN) * 0.08})`;
+                    ctx.globalAlpha = 1; ctx.beginPath();
+                    ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+                }
+            }
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(loop);
+    }
+    loop();
+    // Fade in
+    setTimeout(() => { canvas.style.opacity = '1'; }, 100);
+}
+
+// ============================================
 // i18n
 // ============================================
 const i18n = {
@@ -1481,6 +1532,12 @@ const i18n = {
 };
 
 let currentLanguage = localStorage.getItem('neverQuitLanguage') || 'es';
+if (currentLanguage === 'en') {
+    const elEs = document.getElementById('opt-es');
+    const elEn = document.getElementById('opt-en');
+    if (elEs) elEs.classList.remove('active');
+    if (elEn) elEn.classList.add('active');
+}
 
 function getTranslation(key) {
     const keys = key.split('.');
@@ -1489,19 +1546,6 @@ function getTranslation(key) {
     return value || null;
 }
 
-let langDropdownOpen = false;
-function toggleLangDropdown() {
-    langDropdownOpen = !langDropdownOpen;
-    document.getElementById('langDropdown').classList.toggle('visible', langDropdownOpen);
-    document.getElementById('langGlobeBtn').classList.toggle('open', langDropdownOpen);
-}
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('#langDropdown') && !e.target.closest('#langGlobeBtn') && langDropdownOpen) {
-        langDropdownOpen = false;
-        document.getElementById('langDropdown').classList.remove('visible');
-        document.getElementById('langGlobeBtn').classList.remove('open');
-    }
-});
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('neverQuitLanguage', lang);
@@ -1513,9 +1557,7 @@ function setLanguage(lang) {
         const tr = getTranslation(key);
         if (tr) el.innerHTML = tr;
     });
-    if (langDropdownOpen) toggleLangDropdown();
 }
-window.toggleLangDropdown = toggleLangDropdown;
 window.setLanguage = setLanguage;
 
         // === GLOBAL UTILS ===
@@ -1547,7 +1589,8 @@ window.setLanguage = setLanguage;
                 
                 // Ocultar login con animación
                 $('loginOverlay').classList.add('hidden');
-                
+                initDashParticles();
+
                 // Inicializar dashboard después de un delay
                 setTimeout(() => {
                     if (typeof initializeDashboard === 'function') {
@@ -1570,9 +1613,10 @@ window.setLanguage = setLanguage;
             // Solo para desarrollo - permite saltarse el login
             localStorage.setItem('neverQuitLoggedIn', 'true');
             localStorage.setItem('neverQuitUsername', 'dev-mode');
-            
+
             $('loginOverlay').classList.add('hidden');
-            
+            initDashParticles();
+
             setTimeout(() => {
                 if (typeof initializeDashboard === 'function') {
                     initializeDashboard();
@@ -1608,6 +1652,7 @@ window.setLanguage = setLanguage;
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
+            initDashParticles();
             // Inicializar dashboard después de un breve delay
             setTimeout(() => {
                 initializeDashboard();
