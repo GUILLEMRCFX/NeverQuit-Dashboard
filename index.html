@@ -3895,8 +3895,8 @@ window.setLanguage = setLanguage;
 
         function updateUI() {
             // Update account selects
-            // Para Update Challenge: mostrar TODAS las cuentas (incluyendo SUSPENDED para feedback visual)
-            const allActiveAccounts = data.master_comptes;
+            // Para Update Challenge: excluir SUSPENDED (estado terminal, sin transiciones posibles)
+            const allActiveAccounts = data.master_comptes.filter(a => a.status !== 'SUSPENDED');
             
             // Para Register Payout: mostrar SOLO cuentas FUNDED
             const fundedAccounts = data.master_comptes.filter(a => a.status === 'FUNDED' && a.active);
