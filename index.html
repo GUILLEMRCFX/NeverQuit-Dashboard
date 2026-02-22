@@ -1216,6 +1216,143 @@
             opacity: 0; transition: opacity 1.2s ease;
         }
 
+        /* ─── HISTORY FAB & PANEL ─────────────────────────────────── */
+        #historyFab {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            z-index: 9990;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        #historyFab:hover { transform: scale(1.08); }
+
+        #historyBadge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #E74C3C;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #historyPanel {
+            position: fixed;
+            bottom: 84px;
+            left: 20px;
+            width: 360px;
+            max-height: 70vh;
+            background: #181B20;
+            border: 1px solid rgba(230,232,235,0.1);
+            border-radius: 16px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+            z-index: 9989;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #historyPanel.open {
+            display: flex;
+            animation: slideUpPanel 0.25s ease-out;
+        }
+        @keyframes slideUpPanel {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .hp-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(230,232,235,0.08);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #E6E8EB;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .hp-close {
+            background: none;
+            border: none;
+            color: #9AA0A6;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0 0.25rem;
+            line-height: 1;
+        }
+        .hp-close:hover { color: #E6E8EB; }
+        .hp-body {
+            overflow-y: auto;
+            flex: 1;
+            padding: 0.75rem 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: #2ECC71 rgba(230,232,235,0.05);
+        }
+        .hp-body::-webkit-scrollbar { width: 4px; }
+        .hp-body::-webkit-scrollbar-thumb { background: #2ECC71; border-radius: 2px; }
+        .hp-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #2ECC71;
+            margin: 0.75rem 0 0.4rem;
+        }
+        .hp-section-title:first-child { margin-top: 0; }
+        .hp-empty {
+            color: #9AA0A6;
+            font-size: 0.78rem;
+            font-style: italic;
+            padding: 0.25rem 0;
+        }
+        .hp-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.5rem 0.6rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 0.4rem;
+            font-size: 0.78rem;
+            color: #C0C7D0;
+            transition: background 0.15s;
+        }
+        .hp-entry:hover { background: rgba(255,255,255,0.06); }
+        .hp-entry-info { flex: 1; line-height: 1.5; }
+        .hp-entry-info strong { color: #E6E8EB; font-size: 0.8rem; }
+        .hp-entry-info span  { display: block; }
+        .hp-del {
+            background: none;
+            border: none;
+            color: #E74C3C;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0 0.2rem;
+            flex-shrink: 0;
+            opacity: 0.6;
+            transition: opacity 0.15s;
+            line-height: 1;
+            margin-top: 2px;
+        }
+        .hp-del:hover { opacity: 1; }
     </style>
 </head>
 <body>
@@ -1903,6 +2040,15 @@ window.setLanguage = setLanguage;
         let lastAction = null;
         let undoTimeout = null;
 
+        // ─── PERSISTENT ACTION HISTORY ───────────────────────────────────────────
+        let actionHistory = { challenges: [], statuses: [], payouts: [] };
+        (function loadActionHistory() {
+            try {
+                const raw = localStorage.getItem('nqActionHistory');
+                if (raw) actionHistory = JSON.parse(raw);
+            } catch(e) {}
+        })();
+
         function saveLastAction(type, actionData) {
             lastAction = {
                 type: type,
@@ -2013,6 +2159,136 @@ window.setLanguage = setLanguage;
                     }
                     break;
             }
+        }
+
+        // ─── HISTORY PANEL FUNCTIONS ─────────────────────────────────────────────
+
+        function saveActionHistory() {
+            localStorage.setItem('nqActionHistory', JSON.stringify(actionHistory));
+        }
+
+        function updateHistoryBadge() {
+            const badge = document.getElementById('historyBadge');
+            if (!badge) return;
+            const total = actionHistory.challenges.length
+                        + actionHistory.statuses.length
+                        + actionHistory.payouts.length;
+            badge.textContent = total;
+            badge.style.display = total > 0 ? 'flex' : 'none';
+        }
+
+        function toggleHistoryPanel() {
+            const panel = document.getElementById('historyPanel');
+            if (!panel) return;
+            const opening = panel.classList.toggle('open');
+            if (opening) renderHistoryPanel();
+        }
+
+        function renderHistoryPanel() {
+            const body = document.getElementById('historyPanelBody');
+            if (!body) return;
+
+            function fmtDate(d) { return d ? d.split('-').reverse().join('/') : '—'; }
+
+            // Section: Challenges Created
+            let html = '<div class="hp-section-title">Challenges Created</div>';
+            if (actionHistory.challenges.length === 0) {
+                html += '<div class="hp-empty">Sin entradas</div>';
+            } else {
+                [...actionHistory.challenges].reverse().forEach((c, ri) => {
+                    const i = actionHistory.challenges.length - 1 - ri;
+                    html += `<div class="hp-entry">
+                        <div class="hp-entry-info">
+                            <strong>#${c.accountNumber}</strong>
+                            <span>${c.propFirm} · ${c.accountSize}</span>
+                            <span>€${c.challengeCost.toLocaleString()} · ${fmtDate(c.purchaseDate)}</span>
+                        </div>
+                        <button class="hp-del" onclick="deleteHistoryEntry('challenges',${i})" title="Deshacer creación">✕</button>
+                    </div>`;
+                });
+            }
+
+            // Section: Status Updates
+            html += '<div class="hp-section-title">Status Updates</div>';
+            if (actionHistory.statuses.length === 0) {
+                html += '<div class="hp-empty">Sin entradas</div>';
+            } else {
+                [...actionHistory.statuses].reverse().forEach((s, ri) => {
+                    const i = actionHistory.statuses.length - 1 - ri;
+                    html += `<div class="hp-entry">
+                        <div class="hp-entry-info">
+                            <strong>#${s.accountNumber}</strong>
+                            <span>${s.propFirm}</span>
+                            <span>${s.previousStatus} → ${s.newStatus} · ${fmtDate(s.statusDate)}</span>
+                        </div>
+                        <button class="hp-del" onclick="deleteHistoryEntry('statuses',${i})" title="Revertir estado">✕</button>
+                    </div>`;
+                });
+            }
+
+            // Section: Payouts
+            html += '<div class="hp-section-title">Payouts</div>';
+            if (actionHistory.payouts.length === 0) {
+                html += '<div class="hp-empty">Sin entradas</div>';
+            } else {
+                [...actionHistory.payouts].reverse().forEach((p, ri) => {
+                    const i = actionHistory.payouts.length - 1 - ri;
+                    html += `<div class="hp-entry">
+                        <div class="hp-entry-info">
+                            <strong>#${p.accountNumber}</strong>
+                            <span>${p.propFirm} · €${p.amount.toLocaleString()}</span>
+                            <span>${p.status} · ${fmtDate(p.payoutDate)}</span>
+                        </div>
+                        <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="Eliminar payout">✕</button>
+                    </div>`;
+                });
+            }
+
+            body.innerHTML = html;
+        }
+
+        function deleteHistoryEntry(type, index) {
+            if (type === 'challenges') {
+                const entry = actionHistory.challenges[index];
+                if (!entry) return;
+                data.master_comptes = data.master_comptes.filter(a => a.id !== entry.accountId);
+                data.payouts        = data.payouts.filter(p => p.accountId !== entry.accountId);
+                data.examens        = data.examens.filter(e => e.accountId !== entry.accountId);
+                // Also remove linked history entries
+                actionHistory.statuses  = actionHistory.statuses.filter(s => s.accountId !== entry.accountId);
+                actionHistory.payouts   = actionHistory.payouts.filter(p => p.accountId !== entry.accountId);
+                actionHistory.challenges.splice(index, 1);
+                showAlert(`Challenge eliminada: #${entry.accountNumber}`, 'success');
+
+            } else if (type === 'statuses') {
+                const entry = actionHistory.statuses[index];
+                if (!entry) return;
+                const account = data.master_comptes.find(a => a.id === entry.accountId);
+                if (account) {
+                    account.status         = entry.previousStatus;
+                    account.lastStatusDate = entry.previousDate;
+                    account.active         = entry.previousStatus !== 'SUSPENDED';
+                    // Remove matching examen entry
+                    const pairs = data.examens.map((e, i) => ({ e, i })).reverse();
+                    const hit   = pairs.find(({ e }) => e.accountId === entry.accountId && e.phase === entry.newStatus);
+                    if (hit !== undefined) data.examens.splice(hit.i, 1);
+                }
+                actionHistory.statuses.splice(index, 1);
+                showAlert(`Estado revertido a: ${entry.previousStatus}`, 'success');
+
+            } else if (type === 'payouts') {
+                const entry = actionHistory.payouts[index];
+                if (!entry) return;
+                data.payouts = data.payouts.filter(p => p.id !== entry.id);
+                actionHistory.payouts.splice(index, 1);
+                showAlert(`Payout eliminado: €${entry.amount.toLocaleString()}`, 'success');
+            }
+
+            saveData();
+            saveActionHistory();
+            updateHistoryBadge();
+            renderHistoryPanel();
+            updateUI();
         }
 
         // Modal functions
@@ -2142,7 +2418,20 @@ window.setLanguage = setLanguage;
 
             data.master_comptes.push(newAccount);
             saveData();
-            
+
+            // Push to persistent history
+            actionHistory.challenges.push({
+                accountId:     internalId,
+                accountNumber: accountNumber,
+                propFirm:      propFirm,
+                accountSize:   accountSize,
+                challengeCost: challengeCost,
+                purchaseDate:  purchaseDate
+            });
+            if (actionHistory.challenges.length > 20) actionHistory.challenges.shift();
+            saveActionHistory();
+            updateHistoryBadge();
+
             // Guardar para deshacer
             saveLastAction('CREATE_CHALLENGE', {
                 id: internalId,
@@ -2261,7 +2550,21 @@ window.setLanguage = setLanguage;
                 });
                 
                 saveData();
-                
+
+                // Push to persistent history
+                actionHistory.statuses.push({
+                    accountId:      accountId,
+                    accountNumber:  account.accountNumber || account.id,
+                    propFirm:       account.propFirm || '',
+                    previousStatus: previousStatus,
+                    previousDate:   previousDate,
+                    newStatus:      newStatus,
+                    statusDate:     statusDate
+                });
+                if (actionHistory.statuses.length > 20) actionHistory.statuses.shift();
+                saveActionHistory();
+                updateHistoryBadge();
+
                 // Guardar para deshacer
                 saveLastAction('UPDATE_CHALLENGE', {
                     accountId: accountId,
@@ -2322,7 +2625,21 @@ window.setLanguage = setLanguage;
 
             data.payouts.push(newPayout);
             saveData();
-            
+
+            // Push to persistent history
+            actionHistory.payouts.push({
+                id:            newPayout.id,
+                accountId:     accountId,
+                accountNumber: account ? (account.accountNumber || account.id) : accountId,
+                propFirm:      account ? (account.propFirm || '') : '',
+                amount:        amount,
+                payoutDate:    payoutDate,
+                status:        status
+            });
+            if (actionHistory.payouts.length > 20) actionHistory.payouts.shift();
+            saveActionHistory();
+            updateHistoryBadge();
+
             // Guardar para deshacer
             saveLastAction('REGISTER_PAYOUT', {
                 id: newPayout.id,
@@ -3946,6 +4263,8 @@ window.setLanguage = setLanguage;
             renderCEOView();
             renderCapitalEfficiency();
             renderWrapped();
+
+            updateHistoryBadge();
         }
         window._dashUpdateUI = updateUI; // expose for setLanguage re-render
 
@@ -4520,5 +4839,21 @@ window.setLanguage = setLanguage;
         }); // Fin DOMContentLoaded
 
     </script>
+
+    <!-- ─── HISTORY FAB ───────────────────────────────────────────────── -->
+    <button id="historyFab" onclick="toggleHistoryPanel()" title="Historial de acciones">
+        🕒
+        <span id="historyBadge" style="display:none;">0</span>
+    </button>
+
+    <!-- ─── HISTORY PANEL ────────────────────────────────────────────── -->
+    <div id="historyPanel">
+        <div class="hp-header">
+            <span>Historial de Acciones</span>
+            <button class="hp-close" onclick="toggleHistoryPanel()">✕</button>
+        </div>
+        <div class="hp-body" id="historyPanelBody"></div>
+    </div>
+
 </body>
 </html>
