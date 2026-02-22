@@ -470,7 +470,7 @@
             border-radius: 12px;
             font-size: 0.95rem;
             font-weight: 600;
-            z-index: 9999;
+            z-index: 10001; /* above lang-switch (9999) and login overlay (10000) */
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             animation: slideInRight 0.3s ease-out;
             max-width: 400px;
@@ -4388,8 +4388,9 @@ window.setLanguage = setLanguage;
                 const month = parseInt(document.getElementById('wrappedMonth').value);
                 const monthNames = getTranslation('dash.monthNamesFull');
                 periodText = `${monthNames[month]} ${year}`;
-                filterData = filterData.filter(a => new Date(a.purchaseDate).getMonth() === month);
-                filterPayouts = filterPayouts.filter(p => new Date(p.payoutDate).getMonth() === month);
+                // Filter by BOTH month AND year (year already resolved above, defaults to current year for ALL_TIME)
+                filterData    = filterData.filter(a    => { const d = new Date(a.purchaseDate); return d.getMonth() === month && d.getFullYear() === year; });
+                filterPayouts = filterPayouts.filter(p => { const d = new Date(p.payoutDate);   return d.getMonth() === month && d.getFullYear() === year; });
             }
 
             // Calculate metrics
@@ -4715,6 +4716,9 @@ window.setLanguage = setLanguage;
         window.downloadWrapped = downloadWrapped;
         window.generateWrappedPreview = generateWrappedPreview;
         window.selectDesign = selectDesign;
+        // History panel
+        window.toggleHistoryPanel = toggleHistoryPanel;
+        window.deleteHistoryEntry = deleteHistoryEntry;
 
         // ============================================
         // SWIPE FUNCTIONALITY
