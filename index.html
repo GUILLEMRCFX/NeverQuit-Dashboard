@@ -1357,16 +1357,12 @@
                     <div class="card-title">Update Challenge</div>
                     <div class="form-group">
                         <label>Account</label>
-                        <select id="updateAccountId"></select>
+                        <select id="updateAccountId" onchange="onUpdateAccountChange()"></select>
                     </div>
                     <div class="form-group">
                         <label>New Status</label>
-                        <select id="updateNewStatus">
-                            <option>PHASE 1</option>
-                            <option>PHASE 2</option>
-                            <option>FUNDED</option>
-                            <option>SUSPENDED</option>
-                        </select>
+                        <select id="updateNewStatus"></select>
+                        <div id="statusTransitionHint" style="margin-top: 0.5rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;"></div>
                     </div>
                     <div class="form-group">
                         <label>Status Date</label>
@@ -2162,6 +2158,58 @@ window.setLanguage = setLanguage;
             updateUI();
         }
 
+        // ─── STATUS TRANSITION SYSTEM ────────────────────────────────────────────
+        const STATUS_TRANSITIONS = {
+            "PHASE 1":  ["PHASE 2", "SUSPENDED"],
+            "PHASE 2":  ["FUNDED",  "SUSPENDED"],
+            "FUNDED":   ["SUSPENDED"],
+            "SUSPENDED": []
+        };
+
+        const STATUS_COLORS = {
+            "PHASE 1":  "#3498DB",
+            "PHASE 2":  "#F39C12",
+            "FUNDED":   "#2ECC71",
+            "SUSPENDED":"#E74C3C"
+        };
+
+        function onUpdateAccountChange() {
+            const accountId = document.getElementById('updateAccountId').value;
+            const statusSelect = document.getElementById('updateNewStatus');
+            const hint = document.getElementById('statusTransitionHint');
+
+            if (!accountId) {
+                statusSelect.innerHTML = '';
+                statusSelect.disabled = true;
+                hint.textContent = '';
+                return;
+            }
+
+            const account = data.master_comptes.find(a => a.id === accountId);
+            if (!account) return;
+
+            const currentStatus = account.status;
+            const allowed = STATUS_TRANSITIONS[currentStatus] || [];
+
+            if (allowed.length === 0) {
+                // Terminal state
+                statusSelect.innerHTML = '<option>SUSPENDED</option>';
+                statusSelect.disabled = true;
+                hint.innerHTML = `<span style="color: #E74C3C;">⛔ SUSPENDED — Final state. No further transitions allowed.</span>`;
+            } else {
+                statusSelect.disabled = false;
+                statusSelect.innerHTML = allowed.map(s =>
+                    `<option value="${s}">${s}</option>`
+                ).join('');
+
+                // Build hint badges
+                const badges = allowed.map(s =>
+                    `<span style="background: ${STATUS_COLORS[s]}22; color: ${STATUS_COLORS[s]}; border: 1px solid ${STATUS_COLORS[s]}55; border-radius: 4px; padding: 1px 7px;">${s}</span>`
+                ).join(' ');
+                hint.innerHTML = `<span style="color: ${STATUS_COLORS[currentStatus]};">${currentStatus}</span> → ${badges}`;
+            }
+        }
+
         // Update challenge
         function updateChallenge() {
             const accountId = document.getElementById('updateAccountId').value;
@@ -2181,11 +2229,25 @@ window.setLanguage = setLanguage;
 
             const account = data.master_comptes.find(a => a.id === accountId);
             if (account) {
+                // ─── STRICT TRANSITION VALIDATION ────────────────────────
+                const currentStatus = account.status;
+                const allowedNext = STATUS_TRANSITIONS[currentStatus] || [];
+
+                if (allowedNext.length === 0) {
+                    showAlert(`⛔ SUSPENDED — Final state. No further transitions allowed.`, 'error');
+                    return;
+                }
+                if (!allowedNext.includes(newStatus)) {
+                    showAlert(`⛔ Transition not allowed: ${currentStatus} → ${newStatus}`, 'error');
+                    return;
+                }
+                // ─────────────────────────────────────────────────────────
+
                 // Guardar estado anterior para deshacer
                 const previousStatus = account.status;
                 const previousDate = account.lastStatusDate;
                 const previousActive = account.active;
-                
+
                 account.status = newStatus;
                 account.lastStatusDate = statusDate;
                 account.active = newStatus !== 'SUSPENDED';
@@ -3833,8 +3895,8 @@ window.setLanguage = setLanguage;
 
         function updateUI() {
             // Update account selects
-            // Para Update Challenge: mostrar TODAS las cuentas activas (que el usuario ha creado)
-            const allActiveAccounts = data.master_comptes.filter(a => a.active);
+            // Para Update Challenge: mostrar TODAS las cuentas (incluyendo SUSPENDED para feedback visual)
+            const allActiveAccounts = data.master_comptes;
             
             // Para Register Payout: mostrar SOLO cuentas FUNDED
             const fundedAccounts = data.master_comptes.filter(a => a.status === 'FUNDED' && a.active);
@@ -3851,6 +3913,8 @@ window.setLanguage = setLanguage;
                             return `<option value="${a.id}">${displayNumber} - ${a.propFirm} (${a.status})</option>`;
                         }).join('');
                 }
+                // Reset status select + hint whenever accounts are reloaded
+                onUpdateAccountChange();
             }
 
             // Payout dropdown - solo cuentas FUNDED
@@ -4315,6 +4379,7 @@ window.setLanguage = setLanguage;
         // ============================================
         window.createChallenge = createChallenge;
         window.updateChallenge = updateChallenge;
+        window.onUpdateAccountChange = onUpdateAccountChange;
         window.registerPayout = registerPayout;
         window.openResetModal = openResetModal;
         window.closeResetModal = closeResetModal;
