@@ -113,6 +113,8 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         .header {
@@ -136,29 +138,61 @@
             font-size: 0.9rem;
         }
 
-        .year-selector {
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-top: 1rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .year-selector label {
-            color: #9AA0A6;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        /* ─── PER-VIEW TIME FILTER ─── */
+        .view-header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(230, 232, 235, 0.1);
+        }
+        .view-header h2 {
             font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #E6E8EB;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
         }
-
-        .year-selector select {
-            padding: 0.5rem 1rem;
+        .view-header .subtitle { color: #9AA0A6; font-size: 0.95rem; }
+        .time-filter {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .time-filter select {
+            padding: 0.45rem 0.9rem;
             background: #181B20;
-            border: 1px solid rgba(230, 232, 235, 0.1);
+            border: 1px solid rgba(230, 232, 235, 0.12);
             border-radius: 6px;
             color: #E6E8EB;
             font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .time-filter select:focus { outline: none; border-color: rgba(46,204,113,0.4); }
+        .view-label {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.2rem 0.75rem;
+            background: rgba(46,204,113,0.08);
+            border: 1px solid rgba(46,204,113,0.2);
+            border-radius: 20px;
+            color: #2ECC71;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         .btn-reset {
@@ -1044,67 +1078,43 @@
     background: #9AA0A6 !important;
 }
         /* ─── LANGUAGE SELECTOR ─── */
-        .lang-globe-btn {
+        /* ─── LANGUAGE SELECTOR (ES | EN) ─── */
+        .lang-switch {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 9999;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: #181B20;
-            border: 1px solid rgba(230,232,235,0.15);
-            color: #9AA0A6;
-            font-size: 1.3rem;
-            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.25s;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            background: rgba(24, 27, 32, 0.9);
+            border: 1px solid rgba(230, 232, 235, 0.1);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
         }
-        .lang-globe-btn:hover { border-color: #2ECC71; color: #2ECC71; transform: scale(1.08); }
-        .lang-globe-btn.open { border-color: #2ECC71; color: #2ECC71; }
-
-        .lang-dropdown {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            z-index: 9998;
-            background: #181B20;
-            border: 1px solid rgba(230,232,235,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            transform: translateY(-8px) scale(0.95);
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 0.2s ease, opacity 0.2s ease;
-        }
-        .lang-dropdown.visible {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: all;
-        }
-        .lang-opt {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.75rem 1.25rem;
-            color: #9AA0A6;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
+        .lang-switch-opt {
             background: none;
-            width: 100%;
-            text-align: left;
+            border: none;
+            color: #9AA0A6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            padding: 0.1rem 0.35rem;
+            transition: color 0.2s;
         }
-        .lang-opt:hover { background: rgba(46,204,113,0.08); color: #E6E8EB; }
-        .lang-opt.active { color: #2ECC71; }
-        .lang-opt .flag { font-size: 1rem; }
-        .lang-opt:not(:last-child) { border-bottom: 1px solid rgba(230,232,235,0.05); }
+        .lang-switch-opt:hover { color: #E6E8EB; }
+        .lang-switch-opt.active { color: #2ECC71; }
+        .lang-switch-sep {
+            color: rgba(230,232,235,0.18);
+            font-size: 0.75rem;
+            padding: 0 0.05rem;
+            pointer-events: none;
+            user-select: none;
+        }
+        @media (max-width:968px) { .lang-switch { top:10px; right:10px; } }
 
         /* ─── LOGIN CURSOR CANVAS ─── */
         #loginCursorCanvas {
@@ -1112,15 +1122,21 @@
             pointer-events: none; z-index: 1;
         }
 
-        @media (max-width:968px) { .lang-globe-btn { top:10px; right:10px; } }
+        /* ─── DASHBOARD BACKGROUND PARTICLES ─── */
+        #dashParticles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            opacity: 0; transition: opacity 1.2s ease;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Globe Language Selector -->
-    <button class="lang-globe-btn" id="langGlobeBtn" onclick="toggleLangDropdown()" title="Language / Idioma">🌐</button>
-    <div class="lang-dropdown" id="langDropdown">
-        <button class="lang-opt active" id="opt-es" onclick="setLanguage('es')"><span class="flag">🇪🇸</span> Español</button>
-        <button class="lang-opt" id="opt-en" onclick="setLanguage('en')"><span class="flag">🇬🇧</span> English</button>
+    <!-- Language Selector: ES | EN -->
+    <div class="lang-switch">
+        <button class="lang-switch-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
+        <span class="lang-switch-sep">|</span>
+        <button class="lang-switch-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
     </div>
 
     <!-- Login Screen -->
@@ -1157,6 +1173,8 @@
         </div>
     </div>
 
+    <!-- Dashboard background particle canvas -->
+    <canvas id="dashParticles"></canvas>
     <div class="container">
         <!-- Modal de confirmación -->
         <div id="resetModal" class="modal-overlay">
@@ -1188,14 +1206,7 @@
         <div class="header">
             <h1>NEVER QUIT DASHBOARD</h1>
             <p>Sistema de Gestión de Capital Profesional</p>
-            <div class="year-selector">
-                <label>AÑO ACTIVO:</label>
-                <select id="yearSelect">
-                    <option value="2023">2023</option>
-                    <option value="2024">2024</option>
-                    <option value="2025" selected>2025</option>
-                    <option value="2026">2026</option>
-                </select>
+            <div class="header-actions">
                 <button class="btn-reset" onclick="openResetModal()">🔄 Reset Datos</button>
                 <button class="btn-reset btn-reset--gray" onclick="logout()">🚪 Salir</button>
             </div>
@@ -1434,6 +1445,71 @@
 })();
 
 // ============================================
+// DASHBOARD BACKGROUND PARTICLES
+// ============================================
+let dashParticlesRunning = false;
+function initDashParticles() {
+    if (dashParticlesRunning) return;
+    dashParticlesRunning = true;
+    const canvas = document.getElementById('dashParticles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    const COLORS = ['#2ECC71','#27AE60','#1abc9c','#58d68d'];
+    const COUNT  = 55;
+    const CONN   = 140;
+    const pts = [];
+
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < COUNT; i++) {
+        pts.push({
+            x:  Math.random() * W,
+            y:  Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: (Math.random() - 0.5) * 0.25,
+            r:  Math.random() * 1.6 + 0.6,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            alpha: Math.random() * 0.18 + 0.06
+        });
+    }
+
+    function loop() {
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < pts.length; i++) {
+            const p = pts[i];
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+            if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
+        }
+        ctx.lineWidth = 0.4;
+        for (let i = 0; i < pts.length; i++) {
+            for (let j = i + 1; j < pts.length; j++) {
+                const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+                const d  = Math.sqrt(dx * dx + dy * dy);
+                if (d < CONN) {
+                    ctx.strokeStyle = `rgba(46,204,113,${(1 - d / CONN) * 0.08})`;
+                    ctx.globalAlpha = 1; ctx.beginPath();
+                    ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+                }
+            }
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(loop);
+    }
+    loop();
+    // Fade in
+    setTimeout(() => { canvas.style.opacity = '1'; }, 100);
+}
+
+// ============================================
 // i18n
 // ============================================
 const i18n = {
@@ -1443,7 +1519,28 @@ const i18n = {
         modal: { resetTitle:"⚠️ Confirmar Reset", resetConfirm:"¿Estás seguro de que quieres eliminar todos los datos? Esta acción <strong>no se puede deshacer</strong>.", resetItems:"Se borrarán:", itemChallenges:"Todas las challenges", itemPayouts:"Todos los payouts", itemHistory:"Todo el historial", typeReset:"Escribe RESET para confirmar:", cancel:"Cancelar", confirmDelete:"Sí, Eliminar Todo" },
         year: { label:"AÑO ACTIVO:" },
         actions: { resetData:"🔄 Reset Datos", logout:"🚪 Salir" },
-        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" }
+        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
+        dash: {
+            updated:"Actualizado", of:"de", total:"total", costs:"Costos", payments:"pagos",
+            fundedAccounts:"cuentas fondeadas", noActiveAccounts:"Sin cuentas activas",
+            payoutsReceived:"↳ Payouts recibidos", myAccounts:"◇ MIS CUENTAS — ALL TIME",
+            colAccount:"Cuenta", colSize:"Tamaño", colCost:"Coste", colDate:"Fecha",
+            colPctActive:"% Activas", totalActive:"Total activas", noSuspended:"Sin suspendidas",
+            closedAccounts:"cerradas", suspended:"suspendida", excludedFemSg:"excluida", excludedFemPl:"excluidas",
+            noChallenges:"Sin challenges — crea una en Control Center",
+            phase1WinRate:"◇ TASA DE ÉXITO PHASE 1", phase2WinRate:"TASA DE ÉXITO PHASE 2",
+            propFirmNoAccounts:"Sin cuentas de {firm} en el período seleccionado",
+            rendimiento:"Rendimiento", avgTimeToFunding:"TIEMPO PROMEDIO A FONDEO",
+            days:"días", wrappedSubtitle:"TU AÑO DE TRADING EN REVISIÓN",
+            noDataCreate:"Crea tu primera challenge en Control Center para ver tu Wrapped",
+            noDataPeriod:"Sin datos para el período seleccionado",
+            bestPropFirmRoi:"BEST PROP FIRM ROI", allTime:"All-time",
+            viewAllTime:"All-time business snapshot",
+            pending:"Pendiente", reached:"✅ Alcanzado",
+            projection:"proyección basada en ritmo actual",
+            selfFunded:"SISTEMA AUTO-FINANCIADO", roiAverage:"ROI PROMEDIO",
+            monthNames:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"]
+        }
     },
     en: {
         app: { name:"NEVER QUIT", fullName:"NEVER QUIT DASHBOARD", tagline:"Professional Capital Management System" },
@@ -1451,11 +1548,38 @@ const i18n = {
         modal: { resetTitle:"⚠️ Confirm Reset", resetConfirm:"Are you sure you want to delete all data? This action <strong>cannot be undone</strong>.", resetItems:"Will be deleted:", itemChallenges:"All challenges", itemPayouts:"All payouts", itemHistory:"All history", typeReset:"Type RESET to confirm:", cancel:"Cancel", confirmDelete:"Yes, Delete Everything" },
         year: { label:"ACTIVE YEAR:" },
         actions: { resetData:"🔄 Reset Data", logout:"🚪 Logout" },
-        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" }
+        tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
+        dash: {
+            updated:"Updated", of:"of", total:"total", costs:"Costs", payments:"payments",
+            fundedAccounts:"funded accounts", noActiveAccounts:"No active accounts",
+            payoutsReceived:"↳ Payouts received", myAccounts:"◇ MY ACCOUNTS — ALL TIME",
+            colAccount:"Account", colSize:"Size", colCost:"Cost", colDate:"Date",
+            colPctActive:"% Active", totalActive:"Total active", noSuspended:"No suspended",
+            closedAccounts:"closed", suspended:"suspended", excludedFemSg:"excluded", excludedFemPl:"excluded",
+            noChallenges:"No challenges — create one in Control Center",
+            phase1WinRate:"◇ PHASE 1 WIN RATE", phase2WinRate:"PHASE 2 WIN RATE",
+            propFirmNoAccounts:"No accounts for {firm} in the selected period",
+            rendimiento:"Performance", avgTimeToFunding:"AVG TIME TO FUNDING",
+            days:"days", wrappedSubtitle:"YOUR TRADING YEAR IN REVIEW",
+            noDataCreate:"Create your first challenge in Control Center to see your Wrapped",
+            noDataPeriod:"No data for the selected period",
+            bestPropFirmRoi:"BEST PROP FIRM ROI", allTime:"All-time",
+            viewAllTime:"All-time business snapshot",
+            pending:"Pending", reached:"✅ Reached",
+            projection:"projection based on current pace",
+            selfFunded:"SELF-FUNDED SYSTEM", roiAverage:"AVERAGE ROI",
+            monthNames:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        }
     }
 };
 
 let currentLanguage = localStorage.getItem('neverQuitLanguage') || 'es';
+if (currentLanguage === 'en') {
+    const elEs = document.getElementById('opt-es');
+    const elEn = document.getElementById('opt-en');
+    if (elEs) elEs.classList.remove('active');
+    if (elEn) elEn.classList.add('active');
+}
 
 function getTranslation(key) {
     const keys = key.split('.');
@@ -1463,20 +1587,9 @@ function getTranslation(key) {
     for (const k of keys) { if (value) value = value[k]; }
     return value || null;
 }
+// Shorthand for dash translations
+function t(key) { return getTranslation('dash.' + key) || key; }
 
-let langDropdownOpen = false;
-function toggleLangDropdown() {
-    langDropdownOpen = !langDropdownOpen;
-    document.getElementById('langDropdown').classList.toggle('visible', langDropdownOpen);
-    document.getElementById('langGlobeBtn').classList.toggle('open', langDropdownOpen);
-}
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('#langDropdown') && !e.target.closest('#langGlobeBtn') && langDropdownOpen) {
-        langDropdownOpen = false;
-        document.getElementById('langDropdown').classList.remove('visible');
-        document.getElementById('langGlobeBtn').classList.remove('open');
-    }
-});
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('neverQuitLanguage', lang);
@@ -1488,9 +1601,9 @@ function setLanguage(lang) {
         const tr = getTranslation(key);
         if (tr) el.innerHTML = tr;
     });
-    if (langDropdownOpen) toggleLangDropdown();
+    // Re-render active dashboard tab to apply translated strings
+    if (typeof window._dashUpdateUI === 'function') window._dashUpdateUI();
 }
-window.toggleLangDropdown = toggleLangDropdown;
 window.setLanguage = setLanguage;
 
         // === GLOBAL UTILS ===
@@ -1522,7 +1635,8 @@ window.setLanguage = setLanguage;
                 
                 // Ocultar login con animación
                 $('loginOverlay').classList.add('hidden');
-                
+                initDashParticles();
+
                 // Inicializar dashboard después de un delay
                 setTimeout(() => {
                     if (typeof initializeDashboard === 'function') {
@@ -1545,9 +1659,10 @@ window.setLanguage = setLanguage;
             // Solo para desarrollo - permite saltarse el login
             localStorage.setItem('neverQuitLoggedIn', 'true');
             localStorage.setItem('neverQuitUsername', 'dev-mode');
-            
+
             $('loginOverlay').classList.add('hidden');
-            
+            initDashParticles();
+
             setTimeout(() => {
                 if (typeof initializeDashboard === 'function') {
                     initializeDashboard();
@@ -1583,6 +1698,7 @@ window.setLanguage = setLanguage;
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
+            initDashParticles();
             // Inicializar dashboard después de un breve delay
             setTimeout(() => {
                 initializeDashboard();
@@ -2057,12 +2173,40 @@ window.setLanguage = setLanguage;
             return diffDays;
         }
 
+        // ─── TIME FILTER UTILITIES ───────────────────────────────────
+        // Per-view local filter state (independent, no global year)
+        let performanceTimeFilter = "ALL_TIME";
+        let propFirmTimeFilter    = "ALL_TIME";
+        let efficiencyTimeFilter  = "ALL_TIME";
+        let wrappedTimeFilter     = "ALL_TIME";
+
+        function getAvailableYears() {
+            const years = new Set();
+            data.master_comptes.forEach(a => { if (a.year) years.add(a.year); });
+            data.payouts.forEach(p => { if (p.year) years.add(p.year); });
+            return Array.from(years).sort();
+        }
+
+        function filterByYear(arr, selectedYear) {
+            if (selectedYear === "ALL_TIME") return arr;
+            return arr.filter(item => item.year === parseInt(selectedYear));
+        }
+
+        function buildYearOptions(selectedYear) {
+            const years = getAvailableYears();
+            let opts = `<option value="ALL_TIME" ${selectedYear === "ALL_TIME" ? "selected" : ""}>All-time</option>`;
+            years.forEach(y => {
+                opts += `<option value="${y}" ${String(selectedYear) === String(y) ? "selected" : ""}>${y}</option>`;
+            });
+            return opts;
+        }
+        // ─────────────────────────────────────────────────────────────
+
         // Render Overview
         // === RENDER: OVERVIEW ===
         function renderOverview() {
-            const activeYear = parseInt($('yearSelect').value);
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear);
-            const yearPayouts = data.payouts.filter(p => p.year === activeYear);
+            const yearAccounts = data.master_comptes;
+            const yearPayouts  = data.payouts;
 
             const activeFunded = yearAccounts.filter(a => a.status === 'FUNDED' && a.active).length;
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
@@ -2095,30 +2239,31 @@ window.setLanguage = setLanguage;
 
             const overviewHtml = `
                 <div class="dashboard-header">
-                    <h2>OVERVIEW · ${activeYear}</h2>
-                    <div class="subtitle">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <h2>OVERVIEW</h2>
+                    <span class="view-label">${t('viewAllTime')}</span>
+                    <div class="subtitle" style="margin-top:0.5rem;">${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                 </div>
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div class="kpi-label">Active Funded Capital</div>
                         <div class="kpi-value success">${(activeFundedCapital).toLocaleString()} €</div>
-                        <div class="kpi-subtitle">${activeFunded} funded cuentas</div>
+                        <div class="kpi-subtitle">${activeFunded} ${t('fundedAccounts')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">Total Payouts</div>
                         <div class="kpi-value success">${totalPayouts.toLocaleString()} €</div>
-                        <div class="kpi-subtitle">${yearPayouts.length} pagos</div>
+                        <div class="kpi-subtitle">${yearPayouts.length} ${t('payments')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">Active Funded Accounts</div>
                         <div class="kpi-value">${activeFunded}</div>
-                        <div class="kpi-subtitle">de ${yearAccounts.length} total</div>
+                        <div class="kpi-subtitle">${t('of')} ${yearAccounts.length} ${t('total')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">ROI Annual</div>
                         <div class="kpi-value ${roi > 0 ? 'success' : roi < 0 ? 'danger' : ''}">${roi > 0 ? '+' : ''}${roi.toFixed(0)}%</div>
-                        <div class="kpi-subtitle">Costos: ${totalCosts.toLocaleString()} €</div>
+                        <div class="kpi-subtitle">${t('costs')}: ${totalCosts.toLocaleString()} €</div>
                     </div>
                 </div>
 
@@ -2130,7 +2275,7 @@ window.setLanguage = setLanguage;
                                 <tr>
                                     <th>Status</th>
                                     <th>Count</th>
-                                    <th>% Activas</th>
+                                    <th>${t('colPctActive')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2153,12 +2298,12 @@ window.setLanguage = setLanguage;
                                 <tr style="opacity: 0.5;">
                                     <td><span class="status-badge suspended">SUSPENDED</span></td>
                                     <td>${suspendedCount}</td>
-                                    <td style="color: #9AA0A6; font-style: italic;">cerradas</td>
+                                    <td style="color: #9AA0A6; font-style: italic;">${t('closedAccounts')}</td>
                                 </tr>` : ''}
                             </tbody>
                         </table>
                         <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #9AA0A6;">
-                            Total activas: ${activeAccountsOnly.length} · ${suspendedCount > 0 ? `${suspendedCount} suspendida${suspendedCount > 1 ? 's' : ''} excluida${suspendedCount > 1 ? 's' : ''}` : 'Sin suspendidas'}
+                            ${t('totalActive')}: ${activeAccountsOnly.length} · ${suspendedCount > 0 ? `${suspendedCount} ${t('suspended')}${suspendedCount > 1 ? 's' : ''} ${suspendedCount > 1 ? t('excludedFemPl') : t('excludedFemSg')}` : t('noSuspended')}
                         </div>
                     </div>
 
@@ -2168,7 +2313,7 @@ window.setLanguage = setLanguage;
                             <canvas id="activeAccountsChart"></canvas>
                         </div>
                         <div style="text-align: center; margin-top: 1rem; color: #9AA0A6; font-size: 0.85rem;">
-                            Total Activo: ${activeAccountsOnly.length}
+                            Total: ${activeAccountsOnly.length}
                         </div>
                     </div>
                 </div>
@@ -2193,11 +2338,11 @@ window.setLanguage = setLanguage;
                             + '<td style="font-weight:600;">' + acc.accountSize + '</td>'
                             + '<td><span class="status-badge ' + statusClass + '">' + acc.status + '</span></td>'
                             + '<td style="color:#E74C3C;">-€' + acc.challengeCost.toLocaleString() + '</td>'
-                            + '<td style="color:#9AA0A6;">' + new Date(acc.purchaseDate).toLocaleDateString('es-ES') + '</td>'
+                            + '<td style="color:#9AA0A6;">' + new Date(acc.purchaseDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES') + '</td>'
                             + '</tr>';
                         if (payoutsForAcc > 0) {
                             row += '<tr style="background:rgba(46,204,113,0.03);' + rowStyle + '">'
-                                + '<td colspan="4" style="padding-top:0.3rem;padding-bottom:0.5rem;color:#9AA0A6;font-size:0.8rem;padding-left:2.5rem;">↳ Payouts recibidos</td>'
+                                + '<td colspan="4" style="padding-top:0.3rem;padding-bottom:0.5rem;color:#9AA0A6;font-size:0.8rem;padding-left:2.5rem;">' + t('payoutsReceived') + '</td>'
                                 + '<td style="color:#2ECC71;padding-top:0.3rem;padding-bottom:0.5rem;">+€' + payoutsForAcc.toLocaleString() + '</td>'
                                 + '<td></td></tr>';
                         }
@@ -2205,9 +2350,9 @@ window.setLanguage = setLanguage;
                     }).join('');
 
                 accountsTableHtml = '<div class="table-container" style="margin-top:1.5rem;">'
-                    + '<h3 style="margin-bottom:1rem;font-size:1.1rem;font-weight:700;">◇ MIS CUENTAS · ' + activeYear + '</h3>'
+                    + '<h3 style="margin-bottom:1rem;font-size:1.1rem;font-weight:700;">' + t('myAccounts') + '</h3>'
                     + '<table><thead><tr>'
-                    + '<th>Cuenta</th><th>Prop Firm</th><th>Tamaño</th><th>Status</th><th>Coste</th><th>Fecha</th>'
+                    + '<th>' + t('colAccount') + '</th><th>Prop Firm</th><th>' + t('colSize') + '</th><th>Status</th><th>' + t('colCost') + '</th><th>' + t('colDate') + '</th>'
                     + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
             }
 
@@ -2217,7 +2362,7 @@ window.setLanguage = setLanguage;
             const ctx = document.getElementById('activeAccountsChart');
             if (ctx && activeAccountsOnly.length === 0) {
                 ctx.closest('.table-container').querySelector('.chart-container').innerHTML =
-                    '<div style="text-align:center;padding:2rem;color:#9AA0A6;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><div>Sin cuentas activas</div></div>';
+                    '<div style="text-align:center;padding:2rem;color:#9AA0A6;"><div style="font-size:2rem;margin-bottom:0.5rem;">📋</div><div>' + t('noActiveAccounts') + '</div></div>';
             } else if (ctx && activeAccountsOnly.length > 0) {
                 if (window.activeChart && typeof window.activeChart.destroy === 'function') {
                     window.activeChart.destroy();
@@ -2259,9 +2404,8 @@ window.setLanguage = setLanguage;
         // Render Performance
         // === RENDER: PERFORMANCE ===
         function renderPerformance() {
-            const activeYear = parseInt($('yearSelect').value);
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear);
-            const yearPayouts = data.payouts.filter(p => p.year === activeYear);
+            const yearAccounts = filterByYear(data.master_comptes, performanceTimeFilter);
+            const yearPayouts  = filterByYear(data.payouts, performanceTimeFilter);
             
             const totalChallenges = yearAccounts.length;
             const phase1CurrentCount = yearAccounts.filter(a => a.status === 'PHASE 1').length;
@@ -2301,20 +2445,25 @@ window.setLanguage = setLanguage;
             const bestFirm = roiByFirm[0] || { firm: 'N/A', roi: 0 };
 
             const performanceHtml = `
-                <div class="dashboard-header">
-                    <h2>PERFORMANCE · ${activeYear}</h2>
-                    ${totalChallenges === 0 ? `<div style="text-align:center;padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin challenges para ${activeYear} — crea una en Control Center</div>` : ''}
-                    <div class="subtitle">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                <div class="view-header">
+                    <h2>PERFORMANCE</h2>
+                    ${totalChallenges === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">${t('noChallenges')}</div>` : ''}
+                    <div class="subtitle">${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <div class="time-filter">
+                        <select id="performanceTimeFilter" onchange="performanceTimeFilter=this.value;renderPerformance();">
+                            ${buildYearOptions(performanceTimeFilter)}
+                        </select>
+                    </div>
                 </div>
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-label">◇ TASA DE ÉXITO PHASE 1</div>
+                        <div class="kpi-label">${t('phase1WinRate')}</div>
                         <div class="kpi-value success">${phase1WinRate.toFixed(0)}%</div>
-                        <div class="kpi-subtitle">${passedPhase1} de ${totalChallenges}</div>
+                        <div class="kpi-subtitle">${passedPhase1} ${t('of')} ${totalChallenges}</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">TASA DE ÉXITO PHASE 2</div>
+                        <div class="kpi-label">${t('phase2WinRate')}</div>
                         <div class="kpi-value success">${phase2WinRate.toFixed(0)}%</div>
                         <div class="kpi-subtitle">${fundedCount} funded</div>
                     </div>
@@ -2607,19 +2756,17 @@ window.setLanguage = setLanguage;
         // Render Prop Firm View
         // === RENDER: PROP FIRM VIEW ===
         function renderPropFirm() {
-            const activeYear = parseInt($('yearSelect').value);
-            
             // Get selected firm from dropdown if it exists, otherwise default to FTMO
             const firmSelector = document.getElementById('firmSelector');
             const selectedFirm = firmSelector ? firmSelector.value : 'FTMO';
-            
+
             // CORRECCIÓN: Obtener configuración de la firma
             const firmConfig = PROP_FIRMS_CONFIG[selectedFirm] || PROP_FIRMS_CONFIG['FTMO'];
-            
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear && a.propFirm === selectedFirm);
-            const yearPayouts = data.payouts.filter(p => {
+
+            const yearAccounts = filterByYear(data.master_comptes, propFirmTimeFilter).filter(a => a.propFirm === selectedFirm);
+            const yearPayouts  = filterByYear(data.payouts, propFirmTimeFilter).filter(p => {
                 const account = data.master_comptes.find(a => a.id === p.accountId);
-                return p.year === activeYear && account && account.propFirm === selectedFirm;
+                return account && account.propFirm === selectedFirm;
             });
 
             const totalInvested = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
@@ -2636,10 +2783,15 @@ window.setLanguage = setLanguage;
             };
 
             const propFirmHtml = `
-                <div class="dashboard-header">
+                <div class="view-header">
                     <h2>PROP FIRM · ${selectedFirm}</h2>
-                    ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">Sin cuentas de ${selectedFirm} en ${activeYear}</div>` : ''}
-                    <div class="subtitle">Rendimiento Histórico · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">${t('propFirmNoAccounts').replace('{firm}', selectedFirm)}</div>` : ''}
+                    <div class="subtitle">${t('rendimiento')} · ${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <div class="time-filter">
+                        <select id="propFirmTimeFilter" onchange="propFirmTimeFilter=this.value;renderPropFirm();">
+                            ${buildYearOptions(propFirmTimeFilter)}
+                        </select>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 2rem;">
@@ -2868,12 +3020,12 @@ window.setLanguage = setLanguage;
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">AVG. DÍAS EN PHASE 1</div>
-                            <div class="kpi-value">${avgDaysPhase1 > 0 ? Math.round(avgDaysPhase1) : '—'} <span style="font-size: 1rem;">días</span></div>
+                            <div class="kpi-value">${avgDaysPhase1 > 0 ? Math.round(avgDaysPhase1) : '—'} <span style="font-size: 1rem;">${t('days')}</span></div>
                             <div class="kpi-subtitle">hasta superar Phase 1</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">AVG. DÍAS EN PHASE 2</div>
-                            <div class="kpi-value">${avgDaysPhase2 > 0 ? Math.round(avgDaysPhase2) : '—'} <span style="font-size: 1rem;">días</span></div>
+                            <div class="kpi-value">${avgDaysPhase2 > 0 ? Math.round(avgDaysPhase2) : '—'} <span style="font-size: 1rem;">${t('days')}</span></div>
                             <div class="kpi-subtitle">hasta conseguir fondeo</div>
                         </div>
                         <div class="kpi-card">
@@ -2984,11 +3136,8 @@ window.setLanguage = setLanguage;
         // === RENDER: EFFICIENCY ===
         // Render Capital Efficiency
         function renderCapitalEfficiency() {
-            const activeYear = parseInt($('yearSelect').value);
-            
-            // All-time calculations
-            const allAccounts = data.master_comptes;
-            const allPayouts = data.payouts;
+            const allAccounts = filterByYear(data.master_comptes, efficiencyTimeFilter);
+            const allPayouts  = filterByYear(data.payouts, efficiencyTimeFilter);
             const totalWithdrawn = allPayouts.reduce((sum, p) => sum + p.amount, 0);
             const totalInvested = allAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
             const withdrawnToInvestedRatio = totalInvested > 0 ? totalWithdrawn / totalInvested : 0;
@@ -3003,34 +3152,39 @@ window.setLanguage = setLanguage;
             const selfFundedPercentage = totalInvested > 0 ? Math.min((totalWithdrawn / totalInvested) * 100, 100) : 0;
 
             // Break-even timing — calcular dinámicamente
-            let breakEvenMonth = 'Pendiente';
+            let breakEvenMonth = t('pending');
             if (totalInvested > 0 && totalWithdrawn > 0) {
                 if (totalWithdrawn >= totalInvested) {
-                    breakEvenMonth = '✅ Alcanzado';
+                    breakEvenMonth = t('reached');
                 } else {
                     // Calcular proyección basada en la tasa mensual de los últimos 3 meses
                     const last3Months = data.payouts
                         .filter(p => p.payoutDate)
                         .sort((a, b) => new Date(b.payoutDate) - new Date(a.payoutDate))
                         .slice(0, 10);
-                    const recentMonthlyRate = last3Months.length > 0 
-                        ? last3Months.reduce((s, p) => s + p.amount, 0) / 3 
+                    const recentMonthlyRate = last3Months.length > 0
+                        ? last3Months.reduce((s, p) => s + p.amount, 0) / 3
                         : 0;
                     if (recentMonthlyRate > 0) {
                         const monthsRemaining = Math.ceil((totalInvested - totalWithdrawn) / recentMonthlyRate);
                         const breakDate = new Date();
                         breakDate.setMonth(breakDate.getMonth() + monthsRemaining);
-                        const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+                        const monthNames = getTranslation('dash.monthNames');
                         breakEvenMonth = `${monthNames[breakDate.getMonth()]} ${breakDate.getFullYear()}`;
                     }
                 }
             }
 
             const efficiencyHtml = `
-                <div class="dashboard-header">
-                    <h2>CAPITAL EFFICIENCY · ${activeYear}</h2>
-                    ${allAccounts.length === 0 ? `<div style="text-align:center;padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin datos — crea tu primera challenge</div>` : ''}
-                    <div class="subtitle">Rendimiento Histórico · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                <div class="view-header">
+                    <h2>CAPITAL EFFICIENCY</h2>
+                    ${allAccounts.length === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">${t('noChallenges')}</div>` : ''}
+                    <div class="subtitle">${t('rendimiento')} · ${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <div class="time-filter">
+                        <select id="efficiencyTimeFilter" onchange="efficiencyTimeFilter=this.value;renderCapitalEfficiency();">
+                            ${buildYearOptions(efficiencyTimeFilter)}
+                        </select>
+                    </div>
                 </div>
 
                 <div class="kpi-grid">
@@ -3039,17 +3193,17 @@ window.setLanguage = setLanguage;
                         <div class="kpi-value success">${withdrawnToInvestedRatio.toFixed(2)}x</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">TIEMPO PROMEDIO A FONDEO</div>
-                        <div class="kpi-value">${Math.round(avgTimeToFunding)} <span style="font-size: 1rem;">días</span></div>
+                        <div class="kpi-label">${t('avgTimeToFunding')}</div>
+                        <div class="kpi-value">${Math.round(avgTimeToFunding)} <span style="font-size: 1rem;">${t('days')}</span></div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">SISTEMA AUTO-FINANCIADO</div>
+                        <div class="kpi-label">${t('selfFunded')}</div>
                         <div class="kpi-value success">${selfFundedPercentage.toFixed(0)}%</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">TIMING BREAK-EVEN</div>
                         <div class="kpi-value" style="font-size: 1.4rem;">${breakEvenMonth}</div>
-                        <div class="kpi-subtitle">proyección basada en ritmo actual</div>
+                        <div class="kpi-subtitle">${t('projection')}</div>
                     </div>
                 </div>
 
@@ -3232,9 +3386,8 @@ window.setLanguage = setLanguage;
         // Render Wrapped
         // === RENDER: WRAPPED ===
         function renderWrapped() {
-            const activeYear = parseInt($('yearSelect').value);
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear);
-            const yearPayouts = data.payouts.filter(p => p.year === activeYear);
+            const yearAccounts = filterByYear(data.master_comptes, wrappedTimeFilter);
+            const yearPayouts  = filterByYear(data.payouts, wrappedTimeFilter);
 
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
             const totalInvested = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
@@ -3282,25 +3435,22 @@ window.setLanguage = setLanguage;
             }).filter(f => f.count > 0);
 
             const wrappedHtml = `
-                <div class="wrapped-header">
-                    <div class="wrapped-title">PROP FIRM WRAPPED · ${activeYear}</div>
-                    <div class="wrapped-subtitle">TU AÑO DE TRADING EN REVISIÓN</div>
+                <div class="wrapped-header" style="position:relative;">
+                    <div class="wrapped-title">PROP FIRM WRAPPED${wrappedTimeFilter !== "ALL_TIME" ? " · " + wrappedTimeFilter : ""}</div>
+                    <div class="wrapped-subtitle">${t('wrappedSubtitle')}</div>
                     <div style="margin-top: 1rem;">
-                        <select id="wrappedYearSelect" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;">
-                            <option value="2023" ${activeYear === 2023 ? 'selected' : ''}>2023</option>
-                            <option value="2024" ${activeYear === 2024 ? 'selected' : ''}>2024</option>
-                            <option value="2025" ${activeYear === 2025 ? 'selected' : ''}>2025</option>
-                            <option value="2026" ${activeYear === 2026 ? 'selected' : ''}>2026</option>
+                        <select id="wrappedYearSelect" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;"
+                            onchange="wrappedTimeFilter=this.value;renderWrapped();">
+                            ${buildYearOptions(wrappedTimeFilter)}
                         </select>
-                        <span style="margin-left: 1rem; color: #9AA0A6; font-size: 0.8rem;">↑ sincronizado con el selector de año del header</span>
                     </div>
                 </div>
 
                 ${yearAccounts.length === 0 ? `
                 <div style="text-align:center; padding: 3rem; color: #9AA0A6; border: 1px dashed rgba(230,232,235,0.15); border-radius: 12px; margin-bottom: 2rem;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Sin datos para ${activeYear}</div>
-                    <div style="font-size: 0.9rem;">Crea tu primera challenge en Control Center para ver tu Wrapped</div>
+                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">${t('noDataPeriod')}</div>
+                    <div style="font-size: 0.9rem;">${t('noDataCreate')}</div>
                 </div>` : ''}
 
                 <div class="kpi-grid">
@@ -3310,7 +3460,7 @@ window.setLanguage = setLanguage;
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.05), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(243, 156, 18, 0.2);">
                         <div class="kpi-value warning" style="font-size: 2.5rem;">${(totalPayouts > 0 && totalInvested > 0) ? (avgROI >= 0 ? "+" : "") + avgROI.toFixed(0) + "%" : "—"}</div>
-                        <div class="kpi-label">ROI PROMEDIO</div>
+                        <div class="kpi-label">${t('roiAverage')}</div>
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(41, 128, 185, 0.05)); border: 1px solid rgba(52, 152, 219, 0.2);">
                         <div class="kpi-value" style="font-size: 2.5rem; color: #F39C12;">${quickestFunding > 0 ? quickestFunding + ' <span style="font-size: 1.2rem;">DAYS</span>' : '—'}</div>
@@ -3617,6 +3767,7 @@ window.setLanguage = setLanguage;
             renderCapitalEfficiency();
             renderWrapped();
         }
+        window._dashUpdateUI = updateUI; // expose for setLanguage re-render
 
         // === EVENTS: UI / TABS ===
         // Tab navigation
@@ -3624,7 +3775,7 @@ window.setLanguage = setLanguage;
             tab.addEventListener('click', function() {
                 const tabName = this.getAttribute('data-tab');
                 
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 
                 this.classList.add('active');
@@ -3654,30 +3805,11 @@ window.setLanguage = setLanguage;
             });
         });
 
-        // Year selector
-        $('yearSelect').addEventListener('change', updateUI);
-
         // Set today's date
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('createPurchaseDate').value = today;
         document.getElementById('updateStatusDate').value = today;
         document.getElementById('payoutDate').value = today;
-
-        // BUG FIX: Inicializar yearSelect al año actual (no hardcodeado en 2025)
-        const currentYear = new Date().getFullYear().toString();
-        const yearSelectEl = $('yearSelect');
-        let foundYear = false;
-        Array.from(yearSelectEl.options).forEach(opt => {
-            if (opt.value === currentYear) { opt.selected = true; foundYear = true; }
-            else { opt.selected = false; }
-        });
-        if (!foundYear) {
-            const newOpt = document.createElement('option');
-            newOpt.value = currentYear;
-            newOpt.textContent = currentYear;
-            newOpt.selected = true;
-            yearSelectEl.appendChild(newOpt);
-        }
 
         // === INIT ===
         // Initial render
@@ -3698,14 +3830,7 @@ window.setLanguage = setLanguage;
 
         // También añadir listeners después de renderizar wrapped
         function initWrappedListeners() {
-            // Sincronizar wrappedYearSelect ↔ yearSelect global
-            const wrappedYearSel = document.getElementById('wrappedYearSelect');
-            if (wrappedYearSel) {
-                wrappedYearSel.addEventListener('change', function() {
-                    $('yearSelect').value = this.value;
-                    renderWrapped();
-                });
-            }
+            // wrappedYearSelect is now fully local — handled inline via onchange
 
             const monthlyRadio = document.querySelector('input[name="wrappedPeriod"][value="monthly"]');
             const yearlyRadio = document.querySelector('input[name="wrappedPeriod"][value="yearly"]');
@@ -3741,10 +3866,10 @@ window.setLanguage = setLanguage;
 
             // Get selected period
             const period = document.querySelector('input[name="wrappedPeriod"]:checked').value;
-            const year = parseInt($('yearSelect').value);
-            let periodText = year.toString();
-            let filterData = data.master_comptes.filter(a => a.year === year);
-            let filterPayouts = data.payouts.filter(p => p.year === year);
+            const year = wrappedTimeFilter !== "ALL_TIME" ? parseInt(wrappedTimeFilter) : new Date().getFullYear();
+            let periodText = wrappedTimeFilter !== "ALL_TIME" ? year.toString() : "All-time";
+            let filterData = filterByYear(data.master_comptes, wrappedTimeFilter);
+            let filterPayouts = filterByYear(data.payouts, wrappedTimeFilter);
 
             if (period === 'monthly') {
                 const month = parseInt(document.getElementById('wrappedMonth').value);
