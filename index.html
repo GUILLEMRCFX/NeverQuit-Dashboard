@@ -945,6 +945,8 @@
             border: 1px solid rgba(230, 232, 235, 0.1);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             animation: loginSlideIn 0.5s ease-out;
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes loginSlideIn {
@@ -3686,7 +3688,9 @@ window.setLanguage = setLanguage;
             }
         }
 
-        // CONFIGURACIÓN DE PROP FIRMS CON REGLAS REALES (2025)
+        // CONFIGURACIÓN DE PROP FIRMS CON REGLAS REALES (2025-2026)
+        // prices = coste del challenge en EUR/USD según tamaño de cuenta
+        // sizes  = tamaños de cuenta disponibles para cada firma
         const PROP_FIRMS_CONFIG = {
             'FTMO': {
                 profitTarget_P1: 10,
@@ -3697,7 +3701,9 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Restricción 2min antes/después (Standard)',
                 note_funded: 'Sin restricción en Swing Account',
-                minTradingDays: 4
+                minTradingDays: 4,
+                sizes: ['10K', '25K', '50K', '100K', '200K'],
+                prices: { '10K': 89, '25K': 250, '50K': 345, '100K': 540, '200K': 1080 }
             },
             'Alpha Capital Group': {
                 profitTarget_P1: 8,
@@ -3707,47 +3713,58 @@ window.setLanguage = setLanguage;
                 split: '80%',
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Trades 2min antes/después deben durar +2min',
-                minTradingDays: 3
+                minTradingDays: 3,
+                sizes: ['10K', '25K', '50K', '100K', '200K'],
+                prices: { '10K': 97, '25K': 197, '50K': 297, '100K': 497, '200K': 997 }
             },
             'The5ers': {
                 profitTarget_P1: 8,
                 profitTarget_P2: 5,
-                maxDailyLoss: 5,
-                maxLoss: 10,
+                maxDailyLoss: 4,
+                maxLoss: 8,
                 split: '80-100%',
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Permitido sin restricciones',
-                note_funded: 'Escalado progresivo hasta 100% profit split'
+                note_funded: 'Escalado progresivo hasta 100% profit split',
+                minTradingDays: 3,
+                sizes: ['10K', '25K', '50K', '100K'],
+                prices: { '10K': 78, '25K': 195, '50K': 309, '100K': 545 }
             },
             'FundedNext': {
-                profitTarget_P1: 10,
+                profitTarget_P1: 8,
                 profitTarget_P2: 5,
                 maxDailyLoss: 5,
                 maxLoss: 10,
                 split: '80-95%',
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Permitido sin restricciones',
-                minTradingDays: 0
+                minTradingDays: 5,
+                sizes: ['6K', '15K', '25K', '50K', '100K'],
+                prices: { '6K': 59, '15K': 119, '25K': 199, '50K': 299, '100K': 549 }
             },
             'Orion Funded': {
                 profitTarget_P1: 10,
                 profitTarget_P2: 5,
                 maxDailyLoss: 5,
                 maxLoss: 10,
-                split: '80%',
+                split: '80-100%',
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Consultar reglas específicas',
-                minTradingDays: 3
+                minTradingDays: 3,
+                sizes: ['10K', '25K', '50K', '100K', '200K'],
+                prices: { '10K': 149, '25K': 249, '50K': 349, '100K': 499, '200K': 899 }
             },
             'Bullfy': {
                 profitTarget_P1: 10,
                 profitTarget_P2: 5,
                 maxDailyLoss: 5,
                 maxLoss: 10,
-                split: '80%',
+                split: '80-90%',
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Consultar reglas específicas',
-                minTradingDays: 3
+                minTradingDays: 3,
+                sizes: ['10K', '25K', '50K', '100K', '200K'],
+                prices: { '10K': 49, '25K': 99, '50K': 179, '100K': 299, '200K': 499 }
             },
             'MyForexFunds': {
                 profitTarget_P1: 8,
@@ -3758,7 +3775,9 @@ window.setLanguage = setLanguage;
                 newsTrading_Challenge: 'Permitido sin restricciones',
                 newsTrading_Funded: 'Firma temporalmente cerrada',
                 note: '⚠️ CERRADA desde 2023 - Reapertura esperada 2026',
-                minTradingDays: 3
+                minTradingDays: 3,
+                sizes: ['10K', '25K', '50K', '100K', '200K'],
+                prices: { '10K': 49, '25K': 99, '50K': 199, '100K': 349, '200K': 649 }
             }
         };
 
