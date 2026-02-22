@@ -1953,6 +1953,25 @@ window.setLanguage = setLanguage;
         }
         setHeaderUsername();
 
+        // ── Exponer funciones globalmente al PRINCIPIO del DOMContentLoaded ──────
+        // Las function-declarations se hoist dentro de este closure, así que están
+        // disponibles aquí aunque su cuerpo aparezca más abajo en el código.
+        // Al exponerlas aquí (no al final), cualquier error de runtime posterior
+        // NO impide que los onclick del HTML sigan funcionando.
+        window.createChallenge       = createChallenge;
+        window.updateChallenge       = updateChallenge;
+        window.onUpdateAccountChange = onUpdateAccountChange;
+        window.registerPayout        = registerPayout;
+        window.openResetModal        = openResetModal;
+        window.closeResetModal       = closeResetModal;
+        window.confirmReset          = confirmReset;
+        window.closePreview          = closePreview;
+        window.downloadWrapped       = downloadWrapped;
+        window.generateWrappedPreview = generateWrappedPreview;
+        window.selectDesign          = selectDesign;
+        window.toggleHistoryPanel    = toggleHistoryPanel;
+        window.deleteHistoryEntry    = deleteHistoryEntry;
+
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
@@ -4719,24 +4738,6 @@ window.setLanguage = setLanguage;
                 showAlert('✅ Wrapped descargado (alta calidad)');
             }
         }
-
-        // ============================================
-        // EXPONER FUNCIONES GLOBALMENTE (para onclick en HTML)
-        // ============================================
-        window.createChallenge = createChallenge;
-        window.updateChallenge = updateChallenge;
-        window.onUpdateAccountChange = onUpdateAccountChange;
-        window.registerPayout = registerPayout;
-        window.openResetModal = openResetModal;
-        window.closeResetModal = closeResetModal;
-        window.confirmReset = confirmReset;
-        window.closePreview = closePreview;
-        window.downloadWrapped = downloadWrapped;
-        window.generateWrappedPreview = generateWrappedPreview;
-        window.selectDesign = selectDesign;
-        // History panel
-        window.toggleHistoryPanel = toggleHistoryPanel;
-        window.deleteHistoryEntry = deleteHistoryEntry;
 
         // ============================================
         // SWIPE FUNCTIONALITY
