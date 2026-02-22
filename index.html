@@ -252,20 +252,24 @@
         }
 
         .tab {
-            padding: 0.75rem 1.5rem;
+            padding: 0.65rem 1.25rem;
             background: transparent;
             border: none;
-            color: #9AA0A6;
+            color: #6B7280;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border-bottom: 3px solid transparent;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-bottom: 2px solid transparent;
             white-space: nowrap;
+            transition: color 0.2s, border-color 0.2s;
+            position: relative;
         }
 
         .tab:hover {
-            color: #E6E8EB;
+            color: #C0C7D0;
         }
 
         .tab.active {
@@ -822,9 +826,9 @@
 
         .design-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.6rem;
+            margin-top: 0;
         }
 
         .design-option {
@@ -848,26 +852,52 @@
 
         .design-preview {
             width: 100%;
-            height: 100px;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #1a1d23, #252930);
+            height: 70px;
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+            background: radial-gradient(ellipse at 60% 20%, rgba(255,255,255,0.08) 0%, #0C0D0F 70%);
         }
 
         .design-preview.gradient1 {
-            background: linear-gradient(135deg, #F39C12, #E67E22);
+            background: radial-gradient(ellipse at 80% 10%, rgba(243,156,18,0.7) 0%, #0D0A07 70%);
         }
 
         .design-preview.gradient2 {
-            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            background: radial-gradient(ellipse at 80% 10%, rgba(46,204,113,0.7) 0%, #020D06 70%);
         }
 
         .design-preview.gradient3 {
-            background: linear-gradient(135deg, #3498DB, #2980B9);
+            background: radial-gradient(ellipse at 80% 10%, rgba(52,152,219,0.7) 0%, #03060F 70%);
         }
 
         .design-preview.dark {
-            background: #121417;
+            background: radial-gradient(ellipse at 60% 20%, rgba(255,255,255,0.08) 0%, #0C0D0F 70%);
+        }
+
+        .wrapped-metric-toggle {
+            padding: 0.45rem 0.9rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            color: #6B7280;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .wrapped-metric-toggle.active {
+            background: rgba(243,156,18,0.12);
+            border-color: rgba(243,156,18,0.4);
+            color: #F39C12;
+        }
+
+        .wrapped-metric-toggle:hover:not(.active) {
+            border-color: rgba(255,255,255,0.2);
+            color: #C0C7D0;
         }
 
         /* Login Screen Styles */
@@ -1041,7 +1071,64 @@
                 grid-template-columns: 1fr;
             }
             .kpi-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.75rem;
+                padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+                padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+                padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+            }
+            .container {
+                padding: 0;
+            }
+            header h1 {
+                font-size: 1.4rem;
+            }
+            header .subtitle {
+                font-size: 0.75rem;
+            }
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+            .kpi-card {
+                padding: 1rem 0.85rem;
+            }
+            .kpi-value {
+                font-size: 1.5rem;
+            }
+            .tabs {
+                gap: 0;
+                margin-bottom: 1.5rem;
+            }
+            .tab {
+                padding: 0.6rem 0.85rem;
+                font-size: 0.65rem;
+                letter-spacing: 0.07em;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .grid {
+                gap: 1rem;
+            }
+            .dashboard-header h2, .view-header h2 {
+                font-size: 1.1rem;
+            }
+            .lang-switch {
+                top: 10px;
+                right: 10px;
+            }
+            .header-actions {
+                gap: 0.5rem;
+            }
+            .btn {
+                padding: 0.5rem 0.9rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -2235,6 +2322,7 @@ window.setLanguage = setLanguage;
             const activeFunded = yearAccounts.filter(a => a.status === 'FUNDED' && a.active).length;
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
             const totalCosts = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
+            const netProfit = totalPayouts - totalCosts;
             // BUG FIX: si no hay payouts todavía, ROI = 0% (no mostrar -100% desde el inicio)
             const roi = (totalCosts > 0 && totalPayouts > 0) ? ((totalPayouts - totalCosts) / totalCosts * 100) : 0;
 
@@ -2268,6 +2356,20 @@ window.setLanguage = setLanguage;
                     <div class="subtitle" style="margin-top:0.5rem;">${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                 </div>
 
+                <!-- NET P&L HERO CARD -->
+                <div class="kpi-card" style="background: linear-gradient(135deg, ${netProfit >= 0 ? 'rgba(46,204,113,0.08), rgba(39,174,96,0.04)' : 'rgba(231,76,60,0.08), rgba(192,57,43,0.04)'}); border: 1px solid ${netProfit >= 0 ? 'rgba(46,204,113,0.25)' : 'rgba(231,76,60,0.25)'}; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1.5rem 2rem;">
+                    <div>
+                        <div class="kpi-label" style="font-size: 0.7rem; letter-spacing: 0.12em; margin-bottom: 0.4rem;">${currentLanguage === 'en' ? 'NET BUSINESS PROFIT' : 'BENEFICIO NETO DEL NEGOCIO'}</div>
+                        <div style="font-size: 2.4rem; font-weight: 800; color: ${netProfit >= 0 ? '#2ECC71' : '#E74C3C'}; line-height: 1;">${netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()} €</div>
+                        <div class="kpi-subtitle" style="margin-top: 0.4rem;">${currentLanguage === 'en' ? 'After deducting' : 'Tras descontar'} ${totalCosts.toLocaleString()} € ${currentLanguage === 'en' ? 'in costs' : 'en costes'}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="kpi-label" style="font-size: 0.7rem; letter-spacing: 0.12em; margin-bottom: 0.4rem;">ROI TOTAL</div>
+                        <div style="font-size: 1.8rem; font-weight: 800; color: ${roi > 0 ? '#2ECC71' : roi < 0 ? '#E74C3C' : '#9AA0A6'};">${roi > 0 ? '+' : ''}${roi.toFixed(1)}%</div>
+                        <div class="kpi-subtitle" style="margin-top: 0.4rem;">${yearPayouts.length} ${t('payments')}</div>
+                    </div>
+                </div>
+
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div class="kpi-label">Active Funded Capital</div>
@@ -2280,14 +2382,14 @@ window.setLanguage = setLanguage;
                         <div class="kpi-subtitle">${yearPayouts.length} ${t('payments')}</div>
                     </div>
                     <div class="kpi-card">
+                        <div class="kpi-label">${currentLanguage === 'en' ? 'Total Invested' : 'Total Invertido'}</div>
+                        <div class="kpi-value danger">${totalCosts.toLocaleString()} €</div>
+                        <div class="kpi-subtitle">${yearAccounts.length} ${t('total')} ${currentLanguage === 'en' ? 'accounts' : 'cuentas'}</div>
+                    </div>
+                    <div class="kpi-card">
                         <div class="kpi-label">Active Funded Accounts</div>
                         <div class="kpi-value">${activeFunded}</div>
                         <div class="kpi-subtitle">${t('of')} ${yearAccounts.length} ${t('total')}</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label">ROI Annual</div>
-                        <div class="kpi-value ${roi > 0 ? 'success' : roi < 0 ? 'danger' : ''}">${roi > 0 ? '+' : ''}${roi.toFixed(0)}%</div>
-                        <div class="kpi-subtitle">${t('costs')}: ${totalCosts.toLocaleString()} €</div>
                     </div>
                 </div>
 
@@ -3560,125 +3662,107 @@ window.setLanguage = setLanguage;
                 `).join('')}
 
                 <!-- WRAPPED GENERATOR -->
-                <div class="wrapped-generator">
-                    <h2 style="font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 2rem; color: #F39C12;">
-                        🎨 GENERAR TU WRAPPED PERSONALIZADO
-                    </h2>
-
-                    <div class="config-section">
-                        <div class="config-title">⏱️ Periodo</div>
-                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                <input type="radio" name="wrappedPeriod" value="monthly" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span>Mensual</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                <input type="radio" name="wrappedPeriod" value="yearly" checked style="width: 18px; height: 18px; cursor: pointer;">
-                                <span>Anual</span>
-                            </label>
-                        </div>
-                        <div id="monthSelector" style="margin-top: 1rem; display: none;">
-                            <select id="wrappedMonth" style="padding: 0.5rem 1rem; background: #121417; border: 1px solid rgba(230, 232, 235, 0.1); border-radius: 6px; color: #E6E8EB;">
-                                <option value="0">Enero</option>
-                                <option value="1">Febrero</option>
-                                <option value="2">Marzo</option>
-                                <option value="3">Abril</option>
-                                <option value="4">Mayo</option>
-                                <option value="5">Junio</option>
-                                <option value="6">Julio</option>
-                                <option value="7">Agosto</option>
-                                <option value="8">Septiembre</option>
-                                <option value="9">Octubre</option>
-                                <option value="10">Noviembre</option>
-                                <option value="11">Diciembre</option>
-                            </select>
-                        </div>
+                <div class="wrapped-generator" style="background: linear-gradient(135deg, rgba(243,156,18,0.04), rgba(230,126,34,0.02)); border: 1px solid rgba(243,156,18,0.12); border-radius: 20px; padding: 2.5rem;">
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 2.5rem;">
+                        <div style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; color: #F39C12; margin-bottom: 0.6rem; text-transform: uppercase;">Create your story</div>
+                        <h2 style="font-size: 2rem; font-weight: 900; color: #FFFFFF; margin: 0; letter-spacing: -0.02em;">PROP FIRM WRAPPED</h2>
+                        <p style="color: #6B7280; font-size: 0.85rem; margin-top: 0.5rem;">Tu año en trading, en una imagen para compartir</p>
                     </div>
 
-                    <div class="config-section">
-                        <div class="config-title">📊 Métricas a Incluir</div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.5rem;">
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_payouts" checked>
-                                <label for="metric_payouts">💰 Total Payouts</label>
+                    <!-- Period + Design in one row -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Period -->
+                        <div>
+                            <div class="config-title" style="margin-bottom: 0.75rem;">PERIODO</div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.85rem; font-weight: 600;">
+                                    <input type="radio" name="wrappedPeriod" value="monthly" style="width: 14px; height: 14px; accent-color: #F39C12; cursor: pointer;">
+                                    Mensual
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.5rem 1rem; background: rgba(243,156,18,0.1); border: 1px solid rgba(243,156,18,0.3); border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: #F39C12;">
+                                    <input type="radio" name="wrappedPeriod" value="yearly" checked style="width: 14px; height: 14px; accent-color: #F39C12; cursor: pointer;">
+                                    Anual
+                                </label>
                             </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_roi" checked>
-                                <label for="metric_roi">📈 ROI</label>
+                            <div id="monthSelector" style="margin-top: 0.75rem; display: none;">
+                                <select id="wrappedMonth" style="padding: 0.5rem 1rem; background: #121417; border: 1px solid rgba(230, 232, 235, 0.1); border-radius: 8px; color: #E6E8EB; font-family: Inter, sans-serif; font-size: 0.85rem; width: 100%;">
+                                    <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+                                    <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
+                                    <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
+                                    <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+                                </select>
                             </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_funded" checked>
-                                <label for="metric_funded">🎯 Cuentas Fondeadas</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_invested" checked>
-                                <label for="metric_invested">💸 Total Invertido</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_winrate" checked>
-                                <label for="metric_winrate">✅ Win Rate Phase 1</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_winrate2">
-                                <label for="metric_winrate2">🔥 Win Rate Phase 2</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_fastest">
-                                <label for="metric_fastest">⚡ Fondeo Más Rápido</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_avgtime">
-                                <label for="metric_avgtime">⏱️ Tiempo Promedio Fondeo</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_multiple">
-                                <label for="metric_multiple">📊 Múltiplo de Capital</label>
-                            </div>
-                            <div class="metric-checkbox">
-                                <input type="checkbox" id="metric_bestfirm">
-                                <label for="metric_bestfirm">🏆 Mejor Prop Firm</label>
+                        </div>
+
+                        <!-- Design -->
+                        <div>
+                            <div class="config-title" style="margin-bottom: 0.75rem;">TEMA VISUAL</div>
+                            <div class="design-selector" style="gap: 0.6rem;">
+                                <div class="design-option selected" data-design="gradient1" onclick="selectDesign('gradient1')" title="Obsidian Gold">
+                                    <div class="design-preview gradient1"></div>
+                                    <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; margin-top: 4px;">GOLD</div>
+                                </div>
+                                <div class="design-option" data-design="gradient2" onclick="selectDesign('gradient2')" title="Neon Verde">
+                                    <div class="design-preview gradient2"></div>
+                                    <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; margin-top: 4px;">GREEN</div>
+                                </div>
+                                <div class="design-option" data-design="gradient3" onclick="selectDesign('gradient3')" title="Deep Blue">
+                                    <div class="design-preview gradient3"></div>
+                                    <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; margin-top: 4px;">BLUE</div>
+                                </div>
+                                <div class="design-option" data-design="dark" onclick="selectDesign('dark')" title="Noir Platinum">
+                                    <div class="design-preview dark"></div>
+                                    <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; margin-top: 4px;">NOIR</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="config-section">
-                        <div class="config-title">🎨 Diseño</div>
-                        <div class="design-selector">
-                            <div class="design-option selected" data-design="gradient1" onclick="selectDesign('gradient1')">
-                                <div class="design-preview gradient1"></div>
-                                <div style="font-size: 0.85rem; font-weight: 600;">Fire</div>
-                            </div>
-                            <div class="design-option" data-design="gradient2" onclick="selectDesign('gradient2')">
-                                <div class="design-preview gradient2"></div>
-                                <div style="font-size: 0.85rem; font-weight: 600;">Success</div>
-                            </div>
-                            <div class="design-option" data-design="gradient3" onclick="selectDesign('gradient3')">
-                                <div class="design-preview gradient3"></div>
-                                <div style="font-size: 0.85rem; font-weight: 600;">Ocean</div>
-                            </div>
-                            <div class="design-option" data-design="dark" onclick="selectDesign('dark')">
-                                <div class="design-preview dark"></div>
-                                <div style="font-size: 0.85rem; font-weight: 600;">Dark</div>
-                            </div>
+                    <!-- Metric toggles -->
+                    <div style="margin-bottom: 2rem;">
+                        <div class="config-title" style="margin-bottom: 0.75rem;">MÉTRICAS — toca para seleccionar (máx. 6)</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;" id="metricToggles">
+                            <button class="wrapped-metric-toggle active" data-metric="netprofit">NET PROFIT</button>
+                            <button class="wrapped-metric-toggle active" data-metric="payouts">PAYOUTS</button>
+                            <button class="wrapped-metric-toggle active" data-metric="roi">ROI</button>
+                            <button class="wrapped-metric-toggle active" data-metric="funded">FUNDED</button>
+                            <button class="wrapped-metric-toggle active" data-metric="winrate">WIN RATE P1</button>
+                            <button class="wrapped-metric-toggle" data-metric="winrate2">WIN RATE P2</button>
+                            <button class="wrapped-metric-toggle" data-metric="invested">INVERTIDO</button>
+                            <button class="wrapped-metric-toggle" data-metric="fastest">FONDEO MÁS RÁPIDO</button>
+                            <button class="wrapped-metric-toggle" data-metric="avgtime">TIEMPO PROMEDIO</button>
+                            <button class="wrapped-metric-toggle" data-metric="multiple">MÚLTIPLO</button>
+                            <button class="wrapped-metric-toggle" data-metric="bestfirm">TOP FIRM</button>
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
-                        <button class="btn-primary" onclick="generateWrappedPreview()">
-                            👁️ Vista Previa
-                        </button>
-                    </div>
+                    <!-- Generate CTA -->
+                    <button onclick="generateWrappedPreview()" style="width: 100%; padding: 1.1rem 2rem; background: linear-gradient(135deg, #F39C12, #E67E22); border: none; border-radius: 14px; color: #0D0A07; font-family: Inter, sans-serif; font-size: 1rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 24px rgba(243,156,18,0.3);"
+                        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 32px rgba(243,156,18,0.45)'"
+                        onmouseout="this.style.transform='';this.style.boxShadow='0 4px 24px rgba(243,156,18,0.3)'">
+                        GENERAR WRAPPED
+                    </button>
 
-                    <div id="wrappedPreview" style="display: none;">
-                        <div class="preview-container">
+                    <!-- Preview -->
+                    <div id="wrappedPreview" style="display: none; margin-top: 2rem;">
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <div style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: #2ECC71; text-transform: uppercase; margin-bottom: 0.4rem;">✓ Listo para compartir</div>
+                            <div style="font-size: 1.1rem; font-weight: 700; color: #E6E8EB;">Tu Wrapped está generado · 1080 × 1920 px</div>
+                        </div>
+                        <div class="preview-container" style="border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5);">
                             <canvas id="wrappedCanvas" width="1080" height="1920" class="preview-canvas"></canvas>
                         </div>
-                        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                            <button class="btn-secondary" onclick="closePreview()">
-                                ← Volver a Editar
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                            <button onclick="closePreview()" style="padding: 0.9rem 1.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; color: #9AA0A6; font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s;"
+                                onmouseover="this.style.borderColor='rgba(255,255,255,0.3)';this.style.color='#E6E8EB'"
+                                onmouseout="this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='#9AA0A6'">
+                                ← EDITAR
                             </button>
-                            <button class="btn-primary" onclick="downloadWrapped('png')">
-                                💾 Descargar PNG (1080x1920)
+                            <button onclick="downloadWrapped('png')" style="padding: 0.9rem 1.5rem; background: linear-gradient(135deg, #2ECC71, #27AE60); border: none; border-radius: 12px; color: #021A0D; font-family: Inter, sans-serif; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(46,204,113,0.3);"
+                                onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(46,204,113,0.45)'"
+                                onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(46,204,113,0.3)'">
+                                ↓ DESCARGAR PNG
                             </button>
                         </div>
                     </div>
@@ -3880,6 +3964,20 @@ window.setLanguage = setLanguage;
             document.querySelector(`[data-design="${design}"]`)?.classList.add('selected');
         }
 
+        // Metric toggle handler (event delegation — works on dynamic HTML)
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.wrapped-metric-toggle');
+            if (!btn) return;
+            const maxMetrics = 6;
+            const allToggles = document.querySelectorAll('.wrapped-metric-toggle');
+            const activeCount = document.querySelectorAll('.wrapped-metric-toggle.active').length;
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+            } else if (activeCount < maxMetrics) {
+                btn.classList.add('active');
+            }
+        });
+
         function generateWrappedPreview() {
             const canvas = document.getElementById('wrappedCanvas');
             if (!canvas) return;
@@ -3909,6 +4007,7 @@ window.setLanguage = setLanguage;
                 invested: filterData.reduce((sum, a) => sum + a.challengeCost, 0),
                 funded: filterData.filter(a => a.status === 'FUNDED').length,
                 roi: 0,
+                netprofit: 0,
                 winrate: 0,
                 winrate2: 0,
                 fastest: 0,
@@ -3918,6 +4017,7 @@ window.setLanguage = setLanguage;
             };
 
             metrics.roi = metrics.invested > 0 ? ((metrics.payouts - metrics.invested) / metrics.invested * 100) : 0;
+            metrics.netprofit = metrics.payouts - metrics.invested;
             metrics.multiple = metrics.invested > 0 ? (metrics.payouts / metrics.invested) : 0;
 
             const totalChallenges = filterData.length;
@@ -3952,110 +4052,238 @@ window.setLanguage = setLanguage;
                 metrics.bestfirm = firmROIs[0].firm;
             }
 
-            // Get selected metrics
+            // Get selected metrics (from simplified selector)
             const selectedMetrics = [];
-            if (document.getElementById('metric_payouts')?.checked) selectedMetrics.push('payouts');
-            if (document.getElementById('metric_roi')?.checked) selectedMetrics.push('roi');
-            if (document.getElementById('metric_funded')?.checked) selectedMetrics.push('funded');
-            if (document.getElementById('metric_invested')?.checked) selectedMetrics.push('invested');
-            if (document.getElementById('metric_winrate')?.checked) selectedMetrics.push('winrate');
-            if (document.getElementById('metric_winrate2')?.checked) selectedMetrics.push('winrate2');
-            if (document.getElementById('metric_fastest')?.checked) selectedMetrics.push('fastest');
-            if (document.getElementById('metric_avgtime')?.checked) selectedMetrics.push('avgtime');
-            if (document.getElementById('metric_multiple')?.checked) selectedMetrics.push('multiple');
-            if (document.getElementById('metric_bestfirm')?.checked) selectedMetrics.push('bestfirm');
-
-            // Draw background based on design
-            drawWrappedBackground(ctx, width, height, selectedDesign);
-
-            // Draw header
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 80px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText('PROP FIRM WRAPPED', width / 2, 150);
-
-            ctx.font = '48px Inter';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.fillText(periodText, width / 2, 220);
-
-            // Draw metrics
-            let yPos = 350;
-            const metricsPerRow = 2;
-            const metricWidth = 450;
-            const metricHeight = 200;
-            const gap = 80;
-
-            selectedMetrics.forEach((metric, index) => {
-                const col = index % metricsPerRow;
-                const row = Math.floor(index / metricsPerRow);
-                const x = (width - (metricWidth * metricsPerRow + gap)) / 2 + col * (metricWidth + gap);
-                const y = yPos + row * (metricHeight + gap);
-
-                drawMetricCard(ctx, x, y, metricWidth, metricHeight, metric, metrics);
+            document.querySelectorAll('.wrapped-metric-toggle.active').forEach(btn => {
+                selectedMetrics.push(btn.getAttribute('data-metric'));
             });
+            if (selectedMetrics.length === 0) {
+                selectedMetrics.push('netprofit', 'payouts', 'roi', 'funded', 'winrate');
+            }
+
+            // === DRAW ===
+            drawWrappedBackground(ctx, width, height, selectedDesign);
+            drawWrappedBranding(ctx, width, periodText, selectedDesign);
+
+            // Layout metrics: smart grid based on count
+            const count = selectedMetrics.length;
+            const cols = count === 1 ? 1 : 2;
+            const cardW = count === 1 ? 800 : 460;
+            const cardH = count <= 2 ? 280 : count <= 4 ? 240 : 200;
+            const gap = 30;
+            const totalGridW = cols * cardW + (cols - 1) * gap;
+            const startX = (width - totalGridW) / 2;
+            const startY = 340;
+
+            selectedMetrics.forEach((metric, i) => {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = startX + col * (cardW + gap);
+                const y = startY + row * (cardH + gap);
+                drawMetricCard(ctx, x, y, cardW, cardH, metric, metrics);
+            });
+
+            // Footer watermark
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(255,255,255,0.18)';
+            ctx.font = '500 26px Inter';
+            ctx.fillText('neverquit.app', width / 2, height - 80);
 
             // Show preview
             document.getElementById('wrappedPreview').style.display = 'block';
             document.getElementById('wrappedPreview').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function drawWrappedBackground(ctx, width, height, design) {
-            if (design === 'gradient1') {
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, '#F39C12');
-                gradient.addColorStop(1, '#E67E22');
-                ctx.fillStyle = gradient;
-            } else if (design === 'gradient2') {
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, '#2ECC71');
-                gradient.addColorStop(1, '#27AE60');
-                ctx.fillStyle = gradient;
-            } else if (design === 'gradient3') {
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, '#3498DB');
-                gradient.addColorStop(1, '#2980B9');
-                ctx.fillStyle = gradient;
-            } else {
-                ctx.fillStyle = '#121417';
-            }
-            ctx.fillRect(0, 0, width, height);
+        function drawRoundedRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.arcTo(x + w, y, x + w, y + r, r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+            ctx.lineTo(x + r, y + h);
+            ctx.arcTo(x, y + h, x, y + h - r, r);
+            ctx.lineTo(x, y + r);
+            ctx.arcTo(x, y, x + r, y, r);
+            ctx.closePath();
         }
 
-        function drawMetricCard(ctx, x, y, width, height, metric, metrics) {
-            // Card background
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-            ctx.fillRect(x, y, width, height);
+        function drawOrb(ctx, cx, cy, radius, color1, color2) {
+            const radial = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+            radial.addColorStop(0, color1);
+            radial.addColorStop(1, color2);
+            ctx.fillStyle = radial;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
 
-            ctx.fillStyle = '#FFFFFF';
+        function drawWrappedBackground(ctx, width, height, design) {
+            // Base fill
+            if (design === 'gradient1') {
+                // OBSIDIAN GOLD — dark base + amber radial glow
+                const base = ctx.createLinearGradient(0, 0, 0, height);
+                base.addColorStop(0, '#0D0A07');
+                base.addColorStop(0.5, '#110E08');
+                base.addColorStop(1, '#0A0806');
+                ctx.fillStyle = base; ctx.fillRect(0, 0, width, height);
+                // Orbs
+                drawOrb(ctx, width * 0.8, height * 0.12, 600, 'rgba(243,156,18,0.18)', 'rgba(243,156,18,0)');
+                drawOrb(ctx, width * 0.15, height * 0.75, 700, 'rgba(230,126,34,0.12)', 'rgba(230,126,34,0)');
+                drawOrb(ctx, width * 0.5, height * 0.4, 900, 'rgba(241,196,15,0.06)', 'rgba(241,196,15,0)');
+                // Noise grain via tiny dots
+                ctx.fillStyle = 'rgba(255,255,255,0.012)';
+                for (let i = 0; i < 3000; i++) {
+                    ctx.fillRect(Math.random()*width, Math.random()*height, 1.5, 1.5);
+                }
+            } else if (design === 'gradient2') {
+                // NEON VERDE — dark + emerald radial
+                const base = ctx.createLinearGradient(0, 0, 0, height);
+                base.addColorStop(0, '#020D06');
+                base.addColorStop(1, '#010803');
+                ctx.fillStyle = base; ctx.fillRect(0, 0, width, height);
+                drawOrb(ctx, width * 0.75, height * 0.1, 650, 'rgba(46,204,113,0.2)', 'rgba(46,204,113,0)');
+                drawOrb(ctx, width * 0.2, height * 0.8, 600, 'rgba(39,174,96,0.14)', 'rgba(39,174,96,0)');
+                drawOrb(ctx, width * 0.5, height * 0.5, 800, 'rgba(46,204,113,0.05)', 'rgba(46,204,113,0)');
+                ctx.fillStyle = 'rgba(255,255,255,0.012)';
+                for (let i = 0; i < 3000; i++) ctx.fillRect(Math.random()*width, Math.random()*height, 1.5, 1.5);
+            } else if (design === 'gradient3') {
+                // DEEP BLUE — dark navy + electric blue
+                const base = ctx.createLinearGradient(0, 0, 0, height);
+                base.addColorStop(0, '#03060F');
+                base.addColorStop(1, '#020509');
+                ctx.fillStyle = base; ctx.fillRect(0, 0, width, height);
+                drawOrb(ctx, width * 0.8, height * 0.08, 700, 'rgba(52,152,219,0.2)', 'rgba(52,152,219,0)');
+                drawOrb(ctx, width * 0.1, height * 0.85, 600, 'rgba(41,128,185,0.14)', 'rgba(41,128,185,0)');
+                drawOrb(ctx, width * 0.45, height * 0.45, 850, 'rgba(52,152,219,0.06)', 'rgba(52,152,219,0)');
+                ctx.fillStyle = 'rgba(255,255,255,0.012)';
+                for (let i = 0; i < 3000; i++) ctx.fillRect(Math.random()*width, Math.random()*height, 1.5, 1.5);
+            } else {
+                // NOIR PLATINUM — pure dark
+                const base = ctx.createLinearGradient(0, 0, 0, height);
+                base.addColorStop(0, '#0C0D0F');
+                base.addColorStop(1, '#070809');
+                ctx.fillStyle = base; ctx.fillRect(0, 0, width, height);
+                drawOrb(ctx, width * 0.8, height * 0.1, 600, 'rgba(255,255,255,0.04)', 'rgba(255,255,255,0)');
+                drawOrb(ctx, width * 0.15, height * 0.85, 500, 'rgba(255,255,255,0.03)', 'rgba(255,255,255,0)');
+                ctx.fillStyle = 'rgba(255,255,255,0.01)';
+                for (let i = 0; i < 2000; i++) ctx.fillRect(Math.random()*width, Math.random()*height, 1.5, 1.5);
+            }
+
+            // Subtle horizontal rule near top
+            const accentColor = design === 'gradient1' ? '#F39C12' : design === 'gradient2' ? '#2ECC71' : design === 'gradient3' ? '#3498DB' : '#555';
+            const lineGrad = ctx.createLinearGradient(100, 0, width - 100, 0);
+            lineGrad.addColorStop(0, 'rgba(255,255,255,0)');
+            lineGrad.addColorStop(0.3, accentColor + '66');
+            lineGrad.addColorStop(0.7, accentColor + '66');
+            lineGrad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.strokeStyle = lineGrad;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(100, 290);
+            ctx.lineTo(width - 100, 290);
+            ctx.stroke();
+        }
+
+        function drawWrappedBranding(ctx, width, periodText, design) {
+            const accentColor = design === 'gradient1' ? '#F39C12' : design === 'gradient2' ? '#2ECC71' : design === 'gradient3' ? '#3498DB' : '#A0A8B0';
+
+            // NEVERQUIT wordmark
             ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.font = '900 96px Inter';
+            ctx.letterSpacing = '0.05em';
+            ctx.fillText('NEVERQUIT', width / 2, 155);
 
+            // Accent dot
+            ctx.fillStyle = accentColor;
+            ctx.beginPath();
+            ctx.arc(width / 2 + 445, 128, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // PROP FIRM WRAPPED subtitle
+            ctx.fillStyle = accentColor;
+            ctx.font = '700 34px Inter';
+            ctx.fillText('PROP FIRM WRAPPED', width / 2, 210);
+
+            // Period badge
+            const badgeW = 340, badgeH = 64, badgeX = (width - badgeW) / 2, badgeY = 236;
+            drawRoundedRect(ctx, badgeX, badgeY, badgeW, badgeH, 32);
+            ctx.fillStyle = accentColor + '22';
+            ctx.fill();
+            drawRoundedRect(ctx, badgeX, badgeY, badgeW, badgeH, 32);
+            ctx.strokeStyle = accentColor + '55';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.font = '600 30px Inter';
+            ctx.fillText(periodText.toUpperCase(), width / 2, 278);
+        }
+
+        function drawMetricCard(ctx, x, y, w, h, metric, metrics) {
             const metricData = {
-                payouts: { label: 'Total Payouts', value: `€${metrics.payouts.toLocaleString()}`, emoji: '💰' },
-                roi: { label: 'ROI', value: `+${metrics.roi.toFixed(0)}%`, emoji: '📈' },
-                funded: { label: 'Cuentas Fondeadas', value: metrics.funded.toString(), emoji: '🎯' },
-                invested: { label: 'Invertido', value: `€${metrics.invested.toLocaleString()}`, emoji: '💸' },
-                winrate: { label: 'Win Rate P1', value: `${metrics.winrate.toFixed(0)}%`, emoji: '✅' },
-                winrate2: { label: 'Win Rate P2', value: `${metrics.winrate2.toFixed(0)}%`, emoji: '🔥' },
-                fastest: { label: 'Fondeo + Rápido', value: `${metrics.fastest} días`, emoji: '⚡' },
-                avgtime: { label: 'Tiempo Promedio', value: `${Math.round(metrics.avgtime)} días`, emoji: '⏱️' },
-                multiple: { label: 'Múltiplo Capital', value: `${metrics.multiple.toFixed(2)}x`, emoji: '📊' },
-                bestfirm: { label: 'Mejor Prop Firm', value: metrics.bestfirm, emoji: '🏆' }
+                payouts:   { label: 'TOTAL PAYOUTS',    value: `€${metrics.payouts.toLocaleString()}`,        sub: null },
+                netprofit: { label: 'NET PROFIT',        value: `${metrics.netprofit >= 0 ? '+' : ''}€${metrics.netprofit.toLocaleString()}`, sub: null },
+                roi:       { label: 'TOTAL ROI',         value: `${metrics.roi > 0 ? '+' : ''}${metrics.roi.toFixed(1)}%`, sub: null },
+                funded:    { label: 'FUNDED ACCOUNTS',   value: metrics.funded.toString(),                    sub: null },
+                invested:  { label: 'TOTAL INVESTED',    value: `€${metrics.invested.toLocaleString()}`,      sub: null },
+                winrate:   { label: 'PHASE 1 WIN RATE',  value: `${metrics.winrate.toFixed(0)}%`,             sub: null },
+                winrate2:  { label: 'PHASE 2 WIN RATE',  value: `${metrics.winrate2.toFixed(0)}%`,            sub: null },
+                fastest:   { label: 'FASTEST FUNDING',   value: `${metrics.fastest}d`,                       sub: null },
+                avgtime:   { label: 'AVG FUNDING TIME',  value: `${Math.round(metrics.avgtime)}d`,            sub: null },
+                multiple:  { label: 'CAPITAL MULTIPLE',  value: `${metrics.multiple.toFixed(2)}x`,           sub: null },
+                bestfirm:  { label: 'TOP PROP FIRM',     value: metrics.bestfirm,                            sub: null }
             };
 
-            const data = metricData[metric];
-            
-            // Emoji
-            ctx.font = '60px Inter';
-            ctx.fillText(data.emoji, x + width / 2, y + 80);
+            const d = metricData[metric] || { label: metric.toUpperCase(), value: '—', sub: null };
 
-            // Value
-            ctx.font = 'bold 60px Inter';
-            ctx.fillText(data.value, x + width / 2, y + 140);
+            // Glassmorphism card
+            const isNetProfit = metric === 'netprofit';
+            const glassColor = isNetProfit && metrics.netprofit < 0 ? 'rgba(231,76,60,0.08)' : 'rgba(255,255,255,0.05)';
+            const borderColor = isNetProfit && metrics.netprofit < 0 ? 'rgba(231,76,60,0.3)' : 'rgba(255,255,255,0.12)';
+
+            drawRoundedRect(ctx, x, y, w, h, 28);
+            ctx.fillStyle = glassColor;
+            ctx.fill();
+            drawRoundedRect(ctx, x, y, w, h, 28);
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Top accent line
+            const accentGrad = ctx.createLinearGradient(x + 40, 0, x + w - 40, 0);
+            accentGrad.addColorStop(0, 'rgba(255,255,255,0)');
+            accentGrad.addColorStop(0.5, 'rgba(255,255,255,0.35)');
+            accentGrad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.strokeStyle = accentGrad;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x + 40, y + 1.5);
+            ctx.lineTo(x + w - 40, y + 1.5);
+            ctx.stroke();
+
+            ctx.textAlign = 'center';
+            const cx = x + w / 2;
 
             // Label
-            ctx.font = '24px Inter';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.fillText(data.label, x + width / 2, y + 175);
+            ctx.fillStyle = 'rgba(255,255,255,0.45)';
+            ctx.font = '600 26px Inter';
+            ctx.fillText(d.label, cx, y + 58);
+
+            // Value
+            const valueColor = (metric === 'netprofit' && metrics.netprofit < 0) ? '#FF6B6B'
+                             : (metric === 'netprofit' || metric === 'payouts') ? '#6EE7A0'
+                             : '#FFFFFF';
+            ctx.fillStyle = valueColor;
+
+            // Auto-scale font for long values
+            let fontSize = 72;
+            ctx.font = `800 ${fontSize}px Inter`;
+            while (ctx.measureText(d.value).width > w - 60 && fontSize > 36) {
+                fontSize -= 4;
+                ctx.font = `800 ${fontSize}px Inter`;
+            }
+            ctx.fillText(d.value, cx, y + 58 + fontSize * 1.25);
         }
 
         function closePreview() {
@@ -4103,7 +4331,7 @@ window.setLanguage = setLanguage;
         let touchEndX = 0;
         let touchStartY = 0;
         let touchEndY = 0;
-        const minSwipeDistance = 50;
+        const minSwipeDistance = 90;
 
         const tabOrder = ['control', 'overview', 'performance', 'propfirm', 'ceoview', 'efficiency', 'wrapped'];
 
