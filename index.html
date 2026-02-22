@@ -1431,6 +1431,7 @@
             <h1>NEVER QUIT DASHBOARD</h1>
             <p>Sistema de Gestión de Capital Profesional</p>
             <div class="header-actions">
+                <span id="headerUsername" style="color:#9AA0A6;font-size:0.8rem;font-weight:600;letter-spacing:0.04em;"></span>
                 <button class="btn-reset" onclick="openResetModal()">🔄 Reset Datos</button>
                 <button class="btn-reset btn-reset--gray" onclick="logout()">🚪 Salir</button>
             </div>
@@ -1858,11 +1859,14 @@ window.setLanguage = setLanguage;
         // LOGIN SYSTEM - DEBE ESTAR DISPONIBLE INMEDIATAMENTE
         // ============================================
         
-        // Credenciales (en producción, esto debería estar en un backend)
-        const VALID_CREDENTIALS = {
-            'admin': 'admin123',
-            'demo': 'demo123'
-        };
+        // Credenciales ofuscadas (pendiente: mover a backend)
+        function _checkCredential(u, p) {
+            const v = {
+                [atob('YWRtaW4=')]: atob('YWRtaW4xMjM='),
+                [atob('ZGVtbw==')]: atob('ZGVtbzEyMw==')
+            };
+            return v[u] !== undefined && v[u] === p;
+        }
 
         function handleLogin(event) {
             event.preventDefault();
@@ -1872,13 +1876,15 @@ window.setLanguage = setLanguage;
             const errorDiv = $('loginError');
             
             // Validar credenciales
-            if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+            if (_checkCredential(username, password)) {
                 // Login exitoso
                 localStorage.setItem('neverQuitLoggedIn', 'true');
                 localStorage.setItem('neverQuitUsername', username);
                 
                 // Ocultar login con animación
                 $('loginOverlay').classList.add('hidden');
+                const _hdr = document.getElementById('headerUsername');
+                if (_hdr) _hdr.textContent = `◇ ${username.toUpperCase()}`;
                 initDashParticles();
 
                 // Inicializar dashboard después de un delay
@@ -1938,7 +1944,15 @@ window.setLanguage = setLanguage;
             
         // Verificar si ya está logueado
         const isLoggedIn = localStorage.getItem('neverQuitLoggedIn') === 'true';
-        
+
+        // Mostrar usuario en header
+        function setHeaderUsername() {
+            const el = document.getElementById('headerUsername');
+            const user = localStorage.getItem('neverQuitUsername');
+            if (el && user) el.textContent = `◇ ${user.toUpperCase()}`;
+        }
+        setHeaderUsername();
+
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
@@ -2117,47 +2131,53 @@ window.setLanguage = setLanguage;
             if (btn) btn.remove();
             
             switch(action.type) {
-                case 'CREATE_CHALLENGE':
-                    // Eliminar la última cuenta creada
+                case 'CREATE_CHALLENGE': {
                     const accountIndex = data.master_comptes.findIndex(a => a.id === action.data.id);
                     if (accountIndex !== -1) {
                         const account = data.master_comptes[accountIndex];
                         data.master_comptes.splice(accountIndex, 1);
-                        saveData();
+                        // Sync: remove from persistent history
+                        const hi = actionHistory.challenges.map((c,i)=>({c,i})).reverse().find(({c})=>c.accountId===action.data.id);
+                        if (hi !== undefined) actionHistory.challenges.splice(hi.i, 1);
+                        saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
                         showAlert(`Challenge eliminada: ${account.accountNumber || account.id}`, 'success');
                     }
                     break;
-                    
-                case 'UPDATE_CHALLENGE':
-                    // Restaurar estado anterior
+                }
+                case 'UPDATE_CHALLENGE': {
                     const updateAccount = data.master_comptes.find(a => a.id === action.data.accountId);
                     if (updateAccount) {
                         updateAccount.status = action.data.previousStatus;
                         updateAccount.lastStatusDate = action.data.previousDate;
                         updateAccount.active = action.data.previousActive;
-                        
-                        // Eliminar última entrada de examens
-                        if (data.examens.length > 0) {
-                            data.examens.pop();
-                        }
-                        
-                        saveData();
+                        // Remove the matching examen by accountId + phase (last occurrence)
+                        const exPairs = data.examens.map((e, i) => ({ e, i })).reverse();
+                        const exHit   = exPairs.find(({ e }) => e.accountId === action.data.accountId && e.phase === action.data.newStatus);
+                        if (exHit !== undefined) data.examens.splice(exHit.i, 1);
+                        // Sync: remove from persistent history
+                        const si = actionHistory.statuses.map((s,i)=>({s,i})).reverse()
+                            .find(({s})=>s.accountId===action.data.accountId && s.newStatus===action.data.newStatus);
+                        if (si !== undefined) actionHistory.statuses.splice(si.i, 1);
+                        saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
                         showAlert(`Estado restaurado a: ${action.data.previousStatus}`, 'success');
                     }
                     break;
-                    
-                case 'REGISTER_PAYOUT':
-                    // Eliminar el último payout
+                }
+                case 'REGISTER_PAYOUT': {
                     const payoutIndex = data.payouts.findIndex(p => p.id === action.data.id);
                     if (payoutIndex !== -1) {
                         data.payouts.splice(payoutIndex, 1);
-                        saveData();
+                        // Sync: remove from persistent history
+                        const pi = actionHistory.payouts.findIndex(p => p.id === action.data.id);
+                        if (pi !== -1) actionHistory.payouts.splice(pi, 1);
+                        saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
                         showAlert(`Payout eliminado: €${action.data.amount.toLocaleString()}`, 'success');
                     }
                     break;
+                }
             }
         }
 
@@ -2692,6 +2712,20 @@ window.setLanguage = setLanguage;
         }
         // ─────────────────────────────────────────────────────────────
 
+        // ─── SHARED WIN-RATE HELPER ──────────────────────────────────────────────
+        // Single source of truth used by Performance, CEO View and Wrapped Generator.
+        // Phase 1 WR: accounts that cleared Phase 1 (now in PHASE 2 or FUNDED) / total
+        // Phase 2 WR: FUNDED / accounts that reached Phase 2 (PHASE 2 + FUNDED)
+        function calcWinRates(accounts) {
+            const total      = accounts.length;
+            const funded     = accounts.filter(a => a.status === 'FUNDED').length;
+            const inPhase2   = accounts.filter(a => a.status === 'PHASE 2').length;
+            const passedP1   = inPhase2 + funded;   // cleared Phase 1
+            const p1Rate     = total    > 0 ? (passedP1 / total   * 100) : 0;
+            const p2Rate     = passedP1 > 0 ? (funded   / passedP1 * 100) : 0;
+            return { phase1: p1Rate, phase2: p2Rate, passedPhase1: passedP1, fundedCount: funded, inPhase2 };
+        }
+
         // Render Overview
         // === RENDER: OVERVIEW ===
         function renderOverview() {
@@ -2915,19 +2949,9 @@ window.setLanguage = setLanguage;
             const totalChallenges = yearAccounts.length;
             const phase1CurrentCount = yearAccounts.filter(a => a.status === 'PHASE 1').length;
             const phase2CurrentCount = yearAccounts.filter(a => a.status === 'PHASE 2').length;
-            const fundedCount = yearAccounts.filter(a => a.status === 'FUNDED').length;
             const suspendedCount = yearAccounts.filter(a => a.status === 'SUSPENDED').length;
-            
-            // Win rates CORREGIDOS
-            // Phase 1 Win Rate: % de challenges que SUPERAN Phase 1 (llegan a Phase 2 o FUNDED)
-            // Todas empiezan en Phase 1, así que las que lo superan son: Phase 2 + Funded
-            const passedPhase1 = phase2CurrentCount + fundedCount;
-            const phase1WinRate = totalChallenges > 0 ? (passedPhase1 / totalChallenges * 100) : 0;
-            
-            // Phase 2 Win Rate: De las que llegaron a Phase 2, cuántas se fondean
-            // Total que llegaron a Phase 2 = las que están ahora en Phase 2 + las que ya están Funded
-            const reachedPhase2 = phase2CurrentCount + fundedCount;
-            const phase2WinRate = reachedPhase2 > 0 ? (fundedCount / reachedPhase2 * 100) : 0;
+
+            const { phase1: phase1WinRate, phase2: phase2WinRate, passedPhase1, fundedCount } = calcWinRates(yearAccounts);
             
             const totalCosts = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
@@ -3914,10 +3938,7 @@ window.setLanguage = setLanguage;
 
             // Win rates
             const totalChallenges = yearAccounts.length;
-            const phase1WinRate = totalChallenges > 0 ? 
-                (yearAccounts.filter(a => a.status !== 'PHASE 1' && a.status !== 'SUSPENDED').length / totalChallenges * 100) : 0;
-            const passedPhase1 = yearAccounts.filter(a => a.status === 'PHASE 2' || a.status === 'FUNDED').length;
-            const phase2WinRate = passedPhase1 > 0 ? (fundedAccounts / passedPhase1 * 100) : 0;
+            const { phase1: phase1WinRate, phase2: phase2WinRate } = calcWinRates(yearAccounts);
 
             // Avg time to funding
             const avgTimeToFunding = fundedAccountsWithDays.length > 0 
@@ -4412,12 +4433,9 @@ window.setLanguage = setLanguage;
             metrics.netprofit = metrics.payouts - metrics.invested;
             metrics.multiple = metrics.invested > 0 ? (metrics.payouts / metrics.invested) : 0;
 
-            const totalChallenges = filterData.length;
-            const passedPhase1 = filterData.filter(a => a.status === 'PHASE 2' || a.status === 'FUNDED').length;
-            metrics.winrate = totalChallenges > 0 ? (passedPhase1 / totalChallenges * 100) : 0;
-            
-            const reachedPhase2 = filterData.filter(a => a.status === 'PHASE 2').length + metrics.funded;
-            metrics.winrate2 = reachedPhase2 > 0 ? (metrics.funded / reachedPhase2 * 100) : 0;
+            const { phase1: wr1, phase2: wr2 } = calcWinRates(filterData);
+            metrics.winrate  = wr1;
+            metrics.winrate2 = wr2;
 
             const fundedWithDays = filterData
                 .filter(a => a.status === 'FUNDED')
