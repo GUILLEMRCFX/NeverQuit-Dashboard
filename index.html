@@ -1570,34 +1570,46 @@
                     <!-- Official NeverQuit logo — SVG inline recreation -->
                     <svg class="nq-logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="NeverQuit logo">
                       <defs>
-                        <!-- Soft glow -->
-                        <filter id="nq-glow" x="-55%" y="-55%" width="210%" height="210%">
-                          <feGaussianBlur stdDeviation="3.5" result="b"/>
+                        <!-- Soft glow with double blur pass for more intensity -->
+                        <filter id="nq-glow" x="-60%" y="-60%" width="220%" height="220%">
+                          <feGaussianBlur stdDeviation="4" result="b"/>
+                          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <!-- Volumetric halo — wide and layered -->
+                        <filter id="nq-halo-f" x="-150%" y="-150%" width="400%" height="400%">
+                          <feGaussianBlur stdDeviation="18" result="b"/>
+                          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <!-- Medium glow for highlights -->
+                        <filter id="nq-hl-f" x="-80%" y="-80%" width="260%" height="260%">
+                          <feGaussianBlur stdDeviation="6" result="b"/>
                           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                         </filter>
-                        <!-- Strong halo glow -->
-                        <filter id="nq-halo-f" x="-120%" y="-120%" width="340%" height="340%">
-                          <feGaussianBlur stdDeviation="14" result="b"/>
-                          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                        <!-- Ring gradient: bright upper-left → dark lower-right -->
-                        <linearGradient id="nq-rg" x1="15%" y1="5%" x2="85%" y2="95%">
-                          <stop offset="0%"   stop-color="#d4ffb0"/>
-                          <stop offset="22%"  stop-color="#2ECC71"/>
-                          <stop offset="62%"  stop-color="#1a7a3a"/>
+                        <!-- Ring gradient: bright yellowish-green top → deep green bottom -->
+                        <linearGradient id="nq-rg" x1="20%" y1="0%" x2="80%" y2="100%">
+                          <stop offset="0%"   stop-color="#e8ffb0"/>
+                          <stop offset="15%"  stop-color="#a8ff6e"/>
+                          <stop offset="35%"  stop-color="#2ECC71"/>
+                          <stop offset="65%"  stop-color="#1a7a3a"/>
                           <stop offset="100%" stop-color="#0b2e14"/>
                         </linearGradient>
                         <!-- Orbital gradient: dark left → bright right tip -->
                         <linearGradient id="nq-og" x1="0%" y1="50%" x2="100%" y2="50%">
                           <stop offset="0%"   stop-color="#0b2e14"/>
                           <stop offset="40%"  stop-color="#2ECC71"/>
-                          <stop offset="82%"  stop-color="#a8ff78"/>
-                          <stop offset="100%" stop-color="#d4ffb0"/>
+                          <stop offset="82%"  stop-color="#b0ff7a"/>
+                          <stop offset="100%" stop-color="#e0ffb0"/>
                         </linearGradient>
-                        <!-- Ambient radial halo -->
-                        <radialGradient id="nq-ambient" cx="50%" cy="46%" r="50%">
-                          <stop offset="0%"   stop-color="#2ECC71" stop-opacity="0.28"/>
-                          <stop offset="65%"  stop-color="#2ECC71" stop-opacity="0.06"/>
+                        <!-- Core radial gradient: subtle green tinge on upper-left edge -->
+                        <radialGradient id="nq-core" cx="38%" cy="36%" r="62%">
+                          <stop offset="0%"   stop-color="#0e1c11"/>
+                          <stop offset="65%"  stop-color="#07100a"/>
+                          <stop offset="100%" stop-color="#040c06"/>
+                        </radialGradient>
+                        <!-- Ambient radial halo — larger, more present -->
+                        <radialGradient id="nq-ambient" cx="50%" cy="44%" r="52%">
+                          <stop offset="0%"   stop-color="#2ECC71" stop-opacity="0.38"/>
+                          <stop offset="55%"  stop-color="#2ECC71" stop-opacity="0.10"/>
                           <stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/>
                         </radialGradient>
                         <!-- Clip: behind ring (bottom half) -->
@@ -1606,31 +1618,32 @@
                         <clipPath id="nq-front"><rect x="0" y="0" width="200" height="98"/></clipPath>
                       </defs>
 
-                      <!-- Ambient halo -->
-                      <ellipse cx="100" cy="95" rx="84" ry="76" fill="url(#nq-ambient)"/>
+                      <!-- Ambient soft green cloud -->
+                      <ellipse cx="100" cy="93" rx="90" ry="82" fill="url(#nq-ambient)"/>
 
-                      <!-- Wide outer glow of main ring -->
+                      <!-- Volumetric outer glow — two stacked layers -->
                       <circle cx="100" cy="98" r="52" fill="none" stroke="#2ECC71"
-                              stroke-width="26" opacity="0.1" filter="url(#nq-halo-f)"/>
+                              stroke-width="32" opacity="0.07" filter="url(#nq-halo-f)"/>
+                      <circle cx="100" cy="98" r="52" fill="none" stroke="#4ade80"
+                              stroke-width="18" opacity="0.13" filter="url(#nq-halo-f)"/>
 
                       <!-- Orbital ring — BACK half (behind the main ring) -->
                       <ellipse cx="100" cy="98" rx="86" ry="20"
-                               fill="none" stroke="url(#nq-og)" stroke-width="4.5"
+                               fill="none" stroke="url(#nq-og)" stroke-width="4"
                                transform="rotate(-24 100 98)"
                                clip-path="url(#nq-back)"
-                               opacity="0.45" filter="url(#nq-glow)"/>
+                               opacity="0.5" filter="url(#nq-glow)"/>
 
-                      <!-- Main ring — glow layer -->
-                      <circle cx="100" cy="98" r="52" fill="none" stroke="#2ECC71"
-                              stroke-width="20" opacity="0.2" filter="url(#nq-halo-f)"/>
                       <!-- Main ring — solid visible stroke -->
                       <circle cx="100" cy="98" r="52" fill="none"
                               stroke="url(#nq-rg)" stroke-width="14" filter="url(#nq-glow)"/>
 
-                      <!-- Black hole core -->
-                      <circle cx="100" cy="98" r="45" fill="#07100a"/>
+                      <!-- Black hole core with depth gradient -->
+                      <circle cx="100" cy="98" r="45" fill="url(#nq-core)"/>
                       <!-- Inner edge shimmer -->
-                      <circle cx="100" cy="98" r="45" fill="none" stroke="#1f4d28" stroke-width="1.2" opacity="0.7"/>
+                      <circle cx="100" cy="98" r="45" fill="none" stroke="#1f4d28" stroke-width="1.5" opacity="0.85"/>
+                      <!-- Inner dark ring for extra depth -->
+                      <circle cx="100" cy="98" r="41" fill="none" stroke="#0a1f0d" stroke-width="2.5" opacity="0.5"/>
 
                       <!-- Orbital ring — FRONT half (in front of the main ring) -->
                       <ellipse cx="100" cy="98" rx="86" ry="20"
@@ -1639,24 +1652,35 @@
                                clip-path="url(#nq-front)"
                                filter="url(#nq-glow)"/>
 
-                      <!-- Swoosh tip at upper-right end of orbital (~178,63) -->
+                      <!-- TOP HIGHLIGHT — bright crescent arc (light from upper-left) -->
+                      <path d="M 63 67 Q 80 53 100 52 Q 116 52 128 60"
+                            fill="none" stroke="#c8ffb0" stroke-width="5.5" stroke-linecap="round"
+                            opacity="0.88" filter="url(#nq-hl-f)"/>
+                      <!-- Highlight specular core (pure white centre) -->
+                      <path d="M 68 69 Q 83 57 100 56 Q 114 56 125 63"
+                            fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+                            opacity="0.45"/>
+
+                      <!-- Swoosh tip at upper-right end of orbital -->
                       <path d="M 174 67 C 180 58 190 50 194 46 C 189 53 184 63 178 70 Z"
                             fill="#c8ff9e" opacity="0.95" filter="url(#nq-glow)"/>
                       <!-- Tip inner highlight -->
                       <path d="M 177 65 C 182 58 189 52 193 49 C 188 55 184 62 180 67 Z"
-                            fill="#ffffff" opacity="0.4"/>
+                            fill="#ffffff" opacity="0.5"/>
 
-                      <!-- Scattered star particles -->
-                      <circle cx="75"  cy="42"  r="1.8" fill="#2ECC71" opacity="0.8" filter="url(#nq-glow)"/>
-                      <circle cx="152" cy="47"  r="2.2" fill="#6ee89e" opacity="0.85" filter="url(#nq-glow)"/>
-                      <circle cx="168" cy="84"  r="1.2" fill="#2ECC71" opacity="0.55"/>
-                      <circle cx="38"  cy="80"  r="1.5" fill="#2ECC71" opacity="0.5"/>
-                      <circle cx="158" cy="142" r="1.2" fill="#2ECC71" opacity="0.4"/>
-                      <circle cx="50"  cy="132" r="1.0" fill="#58d68d" opacity="0.35"/>
-                      <circle cx="132" cy="34"  r="1.1" fill="#c8ff9e" opacity="0.65"/>
-                      <circle cx="42"  cy="54"  r="1.3" fill="#2ECC71" opacity="0.3"/>
-                      <circle cx="174" cy="112" r="1.0" fill="#2ECC71" opacity="0.4"/>
-                      <circle cx="88"  cy="155" r="1.4" fill="#2ECC71" opacity="0.35"/>
+                      <!-- Scattered star particles — brighter with glow -->
+                      <circle cx="75"  cy="42"  r="2.2" fill="#6ee89e" opacity="0.95" filter="url(#nq-glow)"/>
+                      <circle cx="152" cy="47"  r="2.8" fill="#b0ff80" opacity="0.92" filter="url(#nq-glow)"/>
+                      <circle cx="132" cy="34"  r="1.8" fill="#d4ffb0" opacity="0.85" filter="url(#nq-glow)"/>
+                      <circle cx="118" cy="38"  r="1.4" fill="#a8ff6e" opacity="0.75" filter="url(#nq-glow)"/>
+                      <circle cx="168" cy="84"  r="1.5" fill="#2ECC71" opacity="0.75" filter="url(#nq-glow)"/>
+                      <circle cx="38"  cy="80"  r="1.8" fill="#2ECC71" opacity="0.65" filter="url(#nq-glow)"/>
+                      <circle cx="42"  cy="54"  r="1.6" fill="#2ECC71" opacity="0.55" filter="url(#nq-glow)"/>
+                      <circle cx="158" cy="142" r="1.4" fill="#2ECC71" opacity="0.5"/>
+                      <circle cx="50"  cy="132" r="1.2" fill="#58d68d" opacity="0.45"/>
+                      <circle cx="174" cy="112" r="1.2" fill="#2ECC71" opacity="0.5"/>
+                      <circle cx="88"  cy="155" r="1.6" fill="#2ECC71" opacity="0.4"/>
+                      <circle cx="60"  cy="110" r="1.0" fill="#2ECC71" opacity="0.35"/>
                     </svg>
 
                     <h1>NEVERQUIT</h1>
