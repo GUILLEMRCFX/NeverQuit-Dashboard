@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEVER QUIT DASHBOARD</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -901,17 +901,31 @@
         }
 
         /* Login Screen Styles */
+        /* iOS: bloquear scroll mientras el login está activo */
+        body.login-active {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            /* iOS Safari: evitar rubber-band scroll en el overlay */
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: none;
             background: linear-gradient(135deg, #121417 0%, #1a1d23 100%);
             z-index: 10000;
             display: flex;
             justify-content: center;
             align-items: center;
+            /* Centrar verticalmente aunque el teclado redimensione el viewport */
+            min-height: 100dvh;
             opacity: 1;
             transition: opacity 0.5s ease-out;
         }
@@ -919,6 +933,7 @@
         .login-overlay.hidden {
             opacity: 0;
             pointer-events: none;
+            touch-action: none;
         }
 
         .login-box {
@@ -1353,9 +1368,149 @@
             margin-top: 2px;
         }
         .hp-del:hover { opacity: 1; }
+
+        /* ── Certificate upload button ── */
+        .cert-upload-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px dashed rgba(255,255,255,0.18);
+            border-radius: 10px;
+            padding: 0.65rem 1rem;
+            font-size: 0.88rem;
+            color: #9AA0A6;
+            transition: border-color 0.2s, color 0.2s;
+            user-select: none;
+        }
+        .cert-upload-label:hover {
+            border-color: #2ECC71;
+            color: #2ECC71;
+        }
+
+        /* ── Hall of Fame ── */
+        .hof-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .hof-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #2ECC71 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+        }
+        .hof-header p { color: #9AA0A6; font-size: 0.9rem; }
+
+        .hof-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .hof-stat {
+            text-align: center;
+            background: rgba(255,215,0,0.06);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 14px;
+            padding: 1rem 1.8rem;
+        }
+        .hof-stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #FFD700;
+        }
+        .hof-stat-label { font-size: 0.78rem; color: #9AA0A6; margin-top: 0.2rem; letter-spacing: 0.05em; text-transform: uppercase; }
+
+        .hof-grid {
+            columns: 3 240px;
+            column-gap: 1rem;
+            row-gap: 1rem;
+        }
+        @media (max-width: 640px) { .hof-grid { columns: 1; } }
+
+        .hof-card {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255,215,0,0.18);
+            background: #181B20;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .hof-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(255,215,0,0.15);
+        }
+        .hof-card img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+            cursor: zoom-in;
+        }
+        .hof-card-body {
+            padding: 0.75rem 1rem;
+        }
+        .hof-card-amount {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #2ECC71;
+        }
+        .hof-card-meta {
+            font-size: 0.78rem;
+            color: #9AA0A6;
+            margin-top: 0.25rem;
+        }
+        .hof-no-cert {
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 14px;
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            padding: 1.2rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .hof-no-cert-icon { font-size: 1.6rem; }
+        .hof-no-cert-amount { font-size: 1.1rem; font-weight: 700; color: #2ECC71; }
+        .hof-no-cert-meta { font-size: 0.75rem; color: #9AA0A6; margin-top: 0.15rem; }
+
+        /* Lightbox */
+        #hofLightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+        }
+        #hofLightbox.active { display: flex; }
+        #hofLightbox img {
+            max-width: 92vw;
+            max-height: 88vh;
+            border-radius: 10px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        }
+        #hofLightboxClose {
+            position: absolute;
+            top: 1rem; right: 1.2rem;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            line-height: 1;
+            background: none;
+            border: none;
+        }
     </style>
 </head>
-<body>
+<body class="login-active">
     <!-- Language Selector: ES | EN -->
     <div class="lang-switch">
         <button class="lang-switch-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
@@ -1447,6 +1602,7 @@
             <button class="tab" data-tab="ceoview">CEO View</button>
             <button class="tab" data-tab="efficiency">Capital Efficiency</button>
             <button class="tab" data-tab="wrapped">Wrapped</button>
+            <button class="tab" data-tab="hallofame">Hall of Fame</button>
         </div>
 
         <!-- CONTROL CENTER -->
@@ -1524,12 +1680,15 @@
                         <input type="date" id="payoutDate">
                     </div>
                     <div class="form-group">
-                        <label>Status</label>
-                        <select id="payoutStatus">
-                            <option value="Solicitado">Solicitado</option>
-                            <option value="Aprobado">Aprobado</option>
-                            <option value="Recibido" selected>Recibido</option>
-                        </select>
+                        <label>Certificado <span style="font-weight:400;color:#9AA0A6;font-size:0.8rem;">(opcional · JPEG/PNG · máx 3MB)</span></label>
+                        <label class="cert-upload-label" id="certUploadLabel" for="payoutCertificate">
+                            <span id="certUploadText">📎 Adjuntar certificado</span>
+                            <input type="file" id="payoutCertificate" accept="image/jpeg,image/jpg,image/png" style="display:none;" onchange="handleCertPreview(this)">
+                        </label>
+                        <div id="certPreviewWrap" style="display:none;margin-top:0.5rem;position:relative;">
+                            <img id="certPreview" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);object-fit:cover;">
+                            <button type="button" onclick="clearCertificate()" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border:none;color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:0.75rem;line-height:22px;text-align:center;">✕</button>
+                        </div>
                     </div>
                     <button class="btn" onclick="registerPayout()">Registrar Payout</button>
                 </div>
@@ -1553,6 +1712,9 @@
 
         <!-- WRAPPED -->
         <div id="wrapped" class="tab-content"></div>
+
+        <!-- HALL OF FAME -->
+        <div id="hallofame" class="tab-content"></div>
     </div>
 
     <script>
@@ -1883,6 +2045,7 @@ window.setLanguage = setLanguage;
                 
                 // Ocultar login con animación
                 $('loginOverlay').classList.add('hidden');
+                document.body.classList.remove('login-active');
                 const _hdr = document.getElementById('headerUsername');
                 if (_hdr) _hdr.textContent = `◇ ${username.toUpperCase()}`;
                 initDashParticles();
@@ -1911,6 +2074,7 @@ window.setLanguage = setLanguage;
             localStorage.setItem('neverQuitUsername', 'dev-mode');
 
             $('loginOverlay').classList.add('hidden');
+            document.body.classList.remove('login-active');
             initDashParticles();
 
             setTimeout(() => {
@@ -1972,9 +2136,16 @@ window.setLanguage = setLanguage;
         window.toggleHistoryPanel    = toggleHistoryPanel;
         window.deleteHistoryEntry    = deleteHistoryEntry;
 
+        // Bloquear scroll/rubber-band en iOS cuando el overlay está activo
+        const _loginOverlay = $('loginOverlay');
+        if (_loginOverlay) {
+            _loginOverlay.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+        }
+
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
+            document.body.classList.remove('login-active');
             initDashParticles();
             // Inicializar dashboard después de un breve delay
             setTimeout(() => {
@@ -2276,7 +2447,7 @@ window.setLanguage = setLanguage;
                         <div class="hp-entry-info">
                             <strong>#${p.accountNumber}</strong>
                             <span>${p.propFirm} · €${p.amount.toLocaleString()}</span>
-                            <span>${p.status} · ${fmtDate(p.payoutDate)}</span>
+                            <span>${fmtDate(p.payoutDate)}</span>
                         </div>
                         <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="Eliminar payout">✕</button>
                     </div>`;
@@ -2620,18 +2791,59 @@ window.setLanguage = setLanguage;
         }
 
         // Register payout
-        function registerPayout() {
-            const accountId = document.getElementById('payoutAccountId').value;
-            const amount = parseFloat(document.getElementById('payoutAmount').value);
-            const payoutDate = document.getElementById('payoutDate').value;
-            const status = document.getElementById('payoutStatus').value;
+        // Comprime una imagen a máx `maxPx` de ancho, devuelve base64 JPEG
+        function compressImage(file, maxPx, quality) {
+            return new Promise((resolve, reject) => {
+                if (file.size > 3 * 1024 * 1024) {
+                    reject(new Error('El archivo supera los 3MB. Usa una imagen más pequeña.'));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('Imagen no válida'));
+                    img.onload = () => {
+                        const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+                        const canvas = document.createElement('canvas');
+                        canvas.width  = Math.round(img.width  * scale);
+                        canvas.height = Math.round(img.height * scale);
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
-            if (!accountId || !amount || !payoutDate || !status) {
+        function handleCertPreview(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            document.getElementById('certPreview').src = url;
+            document.getElementById('certPreviewWrap').style.display = 'block';
+            document.getElementById('certUploadText').textContent = '✓ ' + file.name;
+        }
+
+        function clearCertificate() {
+            const inp = document.getElementById('payoutCertificate');
+            inp.value = '';
+            document.getElementById('certPreviewWrap').style.display = 'none';
+            document.getElementById('certUploadText').textContent = '📎 Adjuntar certificado';
+        }
+
+        async function registerPayout() {
+            const accountId = document.getElementById('payoutAccountId').value;
+            const amount    = parseFloat(document.getElementById('payoutAmount').value);
+            const payoutDate = document.getElementById('payoutDate').value;
+            const certInput  = document.getElementById('payoutCertificate');
+
+            if (!accountId || !amount || !payoutDate) {
                 showAlert('⚠️ Completa todos los campos', 'error');
                 return;
             }
 
-            // CORRECCIÓN: Validar fecha futura
             if (new Date(payoutDate) > new Date()) {
                 showAlert('La fecha de payout no puede ser futura', 'error');
                 return;
@@ -2642,7 +2854,6 @@ window.setLanguage = setLanguage;
                 return;
             }
 
-            // CORRECCIÓN: Validar que el payout no sea absurdamente alto (>200K€ en una sola operación)
             const account = data.master_comptes.find(a => a.id === accountId);
             if (account) {
                 const accountSizeNum = parseInt(account.accountSize.replace('K', '')) * 1000;
@@ -2652,44 +2863,53 @@ window.setLanguage = setLanguage;
                 }
             }
 
+            // Comprimir certificado si se adjuntó
+            let certificateBase64 = null;
+            if (certInput && certInput.files.length > 0) {
+                try {
+                    certificateBase64 = await compressImage(certInput.files[0], 900, 0.78);
+                } catch (err) {
+                    showAlert(`⚠️ ${err.message}`, 'error');
+                    return;
+                }
+            }
+
             const year = new Date(payoutDate).getFullYear();
             const newPayout = {
-                id: `PAY${Date.now()}`,
-                accountId: accountId,
-                year: year,
-                payoutDate: payoutDate,
-                amount: amount,
-                status: status
+                id:               `PAY${Date.now()}`,
+                accountId:        accountId,
+                year:             year,
+                payoutDate:       payoutDate,
+                amount:           amount,
+                certificateBase64: certificateBase64
             };
 
             data.payouts.push(newPayout);
             saveData();
 
-            // Push to persistent history
             actionHistory.payouts.push({
                 id:            newPayout.id,
                 accountId:     accountId,
                 accountNumber: account ? (account.accountNumber || account.id) : accountId,
                 propFirm:      account ? (account.propFirm || '') : '',
                 amount:        amount,
-                payoutDate:    payoutDate,
-                status:        status
+                payoutDate:    payoutDate
             });
             if (actionHistory.payouts.length > 20) actionHistory.payouts.shift();
             saveActionHistory();
             updateHistoryBadge();
 
-            // Guardar para deshacer
             saveLastAction('REGISTER_PAYOUT', {
-                id: newPayout.id,
-                amount: amount,
+                id:        newPayout.id,
+                amount:    amount,
                 accountId: accountId
             });
-            
+
             const accountDisplay = account ? (account.accountNumber || account.id) : accountId;
             showAlert(`Payout registrado: €${amount.toLocaleString()} desde ${accountDisplay}`, 'success');
-            
+
             document.getElementById('payoutAmount').value = '';
+            clearCertificate();
             updateUI();
         }
 
@@ -3594,7 +3814,6 @@ window.setLanguage = setLanguage;
                                     <th>Cuenta</th>
                                     <th>Prop Firm</th>
                                     <th>Monto</th>
-                                    <th>Estado</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -3605,15 +3824,12 @@ window.setLanguage = setLanguage;
                                         const account = allAccounts.find(a => a.id === payout.accountId);
                                         const accountNumber = account ? (account.accountNumber || account.id) : 'N/A';
                                         const propFirm = account ? account.propFirm : 'N/A';
-                                        const statusClass = payout.status === 'Recibido' ? 'funded' : payout.status === 'Aprobado' ? 'phase2' : 'phase1';
-                                        
                                         return `
                                             <tr>
                                                 <td>${new Date(payout.payoutDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES')}</td>
                                                 <td style="font-weight: 600;">${accountNumber}</td>
                                                 <td>${propFirm}</td>
                                                 <td style="font-weight: 700; color: #2ECC71;">€${payout.amount.toLocaleString()}</td>
-                                                <td><span class="status-badge ${statusClass}">${payout.status || 'Recibido'}</span></td>
                                             </tr>
                                         `;
                                     }).join('')}
@@ -4250,6 +4466,80 @@ window.setLanguage = setLanguage;
             updateUI();
         }
 
+        function openHofLightbox(src) {
+            document.getElementById('hofLightboxImg').src = src;
+            document.getElementById('hofLightbox').classList.add('active');
+        }
+        function closeHofLightbox() {
+            document.getElementById('hofLightbox').classList.remove('active');
+            document.getElementById('hofLightboxImg').src = '';
+        }
+
+        function renderHallOfFame() {
+            const container = document.getElementById('hallofame');
+            if (!container) return;
+
+            const payouts = [...data.payouts].sort((a, b) => new Date(b.payoutDate) - new Date(a.payoutDate));
+            const totalAmount = payouts.reduce((s, p) => s + p.amount, 0);
+            const withCert = payouts.filter(p => p.certificateBase64);
+
+            const allAccounts = data.master_comptes || [];
+
+            const cards = payouts.map(p => {
+                const acc = allAccounts.find(a => a.id === p.accountId);
+                const firm = acc ? acc.propFirm : 'N/A';
+                const num  = acc ? (acc.accountNumber || acc.id) : 'N/A';
+                const date = new Date(p.payoutDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+                const meta = `${firm} · #${num} · ${date}`;
+
+                if (p.certificateBase64) {
+                    return `
+                        <div class="hof-card">
+                            <img src="${p.certificateBase64}" alt="Certificado €${p.amount.toLocaleString()}" loading="lazy"
+                                 onclick="openHofLightbox('${p.certificateBase64}')">
+                            <div class="hof-card-body">
+                                <div class="hof-card-amount">€${p.amount.toLocaleString()}</div>
+                                <div class="hof-card-meta">${meta}</div>
+                            </div>
+                        </div>`;
+                }
+                return `
+                    <div class="hof-no-cert">
+                        <div class="hof-no-cert-icon">💰</div>
+                        <div>
+                            <div class="hof-no-cert-amount">€${p.amount.toLocaleString()}</div>
+                            <div class="hof-no-cert-meta">${meta}</div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div style="padding: 2rem 1rem; max-width: 1100px; margin: 0 auto;">
+                    <div class="hof-header">
+                        <h2>◈ HALL OF FAME</h2>
+                        <p>Cada payout es una victoria. Aquí quedan grabadas.</p>
+                    </div>
+                    <div class="hof-stats">
+                        <div class="hof-stat">
+                            <div class="hof-stat-value">€${totalAmount.toLocaleString()}</div>
+                            <div class="hof-stat-label">Total retirado</div>
+                        </div>
+                        <div class="hof-stat">
+                            <div class="hof-stat-value">${payouts.length}</div>
+                            <div class="hof-stat-label">Payouts</div>
+                        </div>
+                        <div class="hof-stat">
+                            <div class="hof-stat-value">${withCert.length}</div>
+                            <div class="hof-stat-label">Con certificado</div>
+                        </div>
+                    </div>
+                    ${payouts.length === 0
+                        ? '<div class="empty-state" style="text-align:center;padding:3rem;">Aún no hay payouts registrados. ¡El primero será legendario!</div>'
+                        : `<div class="hof-grid">${cards}</div>`
+                    }
+                </div>`;
+        }
+
         function updateUI() {
             // Update account selects
             // Para Update Challenge: excluir SUSPENDED (estado terminal, sin transiciones posibles)
@@ -4303,6 +4593,7 @@ window.setLanguage = setLanguage;
             renderCEOView();
             renderCapitalEfficiency();
             renderWrapped();
+            renderHallOfFame();
 
             updateHistoryBadge();
         }
@@ -4339,6 +4630,9 @@ window.setLanguage = setLanguage;
                         break;
                     case 'wrapped':
                         renderWrapped();
+                        break;
+                    case 'hallofame':
+                        renderHallOfFame();
                         break;
                 }
             });
@@ -4876,6 +5170,12 @@ window.setLanguage = setLanguage;
             <button class="hp-close" onclick="toggleHistoryPanel()">✕</button>
         </div>
         <div class="hp-body" id="historyPanelBody"></div>
+    </div>
+
+    <!-- Hall of Fame lightbox -->
+    <div id="hofLightbox" onclick="closeHofLightbox()">
+        <button id="hofLightboxClose" onclick="closeHofLightbox()">✕</button>
+        <img id="hofLightboxImg" src="" alt="Certificado payout">
     </div>
 
 </body>
