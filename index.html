@@ -3907,10 +3907,18 @@ window.setLanguage = setLanguage;
                 if (allActiveAccounts.length === 0) {
                     updateSelect.innerHTML = '<option value="">No hay cuentas disponibles</option>';
                 } else {
+                    const statusOrder = { 'PHASE 1': 0, 'PHASE 2': 1, 'FUNDED': 2, 'SUSPENDED': 3 };
+                    const sortedAccounts = [...allActiveAccounts].sort((a, b) =>
+                        (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
+                    );
                     updateSelect.innerHTML = '<option value="">Selecciona una cuenta...</option>' +
-                        allActiveAccounts.map(a => {
-                            const displayNumber = a.accountNumber || a.id;
-                            return `<option value="${a.id}">${displayNumber} - ${a.propFirm} (${a.status})</option>`;
+                        sortedAccounts.map(a => {
+                            const num = a.accountNumber || a.id;
+                            const size = a.accountSize || '?';
+                            const firm = a.propFirm || '?';
+                            const status = a.status;
+                            const suspended = status === 'SUSPENDED' ? ' ⛔' : '';
+                            return `<option value="${a.id}">#${num} | ${size} | ${firm} — ${status}${suspended}</option>`;
                         }).join('');
                 }
                 // Reset status select + hint whenever accounts are reloaded
