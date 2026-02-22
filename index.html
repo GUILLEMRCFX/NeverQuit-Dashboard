@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEVER QUIT DASHBOARD</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -901,17 +901,31 @@
         }
 
         /* Login Screen Styles */
+        /* iOS: bloquear scroll mientras el login está activo */
+        body.login-active {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            /* iOS Safari: evitar rubber-band scroll en el overlay */
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: none;
             background: linear-gradient(135deg, #121417 0%, #1a1d23 100%);
             z-index: 10000;
             display: flex;
             justify-content: center;
             align-items: center;
+            /* Centrar verticalmente aunque el teclado redimensione el viewport */
+            min-height: 100dvh;
             opacity: 1;
             transition: opacity 0.5s ease-out;
         }
@@ -919,6 +933,7 @@
         .login-overlay.hidden {
             opacity: 0;
             pointer-events: none;
+            touch-action: none;
         }
 
         .login-box {
@@ -1355,7 +1370,7 @@
         .hp-del:hover { opacity: 1; }
     </style>
 </head>
-<body>
+<body class="login-active">
     <!-- Language Selector: ES | EN -->
     <div class="lang-switch">
         <button class="lang-switch-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
@@ -1883,6 +1898,7 @@ window.setLanguage = setLanguage;
                 
                 // Ocultar login con animación
                 $('loginOverlay').classList.add('hidden');
+                document.body.classList.remove('login-active');
                 const _hdr = document.getElementById('headerUsername');
                 if (_hdr) _hdr.textContent = `◇ ${username.toUpperCase()}`;
                 initDashParticles();
@@ -1911,6 +1927,7 @@ window.setLanguage = setLanguage;
             localStorage.setItem('neverQuitUsername', 'dev-mode');
 
             $('loginOverlay').classList.add('hidden');
+            document.body.classList.remove('login-active');
             initDashParticles();
 
             setTimeout(() => {
@@ -1972,9 +1989,16 @@ window.setLanguage = setLanguage;
         window.toggleHistoryPanel    = toggleHistoryPanel;
         window.deleteHistoryEntry    = deleteHistoryEntry;
 
+        // Bloquear scroll/rubber-band en iOS cuando el overlay está activo
+        const _loginOverlay = $('loginOverlay');
+        if (_loginOverlay) {
+            _loginOverlay.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+        }
+
         if (isLoggedIn) {
             // Ya está logueado, ocultar login
             $('loginOverlay').classList.add('hidden');
+            document.body.classList.remove('login-active');
             initDashParticles();
             // Inicializar dashboard después de un breve delay
             setTimeout(() => {
