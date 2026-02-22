@@ -136,29 +136,61 @@
             font-size: 0.9rem;
         }
 
-        .year-selector {
+        .header-actions {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-top: 1rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .year-selector label {
-            color: #9AA0A6;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        /* ─── PER-VIEW TIME FILTER ─── */
+        .view-header {
+            position: relative;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(230, 232, 235, 0.1);
+        }
+        .view-header h2 {
             font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #E6E8EB;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.02em;
         }
-
-        .year-selector select {
-            padding: 0.5rem 1rem;
+        .view-header .subtitle { color: #9AA0A6; font-size: 0.95rem; }
+        .time-filter {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+        .time-filter select {
+            padding: 0.45rem 0.9rem;
             background: #181B20;
-            border: 1px solid rgba(230, 232, 235, 0.1);
+            border: 1px solid rgba(230, 232, 235, 0.12);
             border-radius: 6px;
             color: #E6E8EB;
             font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .time-filter select:focus { outline: none; border-color: rgba(46,204,113,0.4); }
+        .view-label {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.2rem 0.75rem;
+            background: rgba(46,204,113,0.08);
+            border: 1px solid rgba(46,204,113,0.2);
+            border-radius: 20px;
+            color: #2ECC71;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         .btn-reset {
@@ -1188,14 +1220,7 @@
         <div class="header">
             <h1>NEVER QUIT DASHBOARD</h1>
             <p>Sistema de Gestión de Capital Profesional</p>
-            <div class="year-selector">
-                <label>AÑO ACTIVO:</label>
-                <select id="yearSelect">
-                    <option value="2023">2023</option>
-                    <option value="2024">2024</option>
-                    <option value="2025" selected>2025</option>
-                    <option value="2026">2026</option>
-                </select>
+            <div class="header-actions">
                 <button class="btn-reset" onclick="openResetModal()">🔄 Reset Datos</button>
                 <button class="btn-reset btn-reset--gray" onclick="logout()">🚪 Salir</button>
             </div>
@@ -2057,12 +2082,40 @@ window.setLanguage = setLanguage;
             return diffDays;
         }
 
+        // ─── TIME FILTER UTILITIES ───────────────────────────────────
+        // Per-view local filter state (independent, no global year)
+        let performanceTimeFilter = "ALL_TIME";
+        let propFirmTimeFilter    = "ALL_TIME";
+        let efficiencyTimeFilter  = "ALL_TIME";
+        let wrappedTimeFilter     = "ALL_TIME";
+
+        function getAvailableYears() {
+            const years = new Set();
+            data.master_comptes.forEach(a => { if (a.year) years.add(a.year); });
+            data.payouts.forEach(p => { if (p.year) years.add(p.year); });
+            return Array.from(years).sort();
+        }
+
+        function filterByYear(arr, selectedYear) {
+            if (selectedYear === "ALL_TIME") return arr;
+            return arr.filter(item => item.year === parseInt(selectedYear));
+        }
+
+        function buildYearOptions(selectedYear) {
+            const years = getAvailableYears();
+            let opts = `<option value="ALL_TIME" ${selectedYear === "ALL_TIME" ? "selected" : ""}>All-time</option>`;
+            years.forEach(y => {
+                opts += `<option value="${y}" ${String(selectedYear) === String(y) ? "selected" : ""}>${y}</option>`;
+            });
+            return opts;
+        }
+        // ─────────────────────────────────────────────────────────────
+
         // Render Overview
         // === RENDER: OVERVIEW ===
         function renderOverview() {
-            const activeYear = parseInt($('yearSelect').value);
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear);
-            const yearPayouts = data.payouts.filter(p => p.year === activeYear);
+            const yearAccounts = data.master_comptes;
+            const yearPayouts  = data.payouts;
 
             const activeFunded = yearAccounts.filter(a => a.status === 'FUNDED' && a.active).length;
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
@@ -2095,8 +2148,9 @@ window.setLanguage = setLanguage;
 
             const overviewHtml = `
                 <div class="dashboard-header">
-                    <h2>OVERVIEW · ${activeYear}</h2>
-                    <div class="subtitle">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <h2>OVERVIEW</h2>
+                    <span class="view-label">All-time business snapshot</span>
+                    <div class="subtitle" style="margin-top:0.5rem;">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
                 </div>
 
                 <div class="kpi-grid">
@@ -2205,7 +2259,7 @@ window.setLanguage = setLanguage;
                     }).join('');
 
                 accountsTableHtml = '<div class="table-container" style="margin-top:1.5rem;">'
-                    + '<h3 style="margin-bottom:1rem;font-size:1.1rem;font-weight:700;">◇ MIS CUENTAS · ' + activeYear + '</h3>'
+                    + '<h3 style="margin-bottom:1rem;font-size:1.1rem;font-weight:700;">◇ MIS CUENTAS — ALL TIME</h3>'
                     + '<table><thead><tr>'
                     + '<th>Cuenta</th><th>Prop Firm</th><th>Tamaño</th><th>Status</th><th>Coste</th><th>Fecha</th>'
                     + '</tr></thead><tbody>' + rows + '</tbody></table></div>';
@@ -2259,9 +2313,8 @@ window.setLanguage = setLanguage;
         // Render Performance
         // === RENDER: PERFORMANCE ===
         function renderPerformance() {
-            const activeYear = parseInt($('yearSelect').value);
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear);
-            const yearPayouts = data.payouts.filter(p => p.year === activeYear);
+            const yearAccounts = filterByYear(data.master_comptes, performanceTimeFilter);
+            const yearPayouts  = filterByYear(data.payouts, performanceTimeFilter);
             
             const totalChallenges = yearAccounts.length;
             const phase1CurrentCount = yearAccounts.filter(a => a.status === 'PHASE 1').length;
@@ -2301,10 +2354,15 @@ window.setLanguage = setLanguage;
             const bestFirm = roiByFirm[0] || { firm: 'N/A', roi: 0 };
 
             const performanceHtml = `
-                <div class="dashboard-header">
-                    <h2>PERFORMANCE · ${activeYear}</h2>
-                    ${totalChallenges === 0 ? `<div style="text-align:center;padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin challenges para ${activeYear} — crea una en Control Center</div>` : ''}
+                <div class="view-header">
+                    <h2>PERFORMANCE</h2>
+                    ${totalChallenges === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin challenges — crea una en Control Center</div>` : ''}
                     <div class="subtitle">Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <div class="time-filter">
+                        <select id="performanceTimeFilter" onchange="performanceTimeFilter=this.value;renderPerformance();">
+                            ${buildYearOptions(performanceTimeFilter)}
+                        </select>
+                    </div>
                 </div>
 
                 <div class="kpi-grid">
@@ -2607,19 +2665,17 @@ window.setLanguage = setLanguage;
         // Render Prop Firm View
         // === RENDER: PROP FIRM VIEW ===
         function renderPropFirm() {
-            const activeYear = parseInt($('yearSelect').value);
-            
             // Get selected firm from dropdown if it exists, otherwise default to FTMO
             const firmSelector = document.getElementById('firmSelector');
             const selectedFirm = firmSelector ? firmSelector.value : 'FTMO';
-            
+
             // CORRECCIÓN: Obtener configuración de la firma
             const firmConfig = PROP_FIRMS_CONFIG[selectedFirm] || PROP_FIRMS_CONFIG['FTMO'];
-            
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear && a.propFirm === selectedFirm);
-            const yearPayouts = data.payouts.filter(p => {
+
+            const yearAccounts = filterByYear(data.master_comptes, propFirmTimeFilter).filter(a => a.propFirm === selectedFirm);
+            const yearPayouts  = filterByYear(data.payouts, propFirmTimeFilter).filter(p => {
                 const account = data.master_comptes.find(a => a.id === p.accountId);
-                return p.year === activeYear && account && account.propFirm === selectedFirm;
+                return account && account.propFirm === selectedFirm;
             });
 
             const totalInvested = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
@@ -2636,10 +2692,15 @@ window.setLanguage = setLanguage;
             };
 
             const propFirmHtml = `
-                <div class="dashboard-header">
+                <div class="view-header">
                     <h2>PROP FIRM · ${selectedFirm}</h2>
-                    ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">Sin cuentas de ${selectedFirm} en ${activeYear}</div>` : ''}
-                    <div class="subtitle">Rendimiento Histórico · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">Sin cuentas de ${selectedFirm} en el período seleccionado</div>` : ''}
+                    <div class="subtitle">Rendimiento · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <div class="time-filter">
+                        <select id="propFirmTimeFilter" onchange="propFirmTimeFilter=this.value;renderPropFirm();">
+                            ${buildYearOptions(propFirmTimeFilter)}
+                        </select>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 2rem;">
@@ -2984,11 +3045,8 @@ window.setLanguage = setLanguage;
         // === RENDER: EFFICIENCY ===
         // Render Capital Efficiency
         function renderCapitalEfficiency() {
-            const activeYear = parseInt($('yearSelect').value);
-            
-            // All-time calculations
-            const allAccounts = data.master_comptes;
-            const allPayouts = data.payouts;
+            const allAccounts = filterByYear(data.master_comptes, efficiencyTimeFilter);
+            const allPayouts  = filterByYear(data.payouts, efficiencyTimeFilter);
             const totalWithdrawn = allPayouts.reduce((sum, p) => sum + p.amount, 0);
             const totalInvested = allAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
             const withdrawnToInvestedRatio = totalInvested > 0 ? totalWithdrawn / totalInvested : 0;
@@ -3027,10 +3085,15 @@ window.setLanguage = setLanguage;
             }
 
             const efficiencyHtml = `
-                <div class="dashboard-header">
-                    <h2>CAPITAL EFFICIENCY · ${activeYear}</h2>
-                    ${allAccounts.length === 0 ? `<div style="text-align:center;padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin datos — crea tu primera challenge</div>` : ''}
-                    <div class="subtitle">Rendimiento Histórico · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                <div class="view-header">
+                    <h2>CAPITAL EFFICIENCY</h2>
+                    ${allAccounts.length === 0 ? `<div style="padding:0.5rem;color:#F39C12;font-size:0.85rem;">Sin datos — crea tu primera challenge</div>` : ''}
+                    <div class="subtitle">Rendimiento · Actualizado ${new Date().toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })}</div>
+                    <div class="time-filter">
+                        <select id="efficiencyTimeFilter" onchange="efficiencyTimeFilter=this.value;renderCapitalEfficiency();">
+                            ${buildYearOptions(efficiencyTimeFilter)}
+                        </select>
+                    </div>
                 </div>
 
                 <div class="kpi-grid">
@@ -3232,9 +3295,8 @@ window.setLanguage = setLanguage;
         // Render Wrapped
         // === RENDER: WRAPPED ===
         function renderWrapped() {
-            const activeYear = parseInt($('yearSelect').value);
-            const yearAccounts = data.master_comptes.filter(a => a.year === activeYear);
-            const yearPayouts = data.payouts.filter(p => p.year === activeYear);
+            const yearAccounts = filterByYear(data.master_comptes, wrappedTimeFilter);
+            const yearPayouts  = filterByYear(data.payouts, wrappedTimeFilter);
 
             const totalPayouts = yearPayouts.reduce((sum, p) => sum + p.amount, 0);
             const totalInvested = yearAccounts.reduce((sum, a) => sum + a.challengeCost, 0);
@@ -3282,24 +3344,21 @@ window.setLanguage = setLanguage;
             }).filter(f => f.count > 0);
 
             const wrappedHtml = `
-                <div class="wrapped-header">
-                    <div class="wrapped-title">PROP FIRM WRAPPED · ${activeYear}</div>
+                <div class="wrapped-header" style="position:relative;">
+                    <div class="wrapped-title">PROP FIRM WRAPPED${wrappedTimeFilter !== "ALL_TIME" ? " · " + wrappedTimeFilter : ""}</div>
                     <div class="wrapped-subtitle">TU AÑO DE TRADING EN REVISIÓN</div>
                     <div style="margin-top: 1rem;">
-                        <select id="wrappedYearSelect" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;">
-                            <option value="2023" ${activeYear === 2023 ? 'selected' : ''}>2023</option>
-                            <option value="2024" ${activeYear === 2024 ? 'selected' : ''}>2024</option>
-                            <option value="2025" ${activeYear === 2025 ? 'selected' : ''}>2025</option>
-                            <option value="2026" ${activeYear === 2026 ? 'selected' : ''}>2026</option>
+                        <select id="wrappedYearSelect" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(243, 156, 18, 0.3); border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;"
+                            onchange="wrappedTimeFilter=this.value;renderWrapped();">
+                            ${buildYearOptions(wrappedTimeFilter)}
                         </select>
-                        <span style="margin-left: 1rem; color: #9AA0A6; font-size: 0.8rem;">↑ sincronizado con el selector de año del header</span>
                     </div>
                 </div>
 
                 ${yearAccounts.length === 0 ? `
                 <div style="text-align:center; padding: 3rem; color: #9AA0A6; border: 1px dashed rgba(230,232,235,0.15); border-radius: 12px; margin-bottom: 2rem;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Sin datos para ${activeYear}</div>
+                    <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Sin datos para el período seleccionado</div>
                     <div style="font-size: 0.9rem;">Crea tu primera challenge en Control Center para ver tu Wrapped</div>
                 </div>` : ''}
 
@@ -3654,30 +3713,11 @@ window.setLanguage = setLanguage;
             });
         });
 
-        // Year selector
-        $('yearSelect').addEventListener('change', updateUI);
-
         // Set today's date
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('createPurchaseDate').value = today;
         document.getElementById('updateStatusDate').value = today;
         document.getElementById('payoutDate').value = today;
-
-        // BUG FIX: Inicializar yearSelect al año actual (no hardcodeado en 2025)
-        const currentYear = new Date().getFullYear().toString();
-        const yearSelectEl = $('yearSelect');
-        let foundYear = false;
-        Array.from(yearSelectEl.options).forEach(opt => {
-            if (opt.value === currentYear) { opt.selected = true; foundYear = true; }
-            else { opt.selected = false; }
-        });
-        if (!foundYear) {
-            const newOpt = document.createElement('option');
-            newOpt.value = currentYear;
-            newOpt.textContent = currentYear;
-            newOpt.selected = true;
-            yearSelectEl.appendChild(newOpt);
-        }
 
         // === INIT ===
         // Initial render
@@ -3698,14 +3738,7 @@ window.setLanguage = setLanguage;
 
         // También añadir listeners después de renderizar wrapped
         function initWrappedListeners() {
-            // Sincronizar wrappedYearSelect ↔ yearSelect global
-            const wrappedYearSel = document.getElementById('wrappedYearSelect');
-            if (wrappedYearSel) {
-                wrappedYearSel.addEventListener('change', function() {
-                    $('yearSelect').value = this.value;
-                    renderWrapped();
-                });
-            }
+            // wrappedYearSelect is now fully local — handled inline via onchange
 
             const monthlyRadio = document.querySelector('input[name="wrappedPeriod"][value="monthly"]');
             const yearlyRadio = document.querySelector('input[name="wrappedPeriod"][value="yearly"]');
@@ -3741,10 +3774,10 @@ window.setLanguage = setLanguage;
 
             // Get selected period
             const period = document.querySelector('input[name="wrappedPeriod"]:checked').value;
-            const year = parseInt($('yearSelect').value);
-            let periodText = year.toString();
-            let filterData = data.master_comptes.filter(a => a.year === year);
-            let filterPayouts = data.payouts.filter(p => p.year === year);
+            const year = wrappedTimeFilter !== "ALL_TIME" ? parseInt(wrappedTimeFilter) : new Date().getFullYear();
+            let periodText = wrappedTimeFilter !== "ALL_TIME" ? year.toString() : "All-time";
+            let filterData = filterByYear(data.master_comptes, wrappedTimeFilter);
+            let filterPayouts = filterByYear(data.payouts, wrappedTimeFilter);
 
             if (period === 'monthly') {
                 const month = parseInt(document.getElementById('wrappedMonth').value);
