@@ -2623,10 +2623,8 @@ window.setLanguage = setLanguage;
         // ── Logout ────────────────────────────────────────────────────────────
 
         async function nqLogout() {
-            if (confirm('Segur que vols tancar la sessió?')) {
-                await logout();
-                location.reload();
-            }
+            await logout();
+            location.reload();
         }
 
         // ============================================
