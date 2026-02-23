@@ -2670,23 +2670,41 @@ window.setLanguage = setLanguage;
             _loginOverlay.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
         }
 
-        // ── Supabase session check ───────────────────────────────────────────
-        // checkSession / checkBetaAccess are defined in auth.js (loaded before
-        // this script). We use async/await — DOMContentLoaded handler is async.
+        // ── Supabase auth init ────────────────────────────────────────────────
+        // 1. Check if arriving from email-confirmation link (?code=XXXX)
+        // 2. Fall back to existing session check
         try {
-            const { session } = await checkSession();
-            if (session) {
-                const { profile } = await checkBetaAccess(session.user.id);
+            // Step 1 — handle email confirmation / magic-link callback
+            const { session: cbSession, error: cbErr, handled } =
+                await handleEmailConfirmation();
+
+            if (handled && cbErr) {
+                // Code exchange failed — show friendly error and stay on login
+                _showAuthError('Error en confirmar el email. Torna a intentar-ho o contacta suport.');
+            } else if (cbSession) {
+                // Email confirmed successfully → verify beta access and enter
+                const { profile } = await checkBetaAccess(cbSession.user.id);
                 if (profile?.beta_access) {
-                    onLoginSuccess(session.user.email);
+                    onLoginSuccess(cbSession.user.email);
                 } else {
                     showBetaWaitScreen();
                 }
+            } else {
+                // Step 2 — normal session restore (user already logged in)
+                const { session } = await checkSession();
+                if (session) {
+                    const { profile } = await checkBetaAccess(session.user.id);
+                    if (profile?.beta_access) {
+                        onLoginSuccess(session.user.email);
+                    } else {
+                        showBetaWaitScreen();
+                    }
+                }
+                // No session → login overlay stays visible
             }
-            // If no session: login overlay stays visible (body keeps login-active)
         } catch (err) {
-            // auth.js not yet available or network error — stay on login screen
-            console.warn('Auth check failed:', err);
+            // Network error or auth.js not yet available — stay on login screen
+            console.warn('Auth init failed:', err);
         }
         // ─────────────────────────────────────────────────────────────────────
 
