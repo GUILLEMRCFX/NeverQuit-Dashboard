@@ -1074,6 +1074,53 @@
             color: #2ECC71;
         }
 
+        /* Auth tabs (Login / Register toggle) */
+        .auth-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            background: #121417;
+            border-radius: 10px;
+            padding: 0.25rem;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 0.55rem;
+            border: none;
+            background: transparent;
+            color: #9AA0A6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ECC71;
+        }
+
+        /* Success info box (e.g. register confirmation) */
+        .login-success-msg {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ECC71;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+        .login-success-msg.show { display: block; }
+
+        /* Loading spinner on auth buttons */
+        .login-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
         .login-error {
             background: rgba(231, 76, 60, 0.1);
             border: 1px solid rgba(231, 76, 60, 0.3);
@@ -1554,51 +1601,34 @@
         }
 
         /* ═══════════════════════════════════════════════════════
-           GOLDEN MODE — Max Allocation assolit
+           PROPFIRM GOLDEN — Max Allocation assolit (SCOPED al tab)
            ═══════════════════════════════════════════════════════ */
 
-        /* KPI cards: vora daurada subtil */
-        .golden-mode .kpi-card {
+        /* KPI cards — daurats DINS del tab PropFirm únicament */
+        #propfirm.propfirm-golden .kpi-card {
             border-color: rgba(212, 175, 55, 0.3) !important;
             box-shadow: 0 4px 20px rgba(212, 175, 55, 0.08) !important;
         }
-        .golden-mode .kpi-card:hover {
+        #propfirm.propfirm-golden .kpi-card:hover {
             box-shadow: 0 8px 32px rgba(255, 215, 0, 0.18) !important;
             border-color: rgba(255, 215, 0, 0.45) !important;
         }
-
-        /* Valors KPI: daurats */
-        .golden-mode .kpi-value {
+        #propfirm.propfirm-golden .kpi-value {
             color: #FFD700 !important;
-            text-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
         }
-        /* Mantenir verd pels que s'especifiquen explícitament amb classe success si cal — no tocar el color verd de status */
-
-        /* Títols de les vistes */
-        .golden-mode .view-header h2,
-        .golden-mode .dashboard-header h2 {
+        #propfirm.propfirm-golden .view-header h2 {
             color: #FFD700 !important;
-            text-shadow: 0 0 24px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
-
-        /* Table containers: vora daurada */
-        .golden-mode .table-container {
+        #propfirm.propfirm-golden .table-container {
             border-color: rgba(212, 175, 55, 0.2) !important;
         }
-        .golden-mode .table-container h3 {
+        #propfirm.propfirm-golden .table-container h3 {
             color: #FFD700 !important;
         }
-
-        /* Tab activa: daurat */
-        .golden-mode .tab.active {
-            background: linear-gradient(135deg, #B8960C, #FFD700) !important;
-            color: #121417 !important;
-        }
-
-        /* Header del dashboard */
-        .golden-mode .header h1 {
-            color: #FFD700 !important;
-            text-shadow: 0 0 20px rgba(255,215,0,0.3);
+        #propfirm.propfirm-golden .subtitle {
+            color: rgba(255, 215, 0, 0.55) !important;
         }
 
         /* Barra de progrés d'allocació */
@@ -1621,26 +1651,72 @@
             box-shadow: 0 0 12px rgba(255,215,0,0.5);
         }
 
-        /* Trophy overlay */
-        #goldenTrophyOverlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
+        /* ── BETA badge ─────────────────────────────────── */
+        .beta-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 4px;
+            color: #FFD700;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            vertical-align: middle;
+            margin-left: 0.5rem;
         }
-        #goldenTrophyOverlay .trophy-icon {
+
+        /* ── Wrapped — Coming Soon ──────────────────────── */
+        .tab-coming-soon {
+            opacity: 0.45;
+            position: relative;
+        }
+        .tab-coming-soon::after {
+            content: 'SOON';
             position: absolute;
-            font-size: inherit;
-            user-select: none;
-            animation: trophyFloat 8s ease-in-out infinite;
+            top: -6px;
+            right: -4px;
+            background: rgba(243, 156, 18, 0.85);
+            color: #121417;
+            font-size: 0.52rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            padding: 0.05rem 0.3rem;
+            border-radius: 3px;
         }
-        @keyframes trophyFloat {
-            0%, 100% { transform: translateY(0px) rotate(var(--rot)); opacity: var(--opa); }
-            50%       { transform: translateY(-12px) rotate(var(--rot)); opacity: calc(var(--opa) * 1.4); }
+        .wrapped-coming-soon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 55vh;
+            text-align: center;
+            color: #9AA0A6;
+        }
+        .wrapped-coming-soon .cs-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+        .wrapped-coming-soon h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #F39C12;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 0 16px rgba(243,156,18,0.3);
+        }
+        .wrapped-coming-soon p {
+            font-size: 0.9rem;
+            max-width: 360px;
+            line-height: 1.7;
         }
     </style>
+    <!-- Supabase JS v2 — exposes window.supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- NeverQuit auth module -->
+    <script src="auth.js"></script>
 </head>
 <body class="login-active">
     <!-- Language Selector: ES | EN -->
@@ -1778,28 +1854,61 @@
                 </div>
             </div>
             
-            <div id="loginError" class="login-error">
-                Usuario o contraseña incorrectos
+            <!-- Auth notification banners -->
+            <div id="loginError"   class="login-error"></div>
+            <div id="loginSuccess" class="login-success-msg"></div>
+
+            <!-- Tab toggle: Login / Register -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">Iniciar Sesión</button>
+                <button class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">Registrarse</button>
             </div>
-            
-            <form class="login-form" onsubmit="handleLogin(event)">
+
+            <!-- LOGIN FORM -->
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label>Usuario</label>
-                    <input type="text" id="loginUsername" placeholder="Introduce tu usuario" autocomplete="username">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email" required>
                 </div>
-                
                 <div class="form-group">
                     <label>Contraseña</label>
-                    <input type="password" id="loginPassword" placeholder="Introduce tu contraseña" autocomplete="current-password">
+                    <input type="password" id="loginPassword" placeholder="Tu contraseña" autocomplete="current-password" required>
                 </div>
-                
-                <button type="submit" class="login-btn">Entrar al Dashboard</button>
+                <button type="submit" class="login-btn" id="loginBtn">Entrar al Dashboard</button>
             </form>
-            
-            <!-- DEV MODE: Bypass durante desarrollo -->
-            <div class="dev-bypass">
-                <button onclick="bypassLogin()" title="Solo durante desarrollo">🔧 Modo Desarrollo (Skip Login)</button>
-            </div>
+
+            <!-- REGISTER FORM (hidden by default) -->
+            <form class="login-form" id="registerForm" style="display:none;" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="registerEmail" placeholder="tu@email.com" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="registerPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required minlength="8">
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="registerConfirm" placeholder="Repite la contraseña" autocomplete="new-password" required>
+                </div>
+                <button type="submit" class="login-btn" id="registerBtn">Crear Cuenta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Beta Access Pending Screen -->
+    <div id="betaWaitOverlay" class="login-overlay" style="display:none; flex-direction:column;">
+        <div class="login-box" style="text-align:center; max-width:440px;">
+            <div style="font-size:3.5rem; margin-bottom:1rem;">⏳</div>
+            <h2 style="color:#FFD700; font-size:1.4rem; margin-bottom:1rem; letter-spacing:0.05em;">ACCÉS BETA PENDENT</h2>
+            <p style="color:#9AA0A6; font-size:0.92rem; line-height:1.7; margin-bottom:2rem;">
+                T'has registrat correctament però encara estàs a la llista d'espera per accedir al beta.<br><br>
+                Et notificarem quan el teu compte sigui activat.
+            </p>
+            <button class="login-btn" onclick="nqLogout()"
+                style="background:linear-gradient(135deg,#555,#333); margin-top:0.5rem;">
+                🚪 Tancar Sessió
+            </button>
         </div>
     </div>
 
@@ -1834,7 +1943,7 @@
         </div>
 
         <div class="header">
-            <h1>NEVER QUIT DASHBOARD</h1>
+            <h1>NEVER QUIT DASHBOARD <span class="beta-badge">BETA</span></h1>
             <p>Sistema de Gestión de Capital Profesional</p>
             <div class="header-actions">
                 <span id="headerUsername" style="color:#9AA0A6;font-size:0.8rem;font-weight:600;letter-spacing:0.04em;"></span>
@@ -1852,7 +1961,7 @@
             <button class="tab" data-tab="propfirm">Prop Firm</button>
             <button class="tab" data-tab="ceoview">CEO View</button>
             <button class="tab" data-tab="efficiency">Capital Efficiency</button>
-            <button class="tab" data-tab="wrapped">Wrapped</button>
+            <button class="tab tab-coming-soon" data-tab="wrapped">Wrapped</button>
             <button class="tab" data-tab="hallofame">Hall of Fame</button>
         </div>
 
@@ -2163,6 +2272,9 @@
 // DASHBOARD BACKGROUND PARTICLES
 // ============================================
 let dashParticlesRunning = false;
+// Exposed by initDashParticles — call setParticleTheme('gold') or ('green')
+let setParticleTheme = null;
+
 function initDashParticles() {
     if (dashParticlesRunning) return;
     dashParticlesRunning = true;
@@ -2170,10 +2282,16 @@ function initDashParticles() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let W, H;
-    const COLORS = ['#2ECC71','#27AE60','#1abc9c','#58d68d'];
-    const COUNT  = 55;
-    const CONN   = 140;
-    const pts = [];
+
+    const PALETTE = {
+        green: { dots: ['#2ECC71','#27AE60','#1abc9c','#58d68d'], conn: '46,204,113'  },
+        gold:  { dots: ['#FFD700','#FFC107','#E6B800','#D4AF37'], conn: '255,210,0'   }
+    };
+    let theme = PALETTE.green;
+
+    const COUNT = 55;
+    const CONN  = 140;
+    const pts   = [];
 
     function resize() {
         W = canvas.width  = window.innerWidth;
@@ -2184,35 +2302,47 @@ function initDashParticles() {
 
     for (let i = 0; i < COUNT; i++) {
         pts.push({
-            x:  Math.random() * W,
-            y:  Math.random() * H,
-            vx: (Math.random() - 0.5) * 0.25,
-            vy: (Math.random() - 0.5) * 0.25,
-            r:  Math.random() * 1.6 + 0.6,
-            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            x:    Math.random() * W,
+            y:    Math.random() * H,
+            vx:   (Math.random() - 0.5) * 0.25,
+            vy:   (Math.random() - 0.5) * 0.25,
+            r:    Math.random() * 1.6 + 0.6,
+            ci:   Math.floor(Math.random() * 4),  // stable colour-index per particle
             alpha: Math.random() * 0.18 + 0.06
         });
     }
 
+    // Public function: switch particle colour palette
+    setParticleTheme = function(name) {
+        theme = PALETTE[name] || PALETTE.green;
+    };
+
     function loop() {
         ctx.clearRect(0, 0, W, H);
+        const dots = theme.dots;
         for (let i = 0; i < pts.length; i++) {
             const p = pts[i];
             p.x += p.vx; p.y += p.vy;
             if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
             if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
+            ctx.fillStyle = dots[p.ci % dots.length];
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
         }
         ctx.lineWidth = 0.4;
+        const conn = theme.conn;
         for (let i = 0; i < pts.length; i++) {
             for (let j = i + 1; j < pts.length; j++) {
                 const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
                 const d  = Math.sqrt(dx * dx + dy * dy);
                 if (d < CONN) {
-                    ctx.strokeStyle = `rgba(46,204,113,${(1 - d / CONN) * 0.08})`;
-                    ctx.globalAlpha = 1; ctx.beginPath();
-                    ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+                    ctx.strokeStyle = `rgba(${conn},${(1 - d / CONN) * 0.08})`;
+                    ctx.globalAlpha = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(pts[i].x, pts[i].y);
+                    ctx.lineTo(pts[j].x, pts[j].y);
+                    ctx.stroke();
                 }
             }
         }
@@ -2220,7 +2350,6 @@ function initDashParticles() {
         requestAnimationFrame(loop);
     }
     loop();
-    // Fade in
     setTimeout(() => { canvas.style.opacity = '1'; }, 100);
 }
 
@@ -2348,62 +2477,58 @@ window.setLanguage = setLanguage;
         // === GLOBAL UTILS ===
         function $(id) { return document.getElementById(id); }
 
-        // === LOGIN ===
+        // === AUTH — Supabase-based ===
         // ============================================
-        // LOGIN SYSTEM - DEBE ESTAR DISPONIBLE INMEDIATAMENTE
+        // AUTH SYSTEM — all session state lives in Supabase.
+        // No credentials are stored client-side.
         // ============================================
-        
-        // Credenciales ofuscadas (pendiente: mover a backend)
-        function _checkCredential(u, p) {
-            const v = {
-                [atob('YWRtaW4=')]: atob('YWRtaW4xMjM='),
-                [atob('ZGVtbw==')]: atob('ZGVtbzEyMw==')
-            };
-            return v[u] !== undefined && v[u] === p;
+
+        // ── Helpers ──────────────────────────────────────────────────────────
+
+        function _setAuthBtnLoading(btnId, loading, defaultLabel) {
+            const btn = $(btnId);
+            if (!btn) return;
+            btn.disabled  = loading;
+            btn.textContent = loading ? 'Carregant…' : defaultLabel;
         }
 
-        function handleLogin(event) {
-            event.preventDefault();
-            
-            const username = $('loginUsername').value.trim();
-            const password = $('loginPassword').value;
-            const errorDiv = $('loginError');
-            
-            // Validar credenciales
-            if (_checkCredential(username, password)) {
-                // Login exitoso
-                localStorage.setItem('neverQuitLoggedIn', 'true');
-                localStorage.setItem('neverQuitUsername', username);
-                
-                // Ocultar login con animación
-                $('loginOverlay').classList.add('hidden');
-                document.body.classList.remove('login-active');
-                const _hdr = document.getElementById('headerUsername');
-                if (_hdr) _hdr.textContent = `◇ ${username.toUpperCase()}`;
-                initDashParticles();
-
-                // Inicializar dashboard después de un delay
-                setTimeout(() => {
-                    if (typeof initializeDashboard === 'function') {
-                        initializeDashboard();
-                    }
-                }, 500);
-                
-            } else {
-                // Login fallido
-                errorDiv.classList.add('show');
-                $('loginPassword').value = '';
-                
-                setTimeout(() => {
-                    errorDiv.classList.remove('show');
-                }, 3000);
-            }
+        function _showAuthError(msg) {
+            const el = $('loginError');
+            el.textContent = msg;
+            el.classList.add('show');
+            $('loginSuccess').classList.remove('show');
+            setTimeout(() => el.classList.remove('show'), 5000);
         }
 
-        function bypassLogin() {
-            // Solo para desarrollo - permite saltarse el login
-            localStorage.setItem('neverQuitLoggedIn', 'true');
-            localStorage.setItem('neverQuitUsername', 'dev-mode');
+        function _showAuthSuccess(msg) {
+            const el = $('loginSuccess');
+            el.textContent = msg;
+            el.classList.add('show');
+            $('loginError').classList.remove('show');
+        }
+
+        // Show/hide the beta-wait overlay
+        function showBetaWaitScreen() {
+            $('loginOverlay').style.display    = 'none';
+            $('betaWaitOverlay').style.display = 'flex';
+            document.body.classList.remove('login-active');
+        }
+
+        // Switch between Login and Register tabs
+        function switchAuthTab(tab) {
+            const isLogin = tab === 'login';
+            $('loginForm').style.display    = isLogin   ? ''     : 'none';
+            $('registerForm').style.display = isLogin   ? 'none' : '';
+            $('tabLogin').classList.toggle('active',    isLogin);
+            $('tabRegister').classList.toggle('active', !isLogin);
+            $('loginError').classList.remove('show');
+            $('loginSuccess').classList.remove('show');
+        }
+
+        // Transition to the dashboard (called after successful auth + beta check)
+        function onLoginSuccess(email) {
+            const hdr = document.getElementById('headerUsername');
+            if (hdr) hdr.textContent = `◇ ${email.toUpperCase()}`;
 
             $('loginOverlay').classList.add('hidden');
             document.body.classList.remove('login-active');
@@ -2416,38 +2541,109 @@ window.setLanguage = setLanguage;
             }, 500);
         }
 
-        function logout() {
-            if (confirm('¿Seguro que quieres cerrar sesión?')) {
-                localStorage.removeItem('neverQuitLoggedIn');
-                localStorage.removeItem('neverQuitUsername');
+        // ── Login ─────────────────────────────────────────────────────────────
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email    = $('loginEmail').value.trim();
+            const password = $('loginPassword').value;
+
+            if (!email || !password) {
+                _showAuthError('Introdueix email i contrasenya.');
+                return;
+            }
+
+            _setAuthBtnLoading('loginBtn', true, 'Entrar al Dashboard');
+
+            const { session, error } = await login(email, password);
+
+            _setAuthBtnLoading('loginBtn', false, 'Entrar al Dashboard');
+
+            if (error || !session) {
+                _showAuthError(error?.message || 'Credencials incorrectes. Torna-ho a intentar.');
+                $('loginPassword').value = '';
+                return;
+            }
+
+            // Verify beta access before granting entry
+            const { profile, error: profileErr } = await checkBetaAccess(session.user.id);
+
+            if (profileErr || !profile) {
+                _showAuthError('No s\'ha pogut obtenir el perfil d\'usuari. Contacta amb suport.');
+                return;
+            }
+
+            if (!profile.beta_access) {
+                showBetaWaitScreen();
+                return;
+            }
+
+            onLoginSuccess(session.user.email);
+        }
+
+        // ── Register ──────────────────────────────────────────────────────────
+
+        async function handleRegister(event) {
+            event.preventDefault();
+
+            const email    = $('registerEmail').value.trim();
+            const password = $('registerPassword').value;
+            const confirm  = $('registerConfirm').value;
+
+            if (!email || !password) {
+                _showAuthError('Introdueix email i contrasenya.');
+                return;
+            }
+            if (password !== confirm) {
+                _showAuthError('Les contrasenyes no coincideixen.');
+                return;
+            }
+            if (password.length < 8) {
+                _showAuthError('La contrasenya ha de tenir almenys 8 caràcters.');
+                return;
+            }
+
+            _setAuthBtnLoading('registerBtn', true, 'Crear Compte');
+
+            const { user, error } = await register(email, password);
+
+            _setAuthBtnLoading('registerBtn', false, 'Crear Compte');
+
+            if (error) {
+                _showAuthError(error.message || 'Error en el registre. Torna-ho a intentar.');
+                return;
+            }
+
+            // Supabase may require email confirmation — show pending message
+            _showAuthSuccess('✓ Compte creat! Revisa el teu email per confirmar-lo. Accés beta pendent d\'aprovació.');
+            $('registerForm').reset();
+        }
+
+        // ── Logout ────────────────────────────────────────────────────────────
+
+        async function nqLogout() {
+            if (confirm('Segur que vols tancar la sessió?')) {
+                await logout();
                 location.reload();
             }
         }
 
         // ============================================
-        // EXPONER LOGIN/LOGOUT GLOBALMENTE - INMEDIATO
-        // (el HTML usa onsubmit/onclick: deben existir
-        //  ANTES del DOMContentLoaded, no dentro de él)
+        // EXPOSAR FUNCIONS GLOBALMENT — IMMEDIAT
+        // (HTML uses onsubmit/onclick before DOMContentLoaded)
         // ============================================
-        window.handleLogin = handleLogin;
-        window.bypassLogin = bypassLogin;
-        window.logout      = logout;
+        window.handleLogin    = handleLogin;
+        window.handleRegister = handleRegister;
+        window.switchAuthTab  = switchAuthTab;
+        window.nqLogout       = nqLogout;
+        // Keep backward-compat alias for header button onclick="logout()"
+        window.logout         = nqLogout;
 
         // ============================================
         // INICIALIZACIÓN - Esperar a que el DOM esté listo
         // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            
-        // Verificar si ya está logueado
-        const isLoggedIn = localStorage.getItem('neverQuitLoggedIn') === 'true';
-
-        // Mostrar usuario en header
-        function setHeaderUsername() {
-            const el = document.getElementById('headerUsername');
-            const user = localStorage.getItem('neverQuitUsername');
-            if (el && user) el.textContent = `◇ ${user.toUpperCase()}`;
-        }
-        setHeaderUsername();
+        document.addEventListener('DOMContentLoaded', async function() {
 
         // ── Exponer funciones globalmente al PRINCIPIO del DOMContentLoaded ──────
         // Las function-declarations se hoist dentro de este closure, así que están
@@ -2474,16 +2670,25 @@ window.setLanguage = setLanguage;
             _loginOverlay.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
         }
 
-        if (isLoggedIn) {
-            // Ya está logueado, ocultar login
-            $('loginOverlay').classList.add('hidden');
-            document.body.classList.remove('login-active');
-            initDashParticles();
-            // Inicializar dashboard después de un breve delay
-            setTimeout(() => {
-                initializeDashboard();
-            }, 100);
+        // ── Supabase session check ───────────────────────────────────────────
+        // checkSession / checkBetaAccess are defined in auth.js (loaded before
+        // this script). We use async/await — DOMContentLoaded handler is async.
+        try {
+            const { session } = await checkSession();
+            if (session) {
+                const { profile } = await checkBetaAccess(session.user.id);
+                if (profile?.beta_access) {
+                    onLoginSuccess(session.user.email);
+                } else {
+                    showBetaWaitScreen();
+                }
+            }
+            // If no session: login overlay stays visible (body keeps login-active)
+        } catch (err) {
+            // auth.js not yet available or network error — stay on login screen
+            console.warn('Auth check failed:', err);
         }
+        // ─────────────────────────────────────────────────────────────────────
 
         // ============================================
         // DATOS INICIALES - Estado vacío por defecto
@@ -3900,54 +4105,13 @@ window.setLanguage = setLanguage;
                 }, 0);
         }
 
-        // Activa/desactiva el golden mode al dashboard sencer
+        // Calcula quines firmes han assolit el Max Allocation.
+        // No canvia cap estil global — l'efecte visual el gestiona renderPropFirm() per al tab corresponent.
         function checkAndApplyGoldenMode() {
-            // Guard: PROP_FIRMS_CONFIG pot no estar definida si es crida molt aviat
             try { if (!PROP_FIRMS_CONFIG) return; } catch(e) { return; }
-
-            const firmsAtMax = Object.keys(PROP_FIRMS_CONFIG).filter(firm => {
-                const maxAlloc = PROP_FIRMS_CONFIG[firm].maxAllocation || 400000;
-                return getFirmFundedCapital(firm) >= maxAlloc;
+            window._firmsAtMax = Object.keys(PROP_FIRMS_CONFIG).filter(firm => {
+                return getFirmFundedCapital(firm) >= (PROP_FIRMS_CONFIG[firm].maxAllocation || 400000);
             });
-
-            const isGolden = firmsAtMax.length > 0;
-            document.body.classList.toggle('golden-mode', isGolden);
-
-            // Gestionar overlay de trofeus
-            let overlay = document.getElementById('goldenTrophyOverlay');
-            if (isGolden && !overlay) {
-                overlay = document.createElement('div');
-                overlay.id = 'goldenTrophyOverlay';
-                // Posicions i rotacions aleatòries però fixes (seed basat en firma)
-                const trophies = [
-                    { x:5,  y:8,  s:6,  o:0.025, r:-12, d:0    },
-                    { x:22, y:3,  s:3.5,o:0.018, r:6,   d:1.5  },
-                    { x:48, y:6,  s:8,  o:0.020, r:-5,  d:3    },
-                    { x:70, y:2,  s:4,  o:0.022, r:10,  d:0.8  },
-                    { x:88, y:7,  s:5.5,o:0.018, r:-8,  d:2.2  },
-                    { x:10, y:40, s:4,  o:0.015, r:15,  d:4    },
-                    { x:35, y:55, s:7,  o:0.022, r:-4,  d:1    },
-                    { x:60, y:45, s:3.5,o:0.016, r:8,   d:3.5  },
-                    { x:80, y:50, s:5,  o:0.020, r:-10, d:2    },
-                    { x:92, y:38, s:3,  o:0.014, r:5,   d:5    },
-                    { x:15, y:80, s:6,  o:0.022, r:-7,  d:0.5  },
-                    { x:40, y:88, s:4.5,o:0.018, r:12,  d:2.8  },
-                    { x:65, y:82, s:8,  o:0.025, r:-3,  d:1.8  },
-                    { x:85, y:90, s:3.5,o:0.016, r:9,   d:3.2  },
-                    { x:50, y:25, s:5,  o:0.020, r:-14, d:4.5  },
-                    { x:28, y:72, s:3,  o:0.013, r:4,   d:6    },
-                    { x:75, y:68, s:4,  o:0.017, r:-6,  d:2.5  },
-                    { x:95, y:65, s:5.5,o:0.019, r:11,  d:1.2  },
-                    { x:3,  y:62, s:3,  o:0.014, r:-9,  d:3.8  },
-                    { x:55, y:70, s:6.5,o:0.021, r:7,   d:0.3  }
-                ];
-                overlay.innerHTML = trophies.map(t =>
-                    `<div class="trophy-icon" style="left:${t.x}%;top:${t.y}%;font-size:${t.s}rem;--opa:${t.o};--rot:${t.r}deg;animation-delay:${t.d}s;">🏆</div>`
-                ).join('');
-                document.body.appendChild(overlay);
-            } else if (!isGolden && overlay) {
-                overlay.remove();
-            }
         }
         // ─────────────────────────────────────────────────────────────────────
 
@@ -4126,10 +4290,14 @@ window.setLanguage = setLanguage;
                 </div>
             `;
 
-            document.getElementById('propfirm').innerHTML = propFirmHtml;
+            const propfirmEl = document.getElementById('propfirm');
+            propfirmEl.innerHTML = propFirmHtml;
 
-            // Aplicar golden mode si cal
-            checkAndApplyGoldenMode();
+            // Efecte golden SCOPED: afecta únicament aquest tab
+            propfirmEl.classList.toggle('propfirm-golden', isAtMax);
+
+            // Canviar color de les partícules de fons (poligons exteriors)
+            if (setParticleTheme) setParticleTheme(isAtMax ? 'gold' : 'green');
 
             // Re-attach event listener after re-rendering
             setTimeout(() => {
@@ -4647,6 +4815,17 @@ window.setLanguage = setLanguage;
         // Render Wrapped
         // === RENDER: WRAPPED ===
         function renderWrapped() {
+            // ── COMING SOON ──────────────────────────────────────────────────
+            document.getElementById('wrapped').innerHTML = `
+                <div class="wrapped-coming-soon">
+                    <div class="cs-icon">📊</div>
+                    <h2>COMING SOON</h2>
+                    <p>La secció <strong style="color:#E6E8EB;">Prop Firm Wrapped</strong> està en desenvolupament.<br>
+                       Aviat podràs veure el teu resum anual complet, estadístiques i gràfics.</p>
+                </div>
+            `;
+            return;
+            // ─────────────────────────────────────────────────────────────────
             const yearAccounts = filterByYear(data.master_comptes, wrappedTimeFilter);
             const yearPayouts  = filterByYear(data.payouts, wrappedTimeFilter);
 
@@ -5108,12 +5287,15 @@ window.setLanguage = setLanguage;
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const tabName = this.getAttribute('data-tab');
-                
+
                 document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
+
                 this.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
+
+                // Reset partícules a verd quan es surt del tab PropFirm
+                if (tabName !== 'propfirm' && setParticleTheme) setParticleTheme('green');
                 
                 // Renderizar el dashboard correspondiente cuando se hace clic
                 switch(tabName) {
