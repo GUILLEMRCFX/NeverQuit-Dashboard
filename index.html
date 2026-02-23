@@ -1601,51 +1601,34 @@
         }
 
         /* ═══════════════════════════════════════════════════════
-           GOLDEN MODE — Max Allocation assolit
+           PROPFIRM GOLDEN — Max Allocation assolit (SCOPED al tab)
            ═══════════════════════════════════════════════════════ */
 
-        /* KPI cards: vora daurada subtil */
-        .golden-mode .kpi-card {
+        /* KPI cards — daurats DINS del tab PropFirm únicament */
+        #propfirm.propfirm-golden .kpi-card {
             border-color: rgba(212, 175, 55, 0.3) !important;
             box-shadow: 0 4px 20px rgba(212, 175, 55, 0.08) !important;
         }
-        .golden-mode .kpi-card:hover {
+        #propfirm.propfirm-golden .kpi-card:hover {
             box-shadow: 0 8px 32px rgba(255, 215, 0, 0.18) !important;
             border-color: rgba(255, 215, 0, 0.45) !important;
         }
-
-        /* Valors KPI: daurats */
-        .golden-mode .kpi-value {
+        #propfirm.propfirm-golden .kpi-value {
             color: #FFD700 !important;
-            text-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
         }
-        /* Mantenir verd pels que s'especifiquen explícitament amb classe success si cal — no tocar el color verd de status */
-
-        /* Títols de les vistes */
-        .golden-mode .view-header h2,
-        .golden-mode .dashboard-header h2 {
+        #propfirm.propfirm-golden .view-header h2 {
             color: #FFD700 !important;
-            text-shadow: 0 0 24px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
-
-        /* Table containers: vora daurada */
-        .golden-mode .table-container {
+        #propfirm.propfirm-golden .table-container {
             border-color: rgba(212, 175, 55, 0.2) !important;
         }
-        .golden-mode .table-container h3 {
+        #propfirm.propfirm-golden .table-container h3 {
             color: #FFD700 !important;
         }
-
-        /* Tab activa: daurat */
-        .golden-mode .tab.active {
-            background: linear-gradient(135deg, #B8960C, #FFD700) !important;
-            color: #121417 !important;
-        }
-
-        /* Header del dashboard */
-        .golden-mode .header h1 {
-            color: #FFD700 !important;
-            text-shadow: 0 0 20px rgba(255,215,0,0.3);
+        #propfirm.propfirm-golden .subtitle {
+            color: rgba(255, 215, 0, 0.55) !important;
         }
 
         /* Barra de progrés d'allocació */
@@ -1668,24 +1651,66 @@
             box-shadow: 0 0 12px rgba(255,215,0,0.5);
         }
 
-        /* Trophy overlay */
-        #goldenTrophyOverlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
+        /* ── BETA badge ─────────────────────────────────── */
+        .beta-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 4px;
+            color: #FFD700;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            vertical-align: middle;
+            margin-left: 0.5rem;
         }
-        #goldenTrophyOverlay .trophy-icon {
+
+        /* ── Wrapped — Coming Soon ──────────────────────── */
+        .tab-coming-soon {
+            opacity: 0.45;
+            position: relative;
+        }
+        .tab-coming-soon::after {
+            content: 'SOON';
             position: absolute;
-            font-size: inherit;
-            user-select: none;
-            animation: trophyFloat 8s ease-in-out infinite;
+            top: -6px;
+            right: -4px;
+            background: rgba(243, 156, 18, 0.85);
+            color: #121417;
+            font-size: 0.52rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            padding: 0.05rem 0.3rem;
+            border-radius: 3px;
         }
-        @keyframes trophyFloat {
-            0%, 100% { transform: translateY(0px) rotate(var(--rot)); opacity: var(--opa); }
-            50%       { transform: translateY(-12px) rotate(var(--rot)); opacity: calc(var(--opa) * 1.4); }
+        .wrapped-coming-soon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 55vh;
+            text-align: center;
+            color: #9AA0A6;
+        }
+        .wrapped-coming-soon .cs-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+        .wrapped-coming-soon h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #F39C12;
+            letter-spacing: 0.12em;
+            margin-bottom: 0.75rem;
+            text-shadow: 0 0 16px rgba(243,156,18,0.3);
+        }
+        .wrapped-coming-soon p {
+            font-size: 0.9rem;
+            max-width: 360px;
+            line-height: 1.7;
         }
     </style>
     <!-- Supabase JS v2 — exposes window.supabase -->
@@ -1918,7 +1943,7 @@
         </div>
 
         <div class="header">
-            <h1>NEVER QUIT DASHBOARD</h1>
+            <h1>NEVER QUIT DASHBOARD <span class="beta-badge">BETA</span></h1>
             <p>Sistema de Gestión de Capital Profesional</p>
             <div class="header-actions">
                 <span id="headerUsername" style="color:#9AA0A6;font-size:0.8rem;font-weight:600;letter-spacing:0.04em;"></span>
@@ -1936,7 +1961,7 @@
             <button class="tab" data-tab="propfirm">Prop Firm</button>
             <button class="tab" data-tab="ceoview">CEO View</button>
             <button class="tab" data-tab="efficiency">Capital Efficiency</button>
-            <button class="tab" data-tab="wrapped">Wrapped</button>
+            <button class="tab tab-coming-soon" data-tab="wrapped">Wrapped</button>
             <button class="tab" data-tab="hallofame">Hall of Fame</button>
         </div>
 
@@ -2247,6 +2272,9 @@
 // DASHBOARD BACKGROUND PARTICLES
 // ============================================
 let dashParticlesRunning = false;
+// Exposed by initDashParticles — call setParticleTheme('gold') or ('green')
+let setParticleTheme = null;
+
 function initDashParticles() {
     if (dashParticlesRunning) return;
     dashParticlesRunning = true;
@@ -2254,10 +2282,16 @@ function initDashParticles() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let W, H;
-    const COLORS = ['#2ECC71','#27AE60','#1abc9c','#58d68d'];
-    const COUNT  = 55;
-    const CONN   = 140;
-    const pts = [];
+
+    const PALETTE = {
+        green: { dots: ['#2ECC71','#27AE60','#1abc9c','#58d68d'], conn: '46,204,113'  },
+        gold:  { dots: ['#FFD700','#FFC107','#E6B800','#D4AF37'], conn: '255,210,0'   }
+    };
+    let theme = PALETTE.green;
+
+    const COUNT = 55;
+    const CONN  = 140;
+    const pts   = [];
 
     function resize() {
         W = canvas.width  = window.innerWidth;
@@ -2268,35 +2302,47 @@ function initDashParticles() {
 
     for (let i = 0; i < COUNT; i++) {
         pts.push({
-            x:  Math.random() * W,
-            y:  Math.random() * H,
-            vx: (Math.random() - 0.5) * 0.25,
-            vy: (Math.random() - 0.5) * 0.25,
-            r:  Math.random() * 1.6 + 0.6,
-            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            x:    Math.random() * W,
+            y:    Math.random() * H,
+            vx:   (Math.random() - 0.5) * 0.25,
+            vy:   (Math.random() - 0.5) * 0.25,
+            r:    Math.random() * 1.6 + 0.6,
+            ci:   Math.floor(Math.random() * 4),  // stable colour-index per particle
             alpha: Math.random() * 0.18 + 0.06
         });
     }
 
+    // Public function: switch particle colour palette
+    setParticleTheme = function(name) {
+        theme = PALETTE[name] || PALETTE.green;
+    };
+
     function loop() {
         ctx.clearRect(0, 0, W, H);
+        const dots = theme.dots;
         for (let i = 0; i < pts.length; i++) {
             const p = pts[i];
             p.x += p.vx; p.y += p.vy;
             if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
             if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
+            ctx.fillStyle = dots[p.ci % dots.length];
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
         }
         ctx.lineWidth = 0.4;
+        const conn = theme.conn;
         for (let i = 0; i < pts.length; i++) {
             for (let j = i + 1; j < pts.length; j++) {
                 const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
                 const d  = Math.sqrt(dx * dx + dy * dy);
                 if (d < CONN) {
-                    ctx.strokeStyle = `rgba(46,204,113,${(1 - d / CONN) * 0.08})`;
-                    ctx.globalAlpha = 1; ctx.beginPath();
-                    ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+                    ctx.strokeStyle = `rgba(${conn},${(1 - d / CONN) * 0.08})`;
+                    ctx.globalAlpha = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(pts[i].x, pts[i].y);
+                    ctx.lineTo(pts[j].x, pts[j].y);
+                    ctx.stroke();
                 }
             }
         }
@@ -2304,7 +2350,6 @@ function initDashParticles() {
         requestAnimationFrame(loop);
     }
     loop();
-    // Fade in
     setTimeout(() => { canvas.style.opacity = '1'; }, 100);
 }
 
@@ -4060,54 +4105,13 @@ window.setLanguage = setLanguage;
                 }, 0);
         }
 
-        // Activa/desactiva el golden mode al dashboard sencer
+        // Calcula quines firmes han assolit el Max Allocation.
+        // No canvia cap estil global — l'efecte visual el gestiona renderPropFirm() per al tab corresponent.
         function checkAndApplyGoldenMode() {
-            // Guard: PROP_FIRMS_CONFIG pot no estar definida si es crida molt aviat
             try { if (!PROP_FIRMS_CONFIG) return; } catch(e) { return; }
-
-            const firmsAtMax = Object.keys(PROP_FIRMS_CONFIG).filter(firm => {
-                const maxAlloc = PROP_FIRMS_CONFIG[firm].maxAllocation || 400000;
-                return getFirmFundedCapital(firm) >= maxAlloc;
+            window._firmsAtMax = Object.keys(PROP_FIRMS_CONFIG).filter(firm => {
+                return getFirmFundedCapital(firm) >= (PROP_FIRMS_CONFIG[firm].maxAllocation || 400000);
             });
-
-            const isGolden = firmsAtMax.length > 0;
-            document.body.classList.toggle('golden-mode', isGolden);
-
-            // Gestionar overlay de trofeus
-            let overlay = document.getElementById('goldenTrophyOverlay');
-            if (isGolden && !overlay) {
-                overlay = document.createElement('div');
-                overlay.id = 'goldenTrophyOverlay';
-                // Posicions i rotacions aleatòries però fixes (seed basat en firma)
-                const trophies = [
-                    { x:5,  y:8,  s:6,  o:0.025, r:-12, d:0    },
-                    { x:22, y:3,  s:3.5,o:0.018, r:6,   d:1.5  },
-                    { x:48, y:6,  s:8,  o:0.020, r:-5,  d:3    },
-                    { x:70, y:2,  s:4,  o:0.022, r:10,  d:0.8  },
-                    { x:88, y:7,  s:5.5,o:0.018, r:-8,  d:2.2  },
-                    { x:10, y:40, s:4,  o:0.015, r:15,  d:4    },
-                    { x:35, y:55, s:7,  o:0.022, r:-4,  d:1    },
-                    { x:60, y:45, s:3.5,o:0.016, r:8,   d:3.5  },
-                    { x:80, y:50, s:5,  o:0.020, r:-10, d:2    },
-                    { x:92, y:38, s:3,  o:0.014, r:5,   d:5    },
-                    { x:15, y:80, s:6,  o:0.022, r:-7,  d:0.5  },
-                    { x:40, y:88, s:4.5,o:0.018, r:12,  d:2.8  },
-                    { x:65, y:82, s:8,  o:0.025, r:-3,  d:1.8  },
-                    { x:85, y:90, s:3.5,o:0.016, r:9,   d:3.2  },
-                    { x:50, y:25, s:5,  o:0.020, r:-14, d:4.5  },
-                    { x:28, y:72, s:3,  o:0.013, r:4,   d:6    },
-                    { x:75, y:68, s:4,  o:0.017, r:-6,  d:2.5  },
-                    { x:95, y:65, s:5.5,o:0.019, r:11,  d:1.2  },
-                    { x:3,  y:62, s:3,  o:0.014, r:-9,  d:3.8  },
-                    { x:55, y:70, s:6.5,o:0.021, r:7,   d:0.3  }
-                ];
-                overlay.innerHTML = trophies.map(t =>
-                    `<div class="trophy-icon" style="left:${t.x}%;top:${t.y}%;font-size:${t.s}rem;--opa:${t.o};--rot:${t.r}deg;animation-delay:${t.d}s;">🏆</div>`
-                ).join('');
-                document.body.appendChild(overlay);
-            } else if (!isGolden && overlay) {
-                overlay.remove();
-            }
         }
         // ─────────────────────────────────────────────────────────────────────
 
@@ -4286,10 +4290,14 @@ window.setLanguage = setLanguage;
                 </div>
             `;
 
-            document.getElementById('propfirm').innerHTML = propFirmHtml;
+            const propfirmEl = document.getElementById('propfirm');
+            propfirmEl.innerHTML = propFirmHtml;
 
-            // Aplicar golden mode si cal
-            checkAndApplyGoldenMode();
+            // Efecte golden SCOPED: afecta únicament aquest tab
+            propfirmEl.classList.toggle('propfirm-golden', isAtMax);
+
+            // Canviar color de les partícules de fons (poligons exteriors)
+            if (setParticleTheme) setParticleTheme(isAtMax ? 'gold' : 'green');
 
             // Re-attach event listener after re-rendering
             setTimeout(() => {
@@ -4807,6 +4815,17 @@ window.setLanguage = setLanguage;
         // Render Wrapped
         // === RENDER: WRAPPED ===
         function renderWrapped() {
+            // ── COMING SOON ──────────────────────────────────────────────────
+            document.getElementById('wrapped').innerHTML = `
+                <div class="wrapped-coming-soon">
+                    <div class="cs-icon">📊</div>
+                    <h2>COMING SOON</h2>
+                    <p>La secció <strong style="color:#E6E8EB;">Prop Firm Wrapped</strong> està en desenvolupament.<br>
+                       Aviat podràs veure el teu resum anual complet, estadístiques i gràfics.</p>
+                </div>
+            `;
+            return;
+            // ─────────────────────────────────────────────────────────────────
             const yearAccounts = filterByYear(data.master_comptes, wrappedTimeFilter);
             const yearPayouts  = filterByYear(data.payouts, wrappedTimeFilter);
 
@@ -5268,12 +5287,15 @@ window.setLanguage = setLanguage;
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 const tabName = this.getAttribute('data-tab');
-                
+
                 document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
+
                 this.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
+
+                // Reset partícules a verd quan es surt del tab PropFirm
+                if (tabName !== 'propfirm' && setParticleTheme) setParticleTheme('green');
                 
                 // Renderizar el dashboard correspondiente cuando se hace clic
                 switch(tabName) {
