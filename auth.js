@@ -8,6 +8,36 @@ const SUPABASE_ANON_KEY = 'sb_publishable_Q7de43M8xHE4FkWtx9oLPQ_1Y2dcpmL';
 const nqSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /**
+ * Handle email confirmation / magic-link callback.
+ *
+ * Supabase v2 uses PKCE by default:
+ *   After the user clicks the confirmation link they are redirected to the app
+ *   with ?code=XXXX in the URL.  We must exchange that code for a real session.
+ *
+ * Falls back to implicit-flow (?access_token / #access_token) if present.
+ *
+ * @returns {{ session: object|null, error: object|null, handled: boolean }}
+ */
+async function handleEmailConfirmation() {
+    // ── PKCE flow ──────────────────────────────────────────────────────────
+    const params = new URLSearchParams(window.location.search);
+    const code   = params.get('code');
+
+    if (code) {
+        const { data, error } = await nqSupabase.auth.exchangeCodeForSession(code);
+        // Remove the code from the URL so a page-refresh doesn't re-try
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return { session: data?.session ?? null, error, handled: true };
+    }
+
+    // ── Implicit / hash flow (older Supabase setups) ────────────────────────
+    // supabase-js v2 automatically picks up #access_token from the hash
+    // when getSession() is called, so we just let checkSession() handle it.
+
+    return { session: null, error: null, handled: false };
+}
+
+/**
  * Register a new user with email + password.
  * Supabase automatically creates a matching `profiles` row via the DB trigger.
  * @param {string} email
