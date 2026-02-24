@@ -1243,6 +1243,42 @@
 }
         /* ─── LANGUAGE SELECTOR ─── */
         /* ─── LANGUAGE SELECTOR (ES | EN) ─── */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            background: rgba(24, 27, 32, 0.9);
+            border: 1px solid rgba(230, 232, 235, 0.1);
+            border-radius: 6px;
+            padding: 0.3rem 0.6rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+        }
+        .lang-switch-opt {
+            background: none;
+            border: none;
+            color: #9AA0A6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            padding: 0.1rem 0.35rem;
+            transition: color 0.2s;
+        }
+        .lang-switch-opt:hover { color: #E6E8EB; }
+        .lang-switch-opt.active { color: #2ECC71; }
+        .lang-switch-sep {
+            color: rgba(230,232,235,0.18);
+            font-size: 0.75rem;
+            padding: 0 0.05rem;
+            pointer-events: none;
+            user-select: none;
+        }
+        @media (max-width:968px) { .lang-switch { top:10px; right:10px; } }
 
         /* ─── LOGIN CURSOR CANVAS ─── */
         #loginCursorCanvas {
@@ -1655,6 +1691,13 @@
     <script src="auth.js"></script>
 </head>
 <body class="login-active">
+    <!-- Language Selector: ES | EN -->
+    <div class="lang-switch">
+        <button class="lang-switch-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
+        <span class="lang-switch-sep">|</span>
+        <button class="lang-switch-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
+    </div>
+
     <!-- Login Screen -->
     <div id="loginOverlay" class="login-overlay">
         <canvas id="loginCursorCanvas"></canvas>
@@ -2173,6 +2216,12 @@ const i18n = {
 };
 
 let currentLanguage = localStorage.getItem('neverQuitLanguage') || 'es';
+if (currentLanguage === 'en') {
+    const elEs = document.getElementById('opt-es');
+    const elEn = document.getElementById('opt-en');
+    if (elEs) elEs.classList.remove('active');
+    if (elEn) elEn.classList.add('active');
+}
 
 function getTranslation(key) {
     const keys = key.split('.');
@@ -2186,6 +2235,8 @@ function t(key) { return getTranslation('dash.' + key) || key; }
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('neverQuitLanguage', lang);
+    document.getElementById('opt-es').classList.toggle('active', lang === 'es');
+    document.getElementById('opt-en').classList.toggle('active', lang === 'en');
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
