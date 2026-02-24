@@ -1696,6 +1696,170 @@
             max-width: 360px;
             line-height: 1.7;
         }
+
+        /* ─── USER MENU ─── */
+        .user-menu-container {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 10001;
+        }
+
+        .user-menu-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            border: 2px solid rgba(46,204,113,0.4);
+            color: #0D1F14;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow 0.2s, transform 0.15s;
+            box-shadow: 0 2px 12px rgba(46,204,113,0.25);
+        }
+        .user-menu-btn:hover {
+            box-shadow: 0 4px 20px rgba(46,204,113,0.45);
+            transform: scale(1.07);
+        }
+
+        .user-menu-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 260px;
+            background: #181B20;
+            border: 1px solid rgba(230,232,235,0.1);
+            border-radius: 14px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px) scale(0.97);
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        .user-menu-dropdown.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        .user-menu-header {
+            padding: 1rem 1rem 0.85rem;
+            border-bottom: 1px solid rgba(230,232,235,0.07);
+        }
+        .user-menu-email {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #E6E8EB;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.3rem;
+        }
+        .user-menu-plan {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            background: rgba(46,204,113,0.12);
+            border: 1px solid rgba(46,204,113,0.3);
+            border-radius: 20px;
+            color: #2ECC71;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        .user-menu-section {
+            padding: 0.4rem 0;
+        }
+        .user-menu-divider {
+            height: 1px;
+            background: rgba(230,232,235,0.07);
+            margin: 0;
+        }
+
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 1rem;
+            font-size: 0.83rem;
+            font-weight: 500;
+            color: #C8CDD3;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .user-menu-item:hover {
+            background: rgba(230,232,235,0.05);
+            color: #E6E8EB;
+        }
+        .user-menu-item.disabled {
+            color: rgba(154,160,166,0.45);
+            cursor: default;
+            pointer-events: none;
+        }
+        .user-menu-item.disabled:hover { background: none; }
+
+        .user-menu-icon {
+            font-size: 0.95rem;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .user-menu-label { flex: 1; }
+
+        .user-menu-soon {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: rgba(154,160,166,0.5);
+            background: rgba(154,160,166,0.08);
+            border: 1px solid rgba(154,160,166,0.15);
+            border-radius: 4px;
+            padding: 0.1rem 0.35rem;
+            margin-left: auto;
+        }
+
+        /* Language buttons inside menu */
+        .user-menu-lang-btns {
+            display: flex;
+            gap: 0.3rem;
+            margin-left: auto;
+        }
+        .lang-opt {
+            padding: 0.2rem 0.5rem;
+            background: rgba(230,232,235,0.05);
+            border: 1px solid rgba(230,232,235,0.12);
+            border-radius: 5px;
+            color: #9AA0A6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .lang-opt:hover { color: #E6E8EB; border-color: rgba(230,232,235,0.3); }
+        .lang-opt.active {
+            background: rgba(46,204,113,0.12);
+            border-color: rgba(46,204,113,0.4);
+            color: #2ECC71;
+        }
+
+        /* Danger item */
+        .user-menu-item.user-menu-danger { color: #E74C3C; }
+        .user-menu-item.user-menu-danger:hover { background: rgba(231,76,60,0.08); color: #FF6B6B; }
+
+        /* Logout item */
+        .user-menu-item.user-menu-logout { color: #9AA0A6; }
+        .user-menu-item.user-menu-logout:hover { background: rgba(230,232,235,0.04); color: #E6E8EB; }
+
+        @media (max-width: 480px) {
+            .user-menu-dropdown { width: 230px; }
+        }
     </style>
     <!-- Supabase JS v2 — exposes window.supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1704,10 +1868,94 @@
 </head>
 <body class="login-active">
     <!-- Language Selector: ES | EN -->
-    <div class="lang-switch">
-        <button class="lang-switch-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
-        <span class="lang-switch-sep">|</span>
-        <button class="lang-switch-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
+    <!-- User Menu -->
+    <div class="user-menu-container" id="userMenuContainer" style="display:none;">
+        <button class="user-menu-btn" id="userMenuBtn" onclick="toggleUserMenu()" aria-label="User menu">
+            <span id="userMenuAvatar">U</span>
+        </button>
+        <div class="user-menu-dropdown" id="userMenuDropdown">
+
+            <!-- Header: email + plan -->
+            <div class="user-menu-header">
+                <div class="user-menu-email" id="userMenuEmail">user@email.com</div>
+                <span class="user-menu-plan">BETA</span>
+            </div>
+
+            <!-- Account & billing (coming soon) -->
+            <div class="user-menu-section">
+                <div class="user-menu-item disabled">
+                    <span class="user-menu-icon">⚙️</span>
+                    <span class="user-menu-label" data-i18n="userMenu.account">Cuenta</span>
+                    <span class="user-menu-soon">SOON</span>
+                </div>
+                <div class="user-menu-item disabled">
+                    <span class="user-menu-icon">💳</span>
+                    <span class="user-menu-label" data-i18n="userMenu.subscription">Subscripción</span>
+                    <span class="user-menu-soon">SOON</span>
+                </div>
+                <div class="user-menu-item disabled">
+                    <span class="user-menu-icon">🎨</span>
+                    <span class="user-menu-label" data-i18n="userMenu.appearance">Apariencia</span>
+                    <span class="user-menu-soon">SOON</span>
+                </div>
+            </div>
+
+            <div class="user-menu-divider"></div>
+
+            <!-- Language (active) -->
+            <div class="user-menu-section">
+                <div class="user-menu-item" style="cursor:default;">
+                    <span class="user-menu-icon">🌐</span>
+                    <span class="user-menu-label" data-i18n="userMenu.language">Idioma</span>
+                    <div class="user-menu-lang-btns">
+                        <button class="lang-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
+                        <button class="lang-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-menu-divider"></div>
+
+            <!-- Future features (coming soon) -->
+            <div class="user-menu-section">
+                <div class="user-menu-item disabled">
+                    <span class="user-menu-icon">📤</span>
+                    <span class="user-menu-label" data-i18n="userMenu.export">Exportar datos</span>
+                    <span class="user-menu-soon">SOON</span>
+                </div>
+                <div class="user-menu-item disabled">
+                    <span class="user-menu-icon">🔔</span>
+                    <span class="user-menu-label" data-i18n="userMenu.alerts">Alertas</span>
+                    <span class="user-menu-soon">SOON</span>
+                </div>
+                <div class="user-menu-item disabled">
+                    <span class="user-menu-icon">🕐</span>
+                    <span class="user-menu-label" data-i18n="userMenu.timezone">Zona horaria</span>
+                    <span class="user-menu-soon">SOON</span>
+                </div>
+            </div>
+
+            <div class="user-menu-divider"></div>
+
+            <!-- Danger: Reset -->
+            <div class="user-menu-section">
+                <div class="user-menu-item user-menu-danger" onclick="openResetModal(); closeUserMenu();">
+                    <span class="user-menu-icon">🗑️</span>
+                    <span class="user-menu-label" data-i18n="userMenu.resetData">Reset Datos</span>
+                </div>
+            </div>
+
+            <div class="user-menu-divider"></div>
+
+            <!-- Logout -->
+            <div class="user-menu-section">
+                <div class="user-menu-item user-menu-logout" onclick="nqLogout()">
+                    <span class="user-menu-icon">🚪</span>
+                    <span class="user-menu-label" data-i18n="userMenu.logout">Logout</span>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <!-- Login Screen -->
@@ -1808,11 +2056,7 @@
 
         <div class="header">
             <h1>NEVER QUIT DASHBOARD <span class="beta-badge">BETA</span></h1>
-            <p>Sistema de Gestión de Capital Profesional</p>
-            <div class="header-actions">
-                <button class="btn-reset" onclick="openResetModal()">🔄 Reset Datos</button>
-                <button class="btn-reset btn-reset--gray" onclick="logout()">🚪 Salir</button>
-            </div>
+            <p data-i18n="app.tagline">Sistema de Gestión de Capital Profesional</p>
         </div>
 
         <div id="alertContainer"></div>
@@ -2147,6 +2391,7 @@ const i18n = {
         modal: { resetTitle:"⚠️ Confirmar Reset", resetConfirm:"¿Estás seguro de que quieres eliminar todos los datos? Esta acción <strong>no se puede deshacer</strong>.", resetItems:"Se borrarán:", itemChallenges:"Todas las challenges", itemPayouts:"Todos los payouts", itemHistory:"Todo el historial", typeReset:"Escribe RESET para confirmar:", cancel:"Cancelar", confirmDelete:"Sí, Eliminar Todo" },
         year: { label:"AÑO ACTIVO:" },
         actions: { resetData:"🔄 Reset Datos", logout:"🚪 Salir" },
+        userMenu: { account:"Cuenta", subscription:"Subscripción", appearance:"Apariencia", language:"Idioma", export:"Exportar datos", alerts:"Alertas", timezone:"Zona horaria", resetData:"Reset Datos", logout:"Logout" },
         tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
         dash: {
             updated:"Actualizado", of:"de", total:"total", costs:"Costos", payments:"pagos",
@@ -2188,6 +2433,7 @@ const i18n = {
         modal: { resetTitle:"⚠️ Confirm Reset", resetConfirm:"Are you sure you want to delete all data? This action <strong>cannot be undone</strong>.", resetItems:"Will be deleted:", itemChallenges:"All challenges", itemPayouts:"All payouts", itemHistory:"All history", typeReset:"Type RESET to confirm:", cancel:"Cancel", confirmDelete:"Yes, Delete Everything" },
         year: { label:"ACTIVE YEAR:" },
         actions: { resetData:"🔄 Reset Data", logout:"🚪 Logout" },
+        userMenu: { account:"Account", subscription:"Subscription", appearance:"Appearance", language:"Language", export:"Export data", alerts:"Alerts", timezone:"Timezone", resetData:"Reset Data", logout:"Logout" },
         tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
         dash: {
             updated:"Updated", of:"of", total:"total", costs:"Costs", payments:"payments",
@@ -2310,7 +2556,18 @@ window.setLanguage = setLanguage;
         }
 
         // Transition to the dashboard (called after successful auth + beta check)
+        let currentUserEmail = '';
+
         function onLoginSuccess(email) {
+            currentUserEmail = email;
+
+            // Show and populate user menu
+            const menuContainer = $('userMenuContainer');
+            if (menuContainer) menuContainer.style.display = '';
+            const emailEl = $('userMenuEmail');
+            if (emailEl) emailEl.textContent = email;
+            const avatarEl = $('userMenuAvatar');
+            if (avatarEl) avatarEl.textContent = email.charAt(0).toUpperCase();
 
             $('loginOverlay').classList.add('hidden');
             document.body.classList.remove('login-active');
@@ -2419,6 +2676,22 @@ window.setLanguage = setLanguage;
         window.nqLogout       = nqLogout;
         // Keep backward-compat alias for header button onclick="logout()"
         window.logout         = nqLogout;
+
+        // ── User Menu ─────────────────────────────────────────────────────────
+        function toggleUserMenu() {
+            const dd = document.getElementById('userMenuDropdown');
+            if (dd) dd.classList.toggle('open');
+        }
+        function closeUserMenu() {
+            const dd = document.getElementById('userMenuDropdown');
+            if (dd) dd.classList.remove('open');
+        }
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#userMenuContainer')) closeUserMenu();
+        });
+        window.toggleUserMenu = toggleUserMenu;
+        window.closeUserMenu  = closeUserMenu;
 
         // ============================================
         // INICIALIZACIÓN - Esperar a que el DOM esté listo
