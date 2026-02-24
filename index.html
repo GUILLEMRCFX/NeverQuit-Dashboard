@@ -218,14 +218,13 @@
         .tabs {
             display: flex;
             gap: 0.5rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid rgba(230, 232, 235, 0.05);
+            flex: 1;
+            min-width: 0;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
             scrollbar-color: #2ECC71 rgba(230, 232, 235, 0.05);
             padding-bottom: 0.5rem;
-            position: relative;
         }
 
         .tabs::-webkit-scrollbar {
@@ -1697,12 +1696,21 @@
             line-height: 1.7;
         }
 
+        /* ─── NAV WRAPPER (hamburger + tabs in one row) ─── */
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(230,232,235,0.05);
+            padding-bottom: 0.5rem;
+        }
+
         /* ─── USER MENU ─── */
         .user-menu-container {
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 10001;
+            position: relative;
+            flex-shrink: 0;
+            z-index: 201;
         }
 
         .user-menu-btn {
@@ -1796,9 +1804,16 @@
             padding: 0.65rem 1rem;
             font-size: 0.83rem;
             font-weight: 500;
+            font-family: 'Inter', sans-serif;
             color: #C8CDD3;
             cursor: pointer;
             transition: background 0.15s, color 0.15s;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            border-radius: 0;
+            box-sizing: border-box;
         }
         .user-menu-item:hover {
             background: rgba(230,232,235,0.05);
@@ -1874,98 +1889,6 @@
     <script src="auth.js"></script>
 </head>
 <body class="login-active">
-    <!-- Language Selector: ES | EN -->
-    <!-- User Menu -->
-    <div class="user-menu-container" id="userMenuContainer" style="display:none;">
-        <button class="user-menu-btn" id="userMenuBtn" onclick="toggleUserMenu()" aria-label="User menu">
-            <span class="hb-line"></span>
-            <span class="hb-line"></span>
-            <span class="hb-line"></span>
-        </button>
-        <div class="user-menu-dropdown" id="userMenuDropdown">
-
-            <!-- Header: email + plan -->
-            <div class="user-menu-header">
-                <div class="user-menu-email" id="userMenuEmail">user@email.com</div>
-                <span class="user-menu-plan">BETA</span>
-            </div>
-
-            <!-- Account & billing (coming soon) -->
-            <div class="user-menu-section">
-                <div class="user-menu-item disabled">
-                    <span class="user-menu-icon">⚙️</span>
-                    <span class="user-menu-label" data-i18n="userMenu.account">Cuenta</span>
-                    <span class="user-menu-soon">SOON</span>
-                </div>
-                <div class="user-menu-item disabled">
-                    <span class="user-menu-icon">💳</span>
-                    <span class="user-menu-label" data-i18n="userMenu.subscription">Subscripción</span>
-                    <span class="user-menu-soon">SOON</span>
-                </div>
-                <div class="user-menu-item disabled">
-                    <span class="user-menu-icon">🎨</span>
-                    <span class="user-menu-label" data-i18n="userMenu.appearance">Apariencia</span>
-                    <span class="user-menu-soon">SOON</span>
-                </div>
-            </div>
-
-            <div class="user-menu-divider"></div>
-
-            <!-- Language (active) -->
-            <div class="user-menu-section">
-                <div class="user-menu-item" style="cursor:default;">
-                    <span class="user-menu-icon">🌐</span>
-                    <span class="user-menu-label" data-i18n="userMenu.language">Idioma</span>
-                    <div class="user-menu-lang-btns">
-                        <button class="lang-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
-                        <button class="lang-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="user-menu-divider"></div>
-
-            <!-- Future features (coming soon) -->
-            <div class="user-menu-section">
-                <div class="user-menu-item disabled">
-                    <span class="user-menu-icon">📤</span>
-                    <span class="user-menu-label" data-i18n="userMenu.export">Exportar datos</span>
-                    <span class="user-menu-soon">SOON</span>
-                </div>
-                <div class="user-menu-item disabled">
-                    <span class="user-menu-icon">🔔</span>
-                    <span class="user-menu-label" data-i18n="userMenu.alerts">Alertas</span>
-                    <span class="user-menu-soon">SOON</span>
-                </div>
-                <div class="user-menu-item disabled">
-                    <span class="user-menu-icon">🕐</span>
-                    <span class="user-menu-label" data-i18n="userMenu.timezone">Zona horaria</span>
-                    <span class="user-menu-soon">SOON</span>
-                </div>
-            </div>
-
-            <div class="user-menu-divider"></div>
-
-            <!-- Danger: Reset -->
-            <div class="user-menu-section">
-                <div class="user-menu-item user-menu-danger" onclick="openResetModal(); closeUserMenu();">
-                    <span class="user-menu-icon">🗑️</span>
-                    <span class="user-menu-label" data-i18n="userMenu.resetData">Reset Datos</span>
-                </div>
-            </div>
-
-            <div class="user-menu-divider"></div>
-
-            <!-- Logout -->
-            <div class="user-menu-section">
-                <div class="user-menu-item user-menu-logout" onclick="nqLogout()">
-                    <span class="user-menu-icon">🚪</span>
-                    <span class="user-menu-label" data-i18n="userMenu.logout">Logout</span>
-                </div>
-            </div>
-
-        </div>
-    </div>
 
     <!-- Login Screen -->
     <div id="loginOverlay" class="login-overlay">
@@ -2063,22 +1986,106 @@
             </div>
         </div>
 
-        <div class="header">
-            <h1>NEVER QUIT DASHBOARD <span class="beta-badge">BETA</span></h1>
-            <p data-i18n="app.tagline">Sistema de Gestión de Capital Profesional</p>
-        </div>
-
         <div id="alertContainer"></div>
 
-        <div class="tabs">
-            <button class="tab active" data-tab="control">Control Center</button>
-            <button class="tab" data-tab="overview">Overview</button>
-            <button class="tab" data-tab="performance">Performance</button>
-            <button class="tab" data-tab="propfirm">Prop Firm</button>
-            <button class="tab" data-tab="ceoview">CEO View</button>
-            <button class="tab" data-tab="efficiency">Capital Efficiency</button>
-            <button class="tab tab-coming-soon" data-tab="wrapped">Wrapped</button>
-            <button class="tab" data-tab="hallofame">Hall of Fame</button>
+        <div class="nav-wrapper">
+            <!-- Hamburger + dropdown -->
+            <div class="user-menu-container" id="userMenuContainer" style="display:none;">
+                <button class="user-menu-btn" id="userMenuBtn" onclick="toggleUserMenu()" aria-label="User menu">
+                    <span class="hb-line"></span>
+                    <span class="hb-line"></span>
+                    <span class="hb-line"></span>
+                </button>
+                <div class="user-menu-dropdown" id="userMenuDropdown">
+
+                    <div class="user-menu-header">
+                        <div class="user-menu-email" id="userMenuEmail">user@email.com</div>
+                        <span class="user-menu-plan">BETA</span>
+                    </div>
+
+                    <div class="user-menu-section">
+                        <div class="user-menu-item disabled">
+                            <span class="user-menu-icon">⚙️</span>
+                            <span class="user-menu-label" data-i18n="userMenu.account">Cuenta</span>
+                            <span class="user-menu-soon">SOON</span>
+                        </div>
+                        <div class="user-menu-item disabled">
+                            <span class="user-menu-icon">💳</span>
+                            <span class="user-menu-label" data-i18n="userMenu.subscription">Subscripción</span>
+                            <span class="user-menu-soon">SOON</span>
+                        </div>
+                        <div class="user-menu-item disabled">
+                            <span class="user-menu-icon">🎨</span>
+                            <span class="user-menu-label" data-i18n="userMenu.appearance">Apariencia</span>
+                            <span class="user-menu-soon">SOON</span>
+                        </div>
+                    </div>
+
+                    <div class="user-menu-divider"></div>
+
+                    <div class="user-menu-section">
+                        <div class="user-menu-item" style="cursor:default;">
+                            <span class="user-menu-icon">🌐</span>
+                            <span class="user-menu-label" data-i18n="userMenu.language">Idioma</span>
+                            <div class="user-menu-lang-btns">
+                                <button class="lang-opt active" id="opt-es" onclick="setLanguage('es')">ES</button>
+                                <button class="lang-opt" id="opt-en" onclick="setLanguage('en')">EN</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-menu-divider"></div>
+
+                    <div class="user-menu-section">
+                        <div class="user-menu-item disabled">
+                            <span class="user-menu-icon">📤</span>
+                            <span class="user-menu-label" data-i18n="userMenu.export">Exportar datos</span>
+                            <span class="user-menu-soon">SOON</span>
+                        </div>
+                        <div class="user-menu-item disabled">
+                            <span class="user-menu-icon">🔔</span>
+                            <span class="user-menu-label" data-i18n="userMenu.alerts">Alertas</span>
+                            <span class="user-menu-soon">SOON</span>
+                        </div>
+                        <div class="user-menu-item disabled">
+                            <span class="user-menu-icon">🕐</span>
+                            <span class="user-menu-label" data-i18n="userMenu.timezone">Zona horaria</span>
+                            <span class="user-menu-soon">SOON</span>
+                        </div>
+                    </div>
+
+                    <div class="user-menu-divider"></div>
+
+                    <div class="user-menu-section">
+                        <button class="user-menu-item user-menu-danger" onclick="openResetModal(); closeUserMenu();">
+                            <span class="user-menu-icon">🗑️</span>
+                            <span class="user-menu-label" data-i18n="userMenu.resetData">Reset Datos</span>
+                        </button>
+                    </div>
+
+                    <div class="user-menu-divider"></div>
+
+                    <div class="user-menu-section">
+                        <button class="user-menu-item user-menu-logout" onclick="nqLogout()">
+                            <span class="user-menu-icon">🚪</span>
+                            <span class="user-menu-label" data-i18n="userMenu.logout">Logout</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab bar -->
+            <div class="tabs">
+                <button class="tab active" data-tab="control">Control Center</button>
+                <button class="tab" data-tab="overview">Overview</button>
+                <button class="tab" data-tab="performance">Performance</button>
+                <button class="tab" data-tab="propfirm">Prop Firm</button>
+                <button class="tab" data-tab="ceoview">CEO View</button>
+                <button class="tab" data-tab="efficiency">Capital Efficiency</button>
+                <button class="tab tab-coming-soon" data-tab="wrapped">Wrapped</button>
+                <button class="tab" data-tab="hallofame">Hall of Fame</button>
+            </div>
         </div>
 
         <!-- CONTROL CENTER -->
