@@ -1701,36 +1701,43 @@
         .user-menu-container {
             position: fixed;
             top: 16px;
-            right: 16px;
+            left: 16px;
             z-index: 10001;
         }
 
         .user-menu-btn {
             width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #2ECC71, #27AE60);
-            border: 2px solid rgba(46,204,113,0.4);
-            color: #0D1F14;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 800;
+            height: 34px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(230,232,235,0.12);
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: box-shadow 0.2s, transform 0.15s;
-            box-shadow: 0 2px 12px rgba(46,204,113,0.25);
+            gap: 5px;
+            padding: 0 9px;
+            transition: background 0.2s, border-color 0.2s;
         }
         .user-menu-btn:hover {
-            box-shadow: 0 4px 20px rgba(46,204,113,0.45);
-            transform: scale(1.07);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(230,232,235,0.25);
         }
+        .user-menu-btn .hb-line {
+            display: block;
+            width: 100%;
+            height: 1.5px;
+            background: #9AA0A6;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+        .user-menu-btn:hover .hb-line { background: #E6E8EB; }
 
         .user-menu-dropdown {
             position: absolute;
             top: calc(100% + 10px);
-            right: 0;
+            left: 0;
             width: 260px;
             background: #181B20;
             border: 1px solid rgba(230,232,235,0.1);
@@ -1871,7 +1878,9 @@
     <!-- User Menu -->
     <div class="user-menu-container" id="userMenuContainer" style="display:none;">
         <button class="user-menu-btn" id="userMenuBtn" onclick="toggleUserMenu()" aria-label="User menu">
-            <span id="userMenuAvatar">U</span>
+            <span class="hb-line"></span>
+            <span class="hb-line"></span>
+            <span class="hb-line"></span>
         </button>
         <div class="user-menu-dropdown" id="userMenuDropdown">
 
@@ -2566,8 +2575,6 @@ window.setLanguage = setLanguage;
             if (menuContainer) menuContainer.style.display = '';
             const emailEl = $('userMenuEmail');
             if (emailEl) emailEl.textContent = email;
-            const avatarEl = $('userMenuAvatar');
-            if (avatarEl) avatarEl.textContent = email.charAt(0).toUpperCase();
 
             $('loginOverlay').classList.add('hidden');
             document.body.classList.remove('login-active');
@@ -2674,8 +2681,6 @@ window.setLanguage = setLanguage;
         window.handleRegister = handleRegister;
         window.switchAuthTab  = switchAuthTab;
         window.nqLogout       = nqLogout;
-        // Keep backward-compat alias for header button onclick="logout()"
-        window.logout         = nqLogout;
 
         // ── User Menu ─────────────────────────────────────────────────────────
         function toggleUserMenu() {
