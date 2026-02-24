@@ -965,13 +965,12 @@
             margin-bottom: 2rem;
         }
 
-        /* Official logo SVG */
-        .nq-logo-svg {
-            width: 155px;
-            height: 155px;
+        /* Logo image */
+        .nq-logo-img {
+            width: 180px;
+            height: auto;
             display: block;
             margin: 0 auto 1rem;
-            filter: drop-shadow(0 0 18px rgba(46,204,113,0.35));
         }
 
         /* NEVERQUIT — bold white, matching the official logo */
@@ -1572,33 +1571,6 @@
             border: none;
         }
 
-        /* ── Gravitational Field ───────────────────────── */
-        /* Polygon parallax background layer */
-        #polygon-bg {
-            position: absolute;
-            inset: -30px; /* oversize so 8px translate never clips edge */
-            background:
-                radial-gradient(ellipse at 15% 25%, rgba(46,204,113,0.07) 0%, transparent 52%),
-                radial-gradient(ellipse at 85% 72%, rgba(52,152,219,0.05) 0%, transparent 52%),
-                radial-gradient(ellipse at 50% 50%, rgba(46,204,113,0.02) 0%, transparent 68%);
-            z-index: 0;
-            will-change: transform;
-            pointer-events: none;
-        }
-
-        /* Perspective container — wraps the disc */
-        #blackhole-logo {
-            perspective: 700px;
-            perspective-origin: center center;
-        }
-
-        /* The disc itself — receives rotateX/Y + scale from JS */
-        .logo-disc {
-            transform-style: preserve-3d;
-            will-change: transform;
-            transform-origin: center center;
-            /* No CSS transition — LERP in JS handles all smoothing */
-        }
 
         /* ═══════════════════════════════════════════════════════
            PROPFIRM GOLDEN — Max Allocation assolit (SCOPED al tab)
@@ -1728,130 +1700,12 @@
 
     <!-- Login Screen -->
     <div id="loginOverlay" class="login-overlay">
-        <div id="polygon-bg"></div>
         <canvas id="loginCursorCanvas"></canvas>
         <div class="login-box">
             <div class="login-header" id="blackhole-logo">
-                <div class="logo-disc">
-                    <!-- Official NeverQuit logo — SVG inline recreation -->
-                    <svg class="nq-logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="NeverQuit logo">
-                      <defs>
-                        <!-- Soft glow with double blur pass for more intensity -->
-                        <filter id="nq-glow" x="-60%" y="-60%" width="220%" height="220%">
-                          <feGaussianBlur stdDeviation="4" result="b"/>
-                          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                        <!-- Volumetric halo — wide and layered -->
-                        <filter id="nq-halo-f" x="-150%" y="-150%" width="400%" height="400%">
-                          <feGaussianBlur stdDeviation="18" result="b"/>
-                          <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                        <!-- Medium glow for highlights -->
-                        <filter id="nq-hl-f" x="-80%" y="-80%" width="260%" height="260%">
-                          <feGaussianBlur stdDeviation="6" result="b"/>
-                          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-                        </filter>
-                        <!-- Ring gradient: bright yellowish-green top → deep green bottom -->
-                        <linearGradient id="nq-rg" x1="20%" y1="0%" x2="80%" y2="100%">
-                          <stop offset="0%"   stop-color="#e8ffb0"/>
-                          <stop offset="15%"  stop-color="#a8ff6e"/>
-                          <stop offset="35%"  stop-color="#2ECC71"/>
-                          <stop offset="65%"  stop-color="#1a7a3a"/>
-                          <stop offset="100%" stop-color="#0b2e14"/>
-                        </linearGradient>
-                        <!-- Orbital gradient: dark left → bright right tip -->
-                        <linearGradient id="nq-og" x1="0%" y1="50%" x2="100%" y2="50%">
-                          <stop offset="0%"   stop-color="#0b2e14"/>
-                          <stop offset="40%"  stop-color="#2ECC71"/>
-                          <stop offset="82%"  stop-color="#b0ff7a"/>
-                          <stop offset="100%" stop-color="#e0ffb0"/>
-                        </linearGradient>
-                        <!-- Core radial gradient: subtle green tinge on upper-left edge -->
-                        <radialGradient id="nq-core" cx="38%" cy="36%" r="62%">
-                          <stop offset="0%"   stop-color="#0e1c11"/>
-                          <stop offset="65%"  stop-color="#07100a"/>
-                          <stop offset="100%" stop-color="#040c06"/>
-                        </radialGradient>
-                        <!-- Ambient radial halo — larger, more present -->
-                        <radialGradient id="nq-ambient" cx="50%" cy="44%" r="52%">
-                          <stop offset="0%"   stop-color="#2ECC71" stop-opacity="0.38"/>
-                          <stop offset="55%"  stop-color="#2ECC71" stop-opacity="0.10"/>
-                          <stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/>
-                        </radialGradient>
-                        <!-- Clip: behind ring (bottom half) -->
-                        <clipPath id="nq-back"><rect x="0" y="98" width="200" height="102"/></clipPath>
-                        <!-- Clip: in front of ring (top half) -->
-                        <clipPath id="nq-front"><rect x="0" y="0" width="200" height="98"/></clipPath>
-                      </defs>
-
-                      <!-- Ambient soft green cloud -->
-                      <ellipse cx="100" cy="93" rx="90" ry="82" fill="url(#nq-ambient)"/>
-
-                      <!-- Volumetric outer glow — two stacked layers -->
-                      <circle cx="100" cy="98" r="52" fill="none" stroke="#2ECC71"
-                              stroke-width="32" opacity="0.07" filter="url(#nq-halo-f)"/>
-                      <circle cx="100" cy="98" r="52" fill="none" stroke="#4ade80"
-                              stroke-width="18" opacity="0.13" filter="url(#nq-halo-f)"/>
-
-                      <!-- Orbital ring — BACK half (behind the main ring) -->
-                      <ellipse cx="100" cy="98" rx="86" ry="20"
-                               fill="none" stroke="url(#nq-og)" stroke-width="4"
-                               transform="rotate(-24 100 98)"
-                               clip-path="url(#nq-back)"
-                               opacity="0.5" filter="url(#nq-glow)"/>
-
-                      <!-- Main ring — solid visible stroke -->
-                      <circle cx="100" cy="98" r="52" fill="none"
-                              stroke="url(#nq-rg)" stroke-width="14" filter="url(#nq-glow)"/>
-
-                      <!-- Black hole core with depth gradient -->
-                      <circle cx="100" cy="98" r="45" fill="url(#nq-core)"/>
-                      <!-- Inner edge shimmer -->
-                      <circle cx="100" cy="98" r="45" fill="none" stroke="#1f4d28" stroke-width="1.5" opacity="0.85"/>
-                      <!-- Inner dark ring for extra depth -->
-                      <circle cx="100" cy="98" r="41" fill="none" stroke="#0a1f0d" stroke-width="2.5" opacity="0.5"/>
-
-                      <!-- Orbital ring — FRONT half (in front of the main ring) -->
-                      <ellipse cx="100" cy="98" rx="86" ry="20"
-                               fill="none" stroke="url(#nq-og)" stroke-width="7"
-                               transform="rotate(-24 100 98)"
-                               clip-path="url(#nq-front)"
-                               filter="url(#nq-glow)"/>
-
-                      <!-- TOP HIGHLIGHT — bright crescent arc (light from upper-left) -->
-                      <path d="M 63 67 Q 80 53 100 52 Q 116 52 128 60"
-                            fill="none" stroke="#c8ffb0" stroke-width="5.5" stroke-linecap="round"
-                            opacity="0.88" filter="url(#nq-hl-f)"/>
-                      <!-- Highlight specular core (pure white centre) -->
-                      <path d="M 68 69 Q 83 57 100 56 Q 114 56 125 63"
-                            fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
-                            opacity="0.45"/>
-
-                      <!-- Swoosh tip at upper-right end of orbital -->
-                      <path d="M 174 67 C 180 58 190 50 194 46 C 189 53 184 63 178 70 Z"
-                            fill="#c8ff9e" opacity="0.95" filter="url(#nq-glow)"/>
-                      <!-- Tip inner highlight -->
-                      <path d="M 177 65 C 182 58 189 52 193 49 C 188 55 184 62 180 67 Z"
-                            fill="#ffffff" opacity="0.5"/>
-
-                      <!-- Scattered star particles — brighter with glow -->
-                      <circle cx="75"  cy="42"  r="2.2" fill="#6ee89e" opacity="0.95" filter="url(#nq-glow)"/>
-                      <circle cx="152" cy="47"  r="2.8" fill="#b0ff80" opacity="0.92" filter="url(#nq-glow)"/>
-                      <circle cx="132" cy="34"  r="1.8" fill="#d4ffb0" opacity="0.85" filter="url(#nq-glow)"/>
-                      <circle cx="118" cy="38"  r="1.4" fill="#a8ff6e" opacity="0.75" filter="url(#nq-glow)"/>
-                      <circle cx="168" cy="84"  r="1.5" fill="#2ECC71" opacity="0.75" filter="url(#nq-glow)"/>
-                      <circle cx="38"  cy="80"  r="1.8" fill="#2ECC71" opacity="0.65" filter="url(#nq-glow)"/>
-                      <circle cx="42"  cy="54"  r="1.6" fill="#2ECC71" opacity="0.55" filter="url(#nq-glow)"/>
-                      <circle cx="158" cy="142" r="1.4" fill="#2ECC71" opacity="0.5"/>
-                      <circle cx="50"  cy="132" r="1.2" fill="#58d68d" opacity="0.45"/>
-                      <circle cx="174" cy="112" r="1.2" fill="#2ECC71" opacity="0.5"/>
-                      <circle cx="88"  cy="155" r="1.6" fill="#2ECC71" opacity="0.4"/>
-                      <circle cx="60"  cy="110" r="1.0" fill="#2ECC71" opacity="0.35"/>
-                    </svg>
-
-                    <h1>NEVERQUIT</h1>
-                    <p>DASHBOARD</p>
-                </div>
+                <img src="logo.png" class="nq-logo-img" alt="NeverQuit Dashboard">
+                <h1>NEVERQUIT</h1>
+                <p>DASHBOARD</p>
             </div>
             
             <!-- Auth notification banners -->
@@ -1900,14 +1754,14 @@
     <div id="betaWaitOverlay" class="login-overlay" style="display:none; flex-direction:column;">
         <div class="login-box" style="text-align:center; max-width:440px;">
             <div style="font-size:3.5rem; margin-bottom:1rem;">⏳</div>
-            <h2 style="color:#FFD700; font-size:1.4rem; margin-bottom:1rem; letter-spacing:0.05em;">ACCÉS BETA PENDENT</h2>
+            <h2 style="color:#FFD700; font-size:1.4rem; margin-bottom:1rem; letter-spacing:0.05em;">ACCESO BETA PENDIENTE</h2>
             <p style="color:#9AA0A6; font-size:0.92rem; line-height:1.7; margin-bottom:2rem;">
-                T'has registrat correctament però encara estàs a la llista d'espera per accedir al beta.<br><br>
-                Et notificarem quan el teu compte sigui activat.
+                Te has registrado correctamente pero todavía estás en lista de espera para acceder al beta.<br><br>
+                Te notificaremos cuando tu cuenta sea activada.
             </p>
             <button class="login-btn" onclick="nqLogout()"
                 style="background:linear-gradient(135deg,#555,#333); margin-top:0.5rem;">
-                🚪 Tancar Sessió
+                🚪 Cerrar Sesión
             </button>
         </div>
     </div>
@@ -1946,7 +1800,6 @@
             <h1>NEVER QUIT DASHBOARD <span class="beta-badge">BETA</span></h1>
             <p>Sistema de Gestión de Capital Profesional</p>
             <div class="header-actions">
-                <span id="headerUsername" style="color:#9AA0A6;font-size:0.8rem;font-weight:600;letter-spacing:0.04em;"></span>
                 <button class="btn-reset" onclick="openResetModal()">🔄 Reset Datos</button>
                 <button class="btn-reset btn-reset--gray" onclick="logout()">🚪 Salir</button>
             </div>
@@ -2188,85 +2041,6 @@
     loop();
 })();
 
-// ============================================
-// GRAVITATIONAL FIELD — Cinematic logo effect
-// Gravity tilt ±4° · parallax 8px · micro-pull scale 1.025
-// Desktop only. LERP smoothing. Pure RAF loop.
-// ============================================
-(function initGravitationalField() {
-    // Hard disable on mobile — logo stays static
-    if (window.innerWidth < 768) return;
-
-    const logo = document.getElementById('blackhole-logo');
-    const disc = document.querySelector('.logo-disc');
-    const bg   = document.getElementById('polygon-bg');
-    if (!logo || !disc || !bg) return;
-
-    // Normalised cursor position in [-1, 1] along each axis
-    let mouseX = 0, mouseY = 0;
-    // Raw client coords for distance-based scale calculation
-    let mouseClientX = window.innerWidth  / 2;
-    let mouseClientY = window.innerHeight / 2;
-    // Smoothed (LERP) values
-    let curX = 0, curY = 0, curScale = 1;
-
-    document.addEventListener('mousemove', (e) => {
-        mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
-        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-        mouseClientX = e.clientX;
-        mouseClientY = e.clientY;
-    });
-
-    // Linear interpolation helper
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    let animId;
-
-    function animate() {
-        // Smooth approach — 0.05 factor = very fluid, cinematic feel
-        curX = lerp(curX, mouseX, 0.05);
-        curY = lerp(curY, mouseY, 0.05);
-
-        // 3D tilt — max ±4°
-        const rotX = curY * -4;
-        const rotY = curX *  4;
-
-        // Distance-based micro-pull: closer cursor → subtle scale up (max 1.025)
-        const rect      = logo.getBoundingClientRect();
-        const cx        = rect.left + rect.width  / 2;
-        const cy        = rect.top  + rect.height / 2;
-        const dx        = mouseClientX - cx;
-        const dy        = mouseClientY - cy;
-        const dist      = Math.sqrt(dx * dx + dy * dy);
-        const tScale    = 1 + Math.max(0, 1 - dist / 400) * 0.025;
-        curScale        = lerp(curScale, tScale, 0.08);
-
-        // Apply — disc handles tilt + scale; bg handles parallax
-        disc.style.transform =
-            `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${curScale})`;
-        bg.style.transform =
-            `translate(${curX * 8}px, ${curY * 8}px)`;
-
-        animId = requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // Cancel RAF cleanly when login overlay fades out (avoid ghost loops)
-    const loginEl = document.getElementById('loginOverlay');
-    if (loginEl) {
-        const obs = new MutationObserver(() => {
-            if (loginEl.classList.contains('hidden')) {
-                cancelAnimationFrame(animId);
-                // Reset disc so it doesn't freeze mid-tilt if overlay is shown again
-                disc.style.transform = '';
-                bg.style.transform   = '';
-                obs.disconnect();
-            }
-        });
-        obs.observe(loginEl, { attributes: true, attributeFilter: ['class'] });
-    }
-})();
 
 // ============================================
 // DASHBOARD BACKGROUND PARTICLES
@@ -2527,8 +2301,6 @@ window.setLanguage = setLanguage;
 
         // Transition to the dashboard (called after successful auth + beta check)
         function onLoginSuccess(email) {
-            const hdr = document.getElementById('headerUsername');
-            if (hdr) hdr.textContent = `◇ ${email.toUpperCase()}`;
 
             $('loginOverlay').classList.add('hidden');
             document.body.classList.remove('login-active');
