@@ -947,6 +947,7 @@
             animation: loginSlideIn 0.5s ease-out;
             position: relative;
             z-index: 2;
+            isolation: isolate;
         }
 
         @keyframes loginSlideIn {
@@ -963,33 +964,44 @@
         .login-header {
             text-align: center;
             margin-bottom: 2rem;
+            position: relative;
         }
 
-        /* Logo image */
+        /* Glow pulsante detrás del logo */
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: 42%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 220px;
+            height: 180px;
+            background: radial-gradient(ellipse, rgba(46, 204, 113, 0.22) 0%, transparent 70%);
+            pointer-events: none;
+            animation: glowPulse 3s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1);    }
+            50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.18); }
+        }
+
+        /* Logo: mix-blend-mode elimina el fondo oscuro del PNG sin editar el archivo */
         .nq-logo-img {
-            width: 180px;
+            width: 230px;
             height: auto;
             display: block;
-            margin: 0 auto 1rem;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            mix-blend-mode: lighten;
+            animation: logoBreath 3s ease-in-out infinite;
         }
 
-        /* NEVERQUIT — bold white, matching the official logo */
-        .login-header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #FFFFFF;
-            letter-spacing: 0.12em;
-            margin-bottom: 0.35rem;
-            -webkit-text-fill-color: #FFFFFF; /* override any inherited gradient clip */
-        }
-
-        /* DASHBOARD — green, wide spacing, like the official subtitle */
-        .login-header p {
-            color: #2ECC71;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
+        @keyframes logoBreath {
+            0%, 100% { transform: scale(1);    }
+            50%       { transform: scale(1.03); }
         }
 
         .login-form .form-group {
@@ -1704,8 +1716,6 @@
         <div class="login-box">
             <div class="login-header" id="blackhole-logo">
                 <img src="logo.png" class="nq-logo-img" alt="NeverQuit Dashboard">
-                <h1>NEVERQUIT</h1>
-                <p>DASHBOARD</p>
             </div>
             
             <!-- Auth notification banners -->
