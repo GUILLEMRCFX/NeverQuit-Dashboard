@@ -4420,7 +4420,8 @@ setLanguage(currentLanguage);
                 return allPayouts.filter(p => p.year === year).reduce((sum, p) => sum + p.amount, 0);
             });
 
-            const bestYear = years[yearlyPayouts.indexOf(Math.max(...yearlyPayouts))] || 'N/A';
+            const _maxPayout = yearlyPayouts.length > 0 ? Math.max(...yearlyPayouts) : -Infinity;
+            const bestYear = (_maxPayout > 0 ? years[yearlyPayouts.indexOf(_maxPayout)] : null) || 'N/A';
 
             // ── MÉTRICAS DEL ARRAY EXAMENS ──────────────────────────────────
             // Intentos promedio hasta fondear (nº de cambios de fase por cuenta fondeada)
@@ -4945,7 +4946,7 @@ setLanguage(currentLanguage);
 
             // Win rates
             const totalChallenges = yearAccounts.length;
-            const { phase1: phase1WinRate, phase2: phase2WinRate } = calcWinRates(yearAccounts);
+            const { phase1: phase1WinRate, phase2: phase2WinRate, passedPhase1 } = calcWinRates(yearAccounts);
 
             // Avg time to funding
             const avgTimeToFunding = fundedAccountsWithDays.length > 0 
@@ -5035,8 +5036,8 @@ setLanguage(currentLanguage);
                 <div class="achievement-card">
                     <div class="achievement-icon">✅</div>
                     <div class="achievement-content">
-                        <h4>${phase1WinRate.toFixed(0)}% TASA DE ÉXITO PHASE 1</h4>
-                        <p>${passedPhase1} de ${totalChallenges} challenges superaron Phase 1</p>
+                        <h4>${phase1WinRate.toFixed(0)}% ${t('phase1WinRate').replace('◇ ', '')}</h4>
+                        <p>${passedPhase1} ${t('of')} ${totalChallenges} ${msg('challenges passed Phase 1', 'challenges superaron Phase 1')}</p>
                     </div>
                 </div>` : ''}
 
