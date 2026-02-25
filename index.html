@@ -3157,20 +3157,25 @@ setLanguage(currentLanguage);
 
             // Limpiar completamente el localStorage
             localStorage.removeItem('superDashboardData');
-            
+            localStorage.removeItem('nqActionHistory');
+
             // Resetear el objeto data a vacío
             data = {
                 master_comptes: [],
                 payouts: [],
                 examens: []
             };
-            
+
+            // Resetear el historial de acciones en memoria
+            actionHistory = { challenges: [], statuses: [], payouts: [] };
+
             // Cerrar modal
             closeResetModal();
-            
-            // Actualizar UI inmediatamente
+
+            // Actualizar UI y limpiar panel de historial
             updateUI();
-            
+            renderHistoryPanel();
+
             showAlert(msg('✅ All data has been deleted', '✅ Todos los datos han sido eliminados'), 'success');
         }
 
