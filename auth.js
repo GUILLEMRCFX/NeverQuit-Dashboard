@@ -45,7 +45,13 @@ async function handleEmailConfirmation() {
  * @returns {{ user: object|null, error: object|null }}
  */
 async function register(email, password) {
-    const { data, error } = await nqSupabase.auth.signUp({ email, password });
+    // Redirect back to this page after email confirmation so ?code=XXXX is handled correctly.
+    const redirectTo = window.location.origin + window.location.pathname;
+    const { data, error } = await nqSupabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: redirectTo },
+    });
     return { user: data?.user ?? null, error };
 }
 
