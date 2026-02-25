@@ -1904,8 +1904,8 @@
 
             <!-- Tab toggle: Login / Register -->
             <div class="auth-tabs">
-                <button class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')">Iniciar Sesión</button>
-                <button class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')">Registrarse</button>
+                <button class="auth-tab active" id="tabLogin"    onclick="switchAuthTab('login')"    data-i18n="login.tabLogin">Iniciar Sesión</button>
+                <button class="auth-tab"        id="tabRegister" onclick="switchAuthTab('register')" data-i18n="login.tabRegister">Registrarse</button>
             </div>
 
             <!-- LOGIN FORM -->
@@ -1915,10 +1915,10 @@
                     <input type="email" id="loginEmail" placeholder="tu@email.com" autocomplete="email" required>
                 </div>
                 <div class="form-group">
-                    <label>Contraseña</label>
+                    <label data-i18n="login.password">Contraseña</label>
                     <input type="password" id="loginPassword" placeholder="Tu contraseña" autocomplete="current-password" required>
                 </div>
-                <button type="submit" class="login-btn" id="loginBtn">Entrar al Dashboard</button>
+                <button type="submit" class="login-btn" id="loginBtn" data-i18n="login.submit">Entrar al Dashboard</button>
             </form>
 
             <!-- REGISTER FORM (hidden by default) -->
@@ -1928,14 +1928,14 @@
                     <input type="email" id="registerEmail" placeholder="tu@email.com" autocomplete="email" required>
                 </div>
                 <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="registerPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required minlength="8">
+                    <label data-i18n="login.password">Contraseña</label>
+                    <input type="password" id="registerPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required minlength="8" data-i18n-ph="forms.passwordMinPh">
                 </div>
                 <div class="form-group">
-                    <label>Confirmar Contraseña</label>
-                    <input type="password" id="registerConfirm" placeholder="Repite la contraseña" autocomplete="new-password" required>
+                    <label data-i18n="login.confirmPassword">Confirmar Contraseña</label>
+                    <input type="password" id="registerConfirm" placeholder="Repite la contraseña" autocomplete="new-password" required data-i18n-ph="forms.confirmPh">
                 </div>
-                <button type="submit" class="login-btn" id="registerBtn">Crear Cuenta</button>
+                <button type="submit" class="login-btn" id="registerBtn" data-i18n="login.submitRegister">Crear Cuenta</button>
             </form>
         </div>
     </div>
@@ -1944,13 +1944,14 @@
     <div id="betaWaitOverlay" class="login-overlay" style="display:none; flex-direction:column;">
         <div class="login-box" style="text-align:center; max-width:440px;">
             <div style="font-size:3.5rem; margin-bottom:1rem;">⏳</div>
-            <h2 style="color:#FFD700; font-size:1.4rem; margin-bottom:1rem; letter-spacing:0.05em;">ACCESO BETA PENDIENTE</h2>
-            <p style="color:#9AA0A6; font-size:0.92rem; line-height:1.7; margin-bottom:2rem;">
-                Te has registrado correctamente pero todavía estás en lista de espera para acceder al beta.<br><br>
+            <h2 style="color:#FFD700; font-size:1.4rem; margin-bottom:1rem; letter-spacing:0.05em;" data-i18n="login.betaTitle">ACCESO BETA PENDIENTE</h2>
+            <p style="color:#9AA0A6; font-size:0.92rem; line-height:1.7; margin-bottom:2rem;" data-i18n="login.betaMsg">
+                Te has registrado correctamente pero aún estás en lista de espera para acceder al beta.<br><br>
                 Te notificaremos cuando tu cuenta sea activada.
             </p>
             <button class="login-btn" onclick="nqLogout()"
-                style="background:linear-gradient(135deg,#555,#333); margin-top:0.5rem;">
+                style="background:linear-gradient(135deg,#555,#333); margin-top:0.5rem;"
+                data-i18n="login.betaLogout">
                 🚪 Cerrar Sesión
             </button>
         </div>
@@ -2126,9 +2127,9 @@
                     </div>
                     <div class="form-group">
                         <label>Account Number</label>
-                        <input type="text" id="createAccountNumber" placeholder="Número de cuenta de la prop firm">
+                        <input type="text" id="createAccountNumber" placeholder="Número de cuenta de la prop firm" data-i18n-ph="forms.accountNumberPh">
                     </div>
-                    <button class="btn" onclick="createChallenge()">Crear Challenge</button>
+                    <button class="btn" onclick="createChallenge()" data-i18n="forms.createChallenge">Crear Challenge</button>
                 </div>
 
                 <div class="card">
@@ -2146,7 +2147,7 @@
                         <label>Status Date</label>
                         <input type="date" id="updateStatusDate">
                     </div>
-                    <button class="btn" onclick="updateChallenge()">Actualitzar Challenge</button>
+                    <button class="btn" onclick="updateChallenge()" data-i18n="forms.updateChallenge">Actualizar Challenge</button>
                 </div>
 
                 <div class="card">
@@ -2164,9 +2165,9 @@
                         <input type="date" id="payoutDate">
                     </div>
                     <div class="form-group">
-                        <label>Certificado <span style="font-weight:400;color:#9AA0A6;font-size:0.8rem;">(opcional · JPEG/PNG · máx 3MB)</span></label>
+                        <label><span data-i18n="forms.certLabel">Certificado</span> <span style="font-weight:400;color:#9AA0A6;font-size:0.8rem;" data-i18n="forms.certOptional">(opcional · JPEG/PNG · máx 3MB)</span></label>
                         <label class="cert-upload-label" id="certUploadLabel" for="payoutCertificate">
-                            <span id="certUploadText">📎 Adjuntar certificado</span>
+                            <span id="certUploadText" data-i18n="forms.certAttach">📎 Adjuntar certificado</span>
                             <input type="file" id="payoutCertificate" accept="image/jpeg,image/jpg,image/png" style="display:none;" onchange="handleCertPreview(this)">
                         </label>
                         <div id="certPreviewWrap" style="display:none;margin-top:0.5rem;position:relative;">
@@ -2174,7 +2175,7 @@
                             <button type="button" onclick="clearCertificate()" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border:none;color:#fff;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:0.75rem;line-height:22px;text-align:center;">✕</button>
                         </div>
                     </div>
-                    <button class="btn" onclick="registerPayout()">Registrar Payout</button>
+                    <button class="btn" onclick="registerPayout()" data-i18n="forms.registerPayout">Registrar Payout</button>
                 </div>
             </div>
         </div>
@@ -2403,16 +2404,17 @@ function initDashParticles() {
 const i18n = {
     es: {
         app: { name:"NEVER QUIT", fullName:"NEVER QUIT DASHBOARD", tagline:"Sistema de Gestión de Capital Profesional" },
-        login: { subtitle:"Dashboard de Gestión Profesional", username:"Usuario", password:"Contraseña", usernamePlaceholder:"Introduce tu usuario", passwordPlaceholder:"Introduce tu contraseña", submit:"Entrar al Dashboard", error:"Usuario o contraseña incorrectos", devMode:"🔧 Modo Desarrollo (Skip Login)" },
+        login: { subtitle:"Dashboard de Gestión Profesional", username:"Email", password:"Contraseña", usernamePlaceholder:"tu@email.com", passwordPlaceholder:"Tu contraseña", submit:"Entrar al Dashboard", submitRegister:"Crear Cuenta", tabLogin:"Iniciar Sesión", tabRegister:"Registrarse", confirmPassword:"Confirmar Contraseña", confirmPlaceholder:"Repite la contraseña", error:"Email o contraseña incorrectos", devMode:"🔧 Modo Desarrollo (Skip Login)", betaTitle:"ACCESO BETA PENDIENTE", betaMsg:"Te has registrado correctamente pero aún estás en lista de espera para acceder al beta.<br><br>Te notificaremos cuando tu cuenta sea activada.", betaLogout:"🚪 Cerrar Sesión" },
         modal: { resetTitle:"⚠️ Confirmar Reset", resetConfirm:"¿Estás seguro de que quieres eliminar todos los datos? Esta acción <strong>no se puede deshacer</strong>.", resetItems:"Se borrarán:", itemChallenges:"Todas las challenges", itemPayouts:"Todos los payouts", itemHistory:"Todo el historial", typeReset:"Escribe RESET para confirmar:", cancel:"Cancelar", confirmDelete:"Sí, Eliminar Todo" },
         year: { label:"AÑO ACTIVO:" },
         actions: { resetData:"🔄 Reset Datos", logout:"🚪 Salir" },
-        userMenu: { account:"Cuenta", subscription:"Subscripción", appearance:"Apariencia", language:"Idioma", export:"Exportar datos", alerts:"Alertas", timezone:"Zona horaria", resetData:"Reset Datos", logout:"Logout" },
+        userMenu: { account:"Cuenta", subscription:"Suscripción", appearance:"Apariencia", language:"Idioma", export:"Exportar datos", alerts:"Alertas", timezone:"Zona horaria", resetData:"Reset Datos", logout:"Cerrar sesión" },
         tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
+        forms: { createChallenge:"Crear Challenge", updateChallenge:"Actualizar Challenge", registerPayout:"Registrar Payout", accountNumberPh:"Número de cuenta de la prop firm", passwordMinPh:"Mínimo 8 caracteres", confirmPh:"Repite la contraseña", certLabel:"Certificado", certOptional:"(opcional · JPEG/PNG · máx 3MB)", certAttach:"📎 Adjuntar certificado" },
         dash: {
             updated:"Actualizado", of:"de", total:"total", costs:"Costos", payments:"pagos",
             fundedAccounts:"cuentas fondeadas", noActiveAccounts:"Sin cuentas activas",
-            payoutsReceived:"↳ Payouts recibidos", myAccounts:"◇ MIS CUENTAS — ALL TIME",
+            payoutsReceived:"↳ Payouts recibidos", myAccounts:"◇ MIS CUENTAS — HISTÓRICO",
             colAccount:"Cuenta", colSize:"Tamaño", colCost:"Coste", colDate:"Fecha",
             colPctActive:"% Activas", totalActive:"Total activas", noSuspended:"Sin suspendidas",
             closedAccounts:"cerradas", suspended:"suspendida", excludedFemSg:"excluida", excludedFemPl:"excluidas",
@@ -2423,8 +2425,8 @@ const i18n = {
             days:"días", wrappedSubtitle:"TU AÑO DE TRADING EN REVISIÓN",
             noDataCreate:"Crea tu primera challenge en Control Center para ver tu Wrapped",
             noDataPeriod:"Sin datos para el período seleccionado",
-            bestPropFirmRoi:"BEST PROP FIRM ROI", allTime:"All-time",
-            viewAllTime:"All-time business snapshot",
+            bestPropFirmRoi:"MEJOR ROI PROP FIRM", allTime:"Histórico",
+            viewAllTime:"Visión general histórica",
             pending:"Pendiente", reached:"✅ Alcanzado",
             projection:"proyección basada en ritmo actual",
             selfFunded:"SISTEMA AUTO-FINANCIADO", roiAverage:"ROI PROMEDIO",
@@ -2445,12 +2447,13 @@ const i18n = {
     },
     en: {
         app: { name:"NEVER QUIT", fullName:"NEVER QUIT DASHBOARD", tagline:"Professional Capital Management System" },
-        login: { subtitle:"Professional Management Dashboard", username:"Username", password:"Password", submit:"Enter Dashboard", error:"Incorrect username or password", devMode:"🔧 Dev Mode (Skip Login)" },
+        login: { subtitle:"Professional Management Dashboard", username:"Email", password:"Password", usernamePlaceholder:"your@email.com", passwordPlaceholder:"Your password", submit:"Enter Dashboard", submitRegister:"Create Account", tabLogin:"Sign In", tabRegister:"Register", confirmPassword:"Confirm Password", confirmPlaceholder:"Repeat your password", error:"Incorrect email or password", devMode:"🔧 Dev Mode (Skip Login)", betaTitle:"BETA ACCESS PENDING", betaMsg:"You've registered successfully but you're still on the waitlist to access the beta.<br><br>We'll notify you when your account is activated.", betaLogout:"🚪 Sign Out" },
         modal: { resetTitle:"⚠️ Confirm Reset", resetConfirm:"Are you sure you want to delete all data? This action <strong>cannot be undone</strong>.", resetItems:"Will be deleted:", itemChallenges:"All challenges", itemPayouts:"All payouts", itemHistory:"All history", typeReset:"Type RESET to confirm:", cancel:"Cancel", confirmDelete:"Yes, Delete Everything" },
         year: { label:"ACTIVE YEAR:" },
         actions: { resetData:"🔄 Reset Data", logout:"🚪 Logout" },
         userMenu: { account:"Account", subscription:"Subscription", appearance:"Appearance", language:"Language", export:"Export data", alerts:"Alerts", timezone:"Timezone", resetData:"Reset Data", logout:"Logout" },
         tabs: { control:"Control Center", overview:"Overview", performance:"Performance", propfirm:"Prop Firm", ceoview:"CEO View", efficiency:"Capital Efficiency", wrapped:"Wrapped" },
+        forms: { createChallenge:"Create Challenge", updateChallenge:"Update Challenge", registerPayout:"Register Payout", accountNumberPh:"Account number from the prop firm", passwordMinPh:"Minimum 8 characters", confirmPh:"Repeat your password", certLabel:"Certificate", certOptional:"(optional · JPEG/PNG · max 3MB)", certAttach:"📎 Attach certificate" },
         dash: {
             updated:"Updated", of:"of", total:"total", costs:"Costs", payments:"payments",
             fundedAccounts:"funded accounts", noActiveAccounts:"No active accounts",
@@ -2488,12 +2491,6 @@ const i18n = {
 };
 
 let currentLanguage = localStorage.getItem('neverQuitLanguage') || 'es';
-if (currentLanguage === 'en') {
-    const elEs = document.getElementById('opt-es');
-    const elEn = document.getElementById('opt-en');
-    if (elEs) elEs.classList.remove('active');
-    if (elEn) elEn.classList.add('active');
-}
 
 function getTranslation(key) {
     const keys = key.split('.');
@@ -2503,22 +2500,33 @@ function getTranslation(key) {
 }
 // Shorthand for dash translations
 function t(key) { return getTranslation('dash.' + key) || key; }
+// Bilingual message helper: msg('english text', 'spanish text')
+function msg(en, es) { return currentLanguage === 'en' ? en : es; }
 
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('neverQuitLanguage', lang);
-    document.getElementById('opt-es').classList.toggle('active', lang === 'es');
-    document.getElementById('opt-en').classList.toggle('active', lang === 'en');
+    const elEs = document.getElementById('opt-es');
+    const elEn = document.getElementById('opt-en');
+    if (elEs) elEs.classList.toggle('active', lang === 'es');
+    if (elEn) elEn.classList.toggle('active', lang === 'en');
     document.documentElement.lang = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const tr = getTranslation(key);
         if (tr) el.innerHTML = tr;
     });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        const tr = getTranslation(key);
+        if (tr) el.placeholder = tr;
+    });
     // Re-render active dashboard tab to apply translated strings
     if (typeof window._dashUpdateUI === 'function') window._dashUpdateUI();
 }
 window.setLanguage = setLanguage;
+// Apply saved language immediately on page load
+setLanguage(currentLanguage);
 
         // === GLOBAL UTILS ===
         function $(id) { return document.getElementById(id); }
@@ -2535,7 +2543,7 @@ window.setLanguage = setLanguage;
             const btn = $(btnId);
             if (!btn) return;
             btn.disabled  = loading;
-            btn.textContent = loading ? 'Carregant…' : defaultLabel;
+            btn.textContent = loading ? (currentLanguage === 'en' ? 'Loading…' : 'Cargando…') : defaultLabel;
         }
 
         function _showAuthError(msg) {
@@ -2603,18 +2611,19 @@ window.setLanguage = setLanguage;
             const password = $('loginPassword').value;
 
             if (!email || !password) {
-                _showAuthError('Introdueix email i contrasenya.');
+                _showAuthError(currentLanguage === 'en' ? 'Enter your email and password.' : 'Introduce email y contraseña.');
                 return;
             }
 
-            _setAuthBtnLoading('loginBtn', true, 'Entrar al Dashboard');
+            const _loginLabel = getTranslation('login.submit') || 'Entrar al Dashboard';
+            _setAuthBtnLoading('loginBtn', true, _loginLabel);
 
             const { session, error } = await login(email, password);
 
-            _setAuthBtnLoading('loginBtn', false, 'Entrar al Dashboard');
+            _setAuthBtnLoading('loginBtn', false, _loginLabel);
 
             if (error || !session) {
-                _showAuthError(error?.message || 'Credencials incorrectes. Torna-ho a intentar.');
+                _showAuthError(error?.message || (currentLanguage === 'en' ? 'Incorrect credentials. Please try again.' : 'Credenciales incorrectas. Inténtalo de nuevo.'));
                 $('loginPassword').value = '';
                 return;
             }
@@ -2623,7 +2632,7 @@ window.setLanguage = setLanguage;
             const { profile, error: profileErr } = await checkBetaAccess(session.user.id);
 
             if (profileErr || !profile) {
-                _showAuthError('No s\'ha pogut obtenir el perfil d\'usuari. Contacta amb suport.');
+                _showAuthError(currentLanguage === 'en' ? 'Could not retrieve user profile. Contact support.' : 'No se pudo obtener el perfil de usuario. Contacta con soporte.');
                 return;
             }
 
@@ -2645,31 +2654,34 @@ window.setLanguage = setLanguage;
             const confirm  = $('registerConfirm').value;
 
             if (!email || !password) {
-                _showAuthError('Introdueix email i contrasenya.');
+                _showAuthError(currentLanguage === 'en' ? 'Enter your email and password.' : 'Introduce email y contraseña.');
                 return;
             }
             if (password !== confirm) {
-                _showAuthError('Les contrasenyes no coincideixen.');
+                _showAuthError(currentLanguage === 'en' ? 'Passwords do not match.' : 'Las contraseñas no coinciden.');
                 return;
             }
             if (password.length < 8) {
-                _showAuthError('La contrasenya ha de tenir almenys 8 caràcters.');
+                _showAuthError(currentLanguage === 'en' ? 'Password must be at least 8 characters.' : 'La contraseña debe tener al menos 8 caracteres.');
                 return;
             }
 
-            _setAuthBtnLoading('registerBtn', true, 'Crear Compte');
+            const _regLabel = currentLanguage === 'en' ? 'Create Account' : 'Crear Cuenta';
+            _setAuthBtnLoading('registerBtn', true, _regLabel);
 
             const { user, error } = await register(email, password);
 
-            _setAuthBtnLoading('registerBtn', false, 'Crear Compte');
+            _setAuthBtnLoading('registerBtn', false, _regLabel);
 
             if (error) {
-                _showAuthError(error.message || 'Error en el registre. Torna-ho a intentar.');
+                _showAuthError(error.message || (currentLanguage === 'en' ? 'Registration error. Please try again.' : 'Error en el registro. Inténtalo de nuevo.'));
                 return;
             }
 
             // Supabase may require email confirmation — show pending message
-            _showAuthSuccess('✓ Compte creat! Revisa el teu email per confirmar-lo. Accés beta pendent d\'aprovació.');
+            _showAuthSuccess(currentLanguage === 'en'
+                ? '✓ Account created! Check your email to confirm it. Beta access pending approval.'
+                : '✓ Cuenta creada. Revisa tu email para confirmarla. Acceso beta pendiente de aprobación.');
             $('registerForm').reset();
         }
 
@@ -2745,7 +2757,7 @@ window.setLanguage = setLanguage;
 
             if (handled && cbErr) {
                 // Code exchange failed — show friendly error and stay on login
-                _showAuthError('Error en confirmar el email. Torna a intentar-ho o contacta suport.');
+                _showAuthError(currentLanguage === 'en' ? 'Error confirming your email. Try again or contact support.' : 'Error al confirmar el email. Inténtalo de nuevo o contacta soporte.');
             } else if (cbSession) {
                 // Email confirmed successfully → verify beta access and enter
                 const { profile } = await checkBetaAccess(cbSession.user.id);
@@ -2910,7 +2922,7 @@ window.setLanguage = setLanguage;
                 align-items: center;
                 gap: 0.75rem;
             `;
-            undoDiv.innerHTML = '<span style="font-size: 1.2rem;">↶</span><span>Deshacer última acción</span>';
+            undoDiv.innerHTML = `<span style="font-size: 1.2rem;">↶</span><span>${msg('Undo last action', 'Deshacer última acción')}</span>`;
             undoDiv.onclick = undoLastAction;
             
             // Remover botón anterior si existe
@@ -2951,7 +2963,7 @@ window.setLanguage = setLanguage;
                         if (hi !== undefined) actionHistory.challenges.splice(hi.i, 1);
                         saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
-                        showAlert(`Challenge eliminada: ${account.accountNumber || account.id}`, 'success');
+                        showAlert(msg(`Challenge removed: ${account.accountNumber || account.id}`, `Challenge eliminada: ${account.accountNumber || account.id}`), 'success');
                     }
                     break;
                 }
@@ -2971,7 +2983,7 @@ window.setLanguage = setLanguage;
                         if (si !== undefined) actionHistory.statuses.splice(si.i, 1);
                         saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
-                        showAlert(`Estado restaurado a: ${action.data.previousStatus}`, 'success');
+                        showAlert(msg(`Status restored to: ${action.data.previousStatus}`, `Estado restaurado a: ${action.data.previousStatus}`), 'success');
                     }
                     break;
                 }
@@ -2984,7 +2996,7 @@ window.setLanguage = setLanguage;
                         if (pi !== -1) actionHistory.payouts.splice(pi, 1);
                         saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
-                        showAlert(`Payout eliminado: €${action.data.amount.toLocaleString()}`, 'success');
+                        showAlert(msg(`Payout removed: €${action.data.amount.toLocaleString()}`, `Payout eliminado: €${action.data.amount.toLocaleString()}`), 'success');
                     }
                     break;
                 }
@@ -3023,7 +3035,7 @@ window.setLanguage = setLanguage;
             // Section: Challenges Created
             let html = '<div class="hp-section-title">Challenges Created</div>';
             if (actionHistory.challenges.length === 0) {
-                html += '<div class="hp-empty">Sin entradas</div>';
+                html += `<div class="hp-empty">${msg('No entries', 'Sin entradas')}</div>`;
             } else {
                 [...actionHistory.challenges].reverse().forEach((c, ri) => {
                     const i = actionHistory.challenges.length - 1 - ri;
@@ -3033,7 +3045,7 @@ window.setLanguage = setLanguage;
                             <span>${c.propFirm} · ${c.accountSize}</span>
                             <span>€${c.challengeCost.toLocaleString()} · ${fmtDate(c.purchaseDate)}</span>
                         </div>
-                        <button class="hp-del" onclick="deleteHistoryEntry('challenges',${i})" title="Deshacer creación">✕</button>
+                        <button class="hp-del" onclick="deleteHistoryEntry('challenges',${i})" title="${msg('Undo creation', 'Deshacer creación')}">✕</button>
                     </div>`;
                 });
             }
@@ -3041,7 +3053,7 @@ window.setLanguage = setLanguage;
             // Section: Status Updates
             html += '<div class="hp-section-title">Status Updates</div>';
             if (actionHistory.statuses.length === 0) {
-                html += '<div class="hp-empty">Sin entradas</div>';
+                html += `<div class="hp-empty">${msg('No entries', 'Sin entradas')}</div>`;
             } else {
                 [...actionHistory.statuses].reverse().forEach((s, ri) => {
                     const i = actionHistory.statuses.length - 1 - ri;
@@ -3051,7 +3063,7 @@ window.setLanguage = setLanguage;
                             <span>${s.propFirm}</span>
                             <span>${s.previousStatus} → ${s.newStatus} · ${fmtDate(s.statusDate)}</span>
                         </div>
-                        <button class="hp-del" onclick="deleteHistoryEntry('statuses',${i})" title="Revertir estado">✕</button>
+                        <button class="hp-del" onclick="deleteHistoryEntry('statuses',${i})" title="${msg('Revert status', 'Revertir estado')}">✕</button>
                     </div>`;
                 });
             }
@@ -3059,7 +3071,7 @@ window.setLanguage = setLanguage;
             // Section: Payouts
             html += '<div class="hp-section-title">Payouts</div>';
             if (actionHistory.payouts.length === 0) {
-                html += '<div class="hp-empty">Sin entradas</div>';
+                html += `<div class="hp-empty">${msg('No entries', 'Sin entradas')}</div>`;
             } else {
                 [...actionHistory.payouts].reverse().forEach((p, ri) => {
                     const i = actionHistory.payouts.length - 1 - ri;
@@ -3069,7 +3081,7 @@ window.setLanguage = setLanguage;
                             <span>${p.propFirm} · €${p.amount.toLocaleString()}</span>
                             <span>${fmtDate(p.payoutDate)}</span>
                         </div>
-                        <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="Eliminar payout">✕</button>
+                        <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="${msg('Remove payout', 'Eliminar payout')}">✕</button>
                     </div>`;
                 });
             }
@@ -3088,7 +3100,7 @@ window.setLanguage = setLanguage;
                 actionHistory.statuses  = actionHistory.statuses.filter(s => s.accountId !== entry.accountId);
                 actionHistory.payouts   = actionHistory.payouts.filter(p => p.accountId !== entry.accountId);
                 actionHistory.challenges.splice(index, 1);
-                showAlert(`Challenge eliminada: #${entry.accountNumber}`, 'success');
+                showAlert(msg(`Challenge removed: #${entry.accountNumber}`, `Challenge eliminada: #${entry.accountNumber}`), 'success');
 
             } else if (type === 'statuses') {
                 const entry = actionHistory.statuses[index];
@@ -3104,14 +3116,14 @@ window.setLanguage = setLanguage;
                     if (hit !== undefined) data.examens.splice(hit.i, 1);
                 }
                 actionHistory.statuses.splice(index, 1);
-                showAlert(`Estado revertido a: ${entry.previousStatus}`, 'success');
+                showAlert(msg(`Status reverted to: ${entry.previousStatus}`, `Estado revertido a: ${entry.previousStatus}`), 'success');
 
             } else if (type === 'payouts') {
                 const entry = actionHistory.payouts[index];
                 if (!entry) return;
                 data.payouts = data.payouts.filter(p => p.id !== entry.id);
                 actionHistory.payouts.splice(index, 1);
-                showAlert(`Payout eliminado: €${entry.amount.toLocaleString()}`, 'success');
+                showAlert(msg(`Payout removed: €${entry.amount.toLocaleString()}`, `Payout eliminado: €${entry.amount.toLocaleString()}`), 'success');
             }
 
             saveData();
@@ -3139,7 +3151,7 @@ window.setLanguage = setLanguage;
             // Doble verificación por seguridad (además del disabled del botón)
             const input = $('resetConfirmInput');
             if (!input || input.value.toUpperCase() !== 'RESET') {
-                showAlert('⚠️ Escribe RESET para confirmar', 'error');
+                showAlert(msg('⚠️ Type RESET to confirm', '⚠️ Escribe RESET para confirmar'), 'error');
                 return;
             }
 
@@ -3159,7 +3171,7 @@ window.setLanguage = setLanguage;
             // Actualizar UI inmediatamente
             updateUI();
             
-            showAlert('✅ Todos los datos han sido eliminados', 'success');
+            showAlert(msg('✅ All data has been deleted', '✅ Todos los datos han sido eliminados'), 'success');
         }
 
         // Export backup function
@@ -3217,25 +3229,25 @@ window.setLanguage = setLanguage;
             const accountNumber = document.getElementById('createAccountNumber').value.trim();
 
             if (!purchaseDate || !challengeCost || !accountNumber) {
-                showAlert('⚠️ Completa todos los campos', 'error');
+                showAlert(msg('⚠️ Complete all fields', '⚠️ Completa todos los campos'), 'error');
                 return;
             }
 
             // CORRECCIÓN: Validar fecha futura
             if (new Date(purchaseDate) > new Date()) {
-                showAlert('La fecha de compra no puede ser futura', 'error');
+                showAlert(msg('Purchase date cannot be in the future', 'La fecha de compra no puede ser futura'), 'error');
                 return;
             }
 
             if (challengeCost <= 0) {
-                showAlert('⚠️ El costo debe ser mayor a 0', 'error');
+                showAlert(msg('⚠️ Cost must be greater than 0', '⚠️ El costo debe ser mayor a 0'), 'error');
                 return;
             }
 
             // CORRECCIÓN: Validar que el accountSize sea un tamaño reconocido
             const validSizes = ['5K', '6K', '10K', '15K', '25K', '50K', '100K', '200K'];
             if (!validSizes.includes(accountSize)) {
-                showAlert('⚠️ Tamaño de cuenta no válido', 'error');
+                showAlert(msg('⚠️ Invalid account size', '⚠️ Tamaño de cuenta no válido'), 'error');
                 return;
             }
 
@@ -3243,7 +3255,7 @@ window.setLanguage = setLanguage;
 
             // CORRECCIÓN: Validar duplicados solo dentro del mismo año
             if (data.master_comptes.find(a => a.accountNumber === accountNumber && a.year === year)) {
-                showAlert('Este número de cuenta ya existe para el año ' + year, 'error');
+                showAlert(msg('This account number already exists for year ' + year, 'Este número de cuenta ya existe para el año ' + year), 'error');
                 return;
             }
 
@@ -3288,7 +3300,7 @@ window.setLanguage = setLanguage;
                 accountNumber: accountNumber
             });
             
-            showAlert(`Challenge creada exitosamente: ${accountNumber} (${propFirm} - ${accountSize})`, 'success');
+            showAlert(msg(`Challenge created: ${accountNumber} (${propFirm} - ${accountSize})`, `Challenge creada: ${accountNumber} (${propFirm} - ${accountSize})`), 'success');
             
             // Limpiar campos
             document.getElementById('createChallengeCost').value = '';
@@ -3356,13 +3368,13 @@ window.setLanguage = setLanguage;
             const statusDate = document.getElementById('updateStatusDate').value;
 
             if (!accountId || !statusDate) {
-                showAlert('⚠️ Selecciona una cuenta y fecha', 'error');
+                showAlert(msg('⚠️ Select an account and date', '⚠️ Selecciona una cuenta y fecha'), 'error');
                 return;
             }
 
             // CORRECCIÓN: Validar fecha futura
             if (new Date(statusDate) > new Date()) {
-                showAlert('La fecha de estado no puede ser futura', 'error');
+                showAlert(msg('Status date cannot be in the future', 'La fecha de estado no puede ser futura'), 'error');
                 return;
             }
 
@@ -3373,11 +3385,11 @@ window.setLanguage = setLanguage;
                 const allowedNext = STATUS_TRANSITIONS[currentStatus] || [];
 
                 if (allowedNext.length === 0) {
-                    showAlert(`⛔ SUSPENDED — Final state. No further transitions allowed.`, 'error');
+                    showAlert(msg(`⛔ SUSPENDED — Final state. No further transitions allowed.`, `⛔ SUSPENDED — Estado final. No se permiten más transiciones.`), 'error');
                     return;
                 }
                 if (!allowedNext.includes(newStatus)) {
-                    showAlert(`⛔ Transition not allowed: ${currentStatus} → ${newStatus}`, 'error');
+                    showAlert(msg(`⛔ Transition not allowed: ${currentStatus} → ${newStatus}`, `⛔ Transición no permitida: ${currentStatus} → ${newStatus}`), 'error');
                     return;
                 }
                 // ─────────────────────────────────────────────────────────
@@ -3425,7 +3437,7 @@ window.setLanguage = setLanguage;
                 });
                 
                 const displayNumber = account.accountNumber || account.id;
-                showAlert(`Estado actualizado: ${displayNumber} → ${newStatus}`, 'success');
+                showAlert(msg(`Status updated: ${displayNumber} → ${newStatus}`, `Estado actualizado: ${displayNumber} → ${newStatus}`), 'success');
                 updateUI();
             }
         }
@@ -3435,14 +3447,14 @@ window.setLanguage = setLanguage;
         function compressImage(file, maxPx, quality) {
             return new Promise((resolve, reject) => {
                 if (file.size > 3 * 1024 * 1024) {
-                    reject(new Error('El archivo supera los 3MB. Usa una imagen más pequeña.'));
+                    reject(new Error(msg('File exceeds 3MB. Use a smaller image.', 'El archivo supera los 3MB. Usa una imagen más pequeña.')));
                     return;
                 }
                 const reader = new FileReader();
-                reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
+                reader.onerror = () => reject(new Error(msg('Could not read the file', 'No se pudo leer el archivo')));
                 reader.onload = (e) => {
                     const img = new Image();
-                    img.onerror = () => reject(new Error('Imagen no válida'));
+                    img.onerror = () => reject(new Error(msg('Invalid image', 'Imagen no válida')));
                     img.onload = () => {
                         const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
                         const canvas = document.createElement('canvas');
@@ -3470,7 +3482,7 @@ window.setLanguage = setLanguage;
             const inp = document.getElementById('payoutCertificate');
             inp.value = '';
             document.getElementById('certPreviewWrap').style.display = 'none';
-            document.getElementById('certUploadText').textContent = '📎 Adjuntar certificado';
+            document.getElementById('certUploadText').textContent = msg('📎 Attach certificate', '📎 Adjuntar certificado');
         }
 
         async function registerPayout() {
@@ -3480,17 +3492,17 @@ window.setLanguage = setLanguage;
             const certInput  = document.getElementById('payoutCertificate');
 
             if (!accountId || !amount || !payoutDate) {
-                showAlert('⚠️ Completa todos los campos', 'error');
+                showAlert(msg('⚠️ Complete all fields', '⚠️ Completa todos los campos'), 'error');
                 return;
             }
 
             if (new Date(payoutDate) > new Date()) {
-                showAlert('La fecha de payout no puede ser futura', 'error');
+                showAlert(msg('Payout date cannot be in the future', 'La fecha de payout no puede ser futura'), 'error');
                 return;
             }
 
             if (amount <= 0) {
-                showAlert('⚠️ El monto debe ser mayor a 0', 'error');
+                showAlert(msg('⚠️ Amount must be greater than 0', '⚠️ El monto debe ser mayor a 0'), 'error');
                 return;
             }
 
@@ -3498,7 +3510,7 @@ window.setLanguage = setLanguage;
             if (account) {
                 const accountSizeNum = parseInt(account.accountSize.replace('K', '')) * 1000;
                 if (amount > accountSizeNum * 2) {
-                    showAlert(`⚠️ El payout (€${amount.toLocaleString()}) supera 2x el tamaño de la cuenta (${account.accountSize}). Verifica el importe.`, 'error');
+                    showAlert(msg(`⚠️ Payout (€${amount.toLocaleString()}) exceeds 2x the account size (${account.accountSize}). Check the amount.`, `⚠️ El payout (€${amount.toLocaleString()}) supera 2x el tamaño de la cuenta (${account.accountSize}). Verifica el importe.`), 'error');
                     return;
                 }
             }
@@ -3546,7 +3558,7 @@ window.setLanguage = setLanguage;
             });
 
             const accountDisplay = account ? (account.accountNumber || account.id) : accountId;
-            showAlert(`Payout registrado: €${amount.toLocaleString()} desde ${accountDisplay}`, 'success');
+            showAlert(msg(`Payout registered: €${amount.toLocaleString()} from ${accountDisplay}`, `Payout registrado: €${amount.toLocaleString()} desde ${accountDisplay}`), 'success');
 
             document.getElementById('payoutAmount').value = '';
             clearCertificate();
@@ -3920,45 +3932,45 @@ window.setLanguage = setLanguage;
                         <div style="padding: 2rem;">
                             <div style="text-align: center; margin-bottom: 1rem;">
                                 <div class="kpi-value success" style="font-size: 3rem;">${totalChallenges}</div>
-                                <div style="color: #9AA0A6; margin-top: 0.5rem;">Challenges Totales</div>
+                                <div style="color: #9AA0A6; margin-top: 0.5rem;">${msg('Total Challenges', 'Challenges Totales')}</div>
                             </div>
-                            
+
                             <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1.5rem 0;">
                                 <div style="text-align: center;">
-                                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">En Phase 1</div>
+                                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">${msg('In Phase 1', 'En Phase 1')}</div>
                                     <div style="font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700;">${phase1CurrentCount}</div>
-                                    <div style="color: #9AA0A6; font-size: 0.75rem;">actual</div>
+                                    <div style="color: #9AA0A6; font-size: 0.75rem;">${msg('current', 'actual')}</div>
                                 </div>
-                                
+
                                 <div style="color: #2ECC71; font-size: 1.5rem;">→</div>
-                                
+
                                 <div style="text-align: center;">
-                                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">Pasaron P1</div>
+                                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">${msg('Passed P1', 'Pasaron P1')}</div>
                                     <div style="font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: #F39C12;">${passedPhase1}</div>
                                     <div style="color: #F39C12; font-size: 0.75rem;">${phase1WinRate.toFixed(0)}%</div>
                                 </div>
-                                
+
                                 <div style="color: #2ECC71; font-size: 1.5rem;">→</div>
-                                
+
                                 <div style="text-align: center;">
-                                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">En Phase 2</div>
+                                    <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">${msg('In Phase 2', 'En Phase 2')}</div>
                                     <div style="font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700;">${phase2CurrentCount}</div>
-                                    <div style="color: #9AA0A6; font-size: 0.75rem;">actual</div>
+                                    <div style="color: #9AA0A6; font-size: 0.75rem;">${msg('current', 'actual')}</div>
                                 </div>
-                                
+
                                 <div style="color: #2ECC71; font-size: 1.5rem;">→</div>
-                                
+
                                 <div style="text-align: center;">
                                     <div style="color: #9AA0A6; font-size: 0.8rem; margin-bottom: 0.25rem;">Funded</div>
                                     <div style="font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: #2ECC71;">${fundedCount}</div>
                                     <div style="color: #2ECC71; font-size: 0.75rem;">${phase2WinRate.toFixed(0)}%</div>
                                 </div>
                             </div>
-                            
+
                             <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(230, 232, 235, 0.1);">
-                                <div style="color: #9AA0A6; font-size: 0.85rem; margin-bottom: 0.5rem;">Resumen:</div>
+                                <div style="color: #9AA0A6; font-size: 0.85rem; margin-bottom: 0.5rem;">${msg('Summary:', 'Resumen:')}</div>
                                 <div style="color: #9AA0A6; font-size: 0.8rem;">
-                                    ${phase1WinRate.toFixed(0)}% supera Phase 1 · ${phase2WinRate.toFixed(0)}% supera Phase 2 · ${fundedCount} Cuentas Fondeadas
+                                    ${phase1WinRate.toFixed(0)}% ${msg('pass Phase 1', 'superan Phase 1')} · ${phase2WinRate.toFixed(0)}% ${msg('pass Phase 2', 'superan Phase 2')} · ${fundedCount} ${msg('Funded Accounts', 'Cuentas Fondeadas')}
                                 </div>
                             </div>
                         </div>
@@ -4408,7 +4420,8 @@ window.setLanguage = setLanguage;
                 return allPayouts.filter(p => p.year === year).reduce((sum, p) => sum + p.amount, 0);
             });
 
-            const bestYear = years[yearlyPayouts.indexOf(Math.max(...yearlyPayouts))] || 'N/A';
+            const _maxPayout = yearlyPayouts.length > 0 ? Math.max(...yearlyPayouts) : -Infinity;
+            const bestYear = (_maxPayout > 0 ? years[yearlyPayouts.indexOf(_maxPayout)] : null) || 'N/A';
 
             // ── MÉTRICAS DEL ARRAY EXAMENS ──────────────────────────────────
             // Intentos promedio hasta fondear (nº de cambios de fase por cuenta fondeada)
@@ -4550,8 +4563,8 @@ window.setLanguage = setLanguage;
                 </div>
 
                 <div class="table-container">
-                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700;">◇ ÚLTIMOS PAYOUTS</h3>
-                    ${allPayouts.length === 0 ? '<div class="empty-state">No hay payouts registrados</div>' : `
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700;">◇ ${msg('LATEST PAYOUTS', 'ÚLTIMOS PAYOUTS')}</h3>
+                    ${allPayouts.length === 0 ? `<div class="empty-state">${msg('No payouts registered', 'No hay payouts registrados')}</div>` : `
                         <table>
                             <thead>
                                 <tr>
@@ -4903,8 +4916,9 @@ window.setLanguage = setLanguage;
                 <div class="wrapped-coming-soon">
                     <div class="cs-icon">📊</div>
                     <h2>COMING SOON</h2>
-                    <p>La secció <strong style="color:#E6E8EB;">Prop Firm Wrapped</strong> està en desenvolupament.<br>
-                       Aviat podràs veure el teu resum anual complet, estadístiques i gràfics.</p>
+                    <p>${currentLanguage === 'en'
+                        ? `The <strong style="color:#E6E8EB;">Prop Firm Wrapped</strong> section is under development.<br>Soon you'll be able to see your full annual summary, stats and charts.`
+                        : `La sección <strong style="color:#E6E8EB;">Prop Firm Wrapped</strong> está en desarrollo.<br>Pronto podrás ver tu resumen anual completo, estadísticas y gráficos.`}</p>
                 </div>
             `;
             return;
@@ -4932,7 +4946,7 @@ window.setLanguage = setLanguage;
 
             // Win rates
             const totalChallenges = yearAccounts.length;
-            const { phase1: phase1WinRate, phase2: phase2WinRate } = calcWinRates(yearAccounts);
+            const { phase1: phase1WinRate, phase2: phase2WinRate, passedPhase1 } = calcWinRates(yearAccounts);
 
             // Avg time to funding
             const avgTimeToFunding = fundedAccountsWithDays.length > 0 
@@ -5022,8 +5036,8 @@ window.setLanguage = setLanguage;
                 <div class="achievement-card">
                     <div class="achievement-icon">✅</div>
                     <div class="achievement-content">
-                        <h4>${phase1WinRate.toFixed(0)}% TASA DE ÉXITO PHASE 1</h4>
-                        <p>${passedPhase1} de ${totalChallenges} challenges superaron Phase 1</p>
+                        <h4>${phase1WinRate.toFixed(0)}% ${t('phase1WinRate').replace('◇ ', '')}</h4>
+                        <p>${passedPhase1} ${t('of')} ${totalChallenges} ${msg('challenges passed Phase 1', 'challenges superaron Phase 1')}</p>
                     </div>
                 </div>` : ''}
 
@@ -5324,7 +5338,7 @@ window.setLanguage = setLanguage;
                     const sortedAccounts = [...allActiveAccounts].sort((a, b) =>
                         (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
                     );
-                    updateSelect.innerHTML = '<option value="">Selecciona una cuenta...</option>' +
+                    updateSelect.innerHTML = `<option value="">${msg('Select an account...', 'Selecciona una cuenta...')}</option>` +
                         sortedAccounts.map(a => {
                             const num = a.accountNumber || a.id;
                             const size = a.accountSize || '?';
@@ -5342,9 +5356,9 @@ window.setLanguage = setLanguage;
             const payoutSelect = document.getElementById('payoutAccountId');
             if (payoutSelect) {
                 if (fundedAccounts.length === 0) {
-                    payoutSelect.innerHTML = '<option value="">No hay cuentas fondeadas</option>';
+                    payoutSelect.innerHTML = `<option value="">${msg('No funded accounts', 'No hay cuentas fondeadas')}</option>`;
                 } else {
-                    payoutSelect.innerHTML = '<option value="">Selecciona una cuenta...</option>' +
+                    payoutSelect.innerHTML = `<option value="">${msg('Select an account...', 'Selecciona una cuenta...')}</option>` +
                         fundedAccounts.map(a => {
                             const displayNumber = a.accountNumber || a.id;
                             return `<option value="${a.id}">${displayNumber} - ${a.propFirm}</option>`;
@@ -5790,7 +5804,7 @@ window.setLanguage = setLanguage;
                 link.download = `wrapped-${new Date().getTime()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                showAlert('✅ Wrapped descargado como PNG');
+                showAlert(msg('✅ Wrapped downloaded as PNG', '✅ Wrapped descargado como PNG'));
             } else if (format === 'pdf') {
                 // Para PDF necesitaríamos una librería como jsPDF
                 // Por ahora convertimos a PNG de alta calidad
@@ -5798,7 +5812,7 @@ window.setLanguage = setLanguage;
                 link.download = `wrapped-${new Date().getTime()}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 link.click();
-                showAlert('✅ Wrapped descargado (alta calidad)');
+                showAlert(msg('✅ Wrapped downloaded (high quality)', '✅ Wrapped descargado (alta calidad)'));
             }
         }
 
