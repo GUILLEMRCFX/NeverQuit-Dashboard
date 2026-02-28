@@ -398,6 +398,64 @@
             color: #9AA0A6;
         }
 
+        /* ── Info button tooltip ──────────────────────────────────────────── */
+        .info-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(154,160,166,0.18);
+            border: 1px solid rgba(154,160,166,0.3);
+            color: #9AA0A6;
+            font-size: 8px;
+            font-weight: 800;
+            cursor: default;
+            vertical-align: middle;
+            margin-left: 4px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .info-btn:hover .info-tooltip {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(-2px);
+        }
+        .info-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            background: #1A1D22;
+            border: 1px solid rgba(230,232,235,0.13);
+            border-radius: 8px;
+            padding: 0.55rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #C4C9CF;
+            width: 210px;
+            text-align: left;
+            white-space: normal;
+            text-transform: none;
+            letter-spacing: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            z-index: 200;
+            line-height: 1.45;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+        }
+        .info-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(230,232,235,0.13);
+        }
+
         .table-container {
             background: #181B20;
             border-radius: 12px;
@@ -2581,9 +2639,11 @@ setLanguage(currentLanguage);
 
         // Transition to the dashboard (called after successful auth + beta check)
         let currentUserEmail = '';
+        let currentUserId    = '';
 
-        function onLoginSuccess(email) {
+        function onLoginSuccess(email, userId) {
             currentUserEmail = email;
+            currentUserId    = userId || '';
 
             // Show and populate user menu
             const menuContainer = $('userMenuContainer');
