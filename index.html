@@ -1219,6 +1219,17 @@
             .kpi-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            /* Reducir padding del view-header en tablet para que el filtro no tape el título */
+            .view-header {
+                padding: 1.5rem 7rem 1.5rem 1.5rem; /* deja espacio a la derecha para el filtro */
+            }
+            .view-header h2 {
+                font-size: 1.6rem;
+                text-align: left;
+            }
+            .view-header .subtitle {
+                text-align: left;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1275,6 +1286,23 @@
             .btn {
                 padding: 0.5rem 0.9rem;
                 font-size: 0.75rem;
+            }
+            /* Time filter: sacarlo del flow absoluto en móvil para no solapar el título */
+            .view-header {
+                padding: 1.25rem 1rem 1rem;
+            }
+            .time-filter {
+                position: static;
+                margin-top: 0.75rem;
+                text-align: center;
+            }
+            /* Reducir padding de kpi-grid en view-header */
+            .view-header + .kpi-grid {
+                margin-top: 0;
+            }
+            /* Asegurar que los valores ROI grandes no rompan layout */
+            .kpi-value[style*="3.5rem"], .kpi-value[style*="2.5rem"] {
+                font-size: 2rem !important;
             }
         }
 
@@ -1642,10 +1670,10 @@
 
 
         /* ═══════════════════════════════════════════════════════
-           PROPFIRM GOLDEN — Max Allocation assolit (SCOPED al tab)
+           PROPFIRM GOLDEN — Max Allocation alcanzado (SCOPED al tab)
            ═══════════════════════════════════════════════════════ */
 
-        /* KPI cards — daurats DINS del tab PropFirm únicament */
+        /* KPI cards — dorados DENTRO del tab PropFirm únicamente */
         #propfirm.propfirm-golden .kpi-card {
             border-color: rgba(212, 175, 55, 0.3) !important;
             box-shadow: 0 4px 20px rgba(212, 175, 55, 0.08) !important;
@@ -1672,7 +1700,7 @@
             color: rgba(255, 215, 0, 0.55) !important;
         }
 
-        /* Barra de progrés d'allocació */
+        /* Barra de progreso de allocación */
         .alloc-bar-track {
             width: 100%;
             height: 10px;
@@ -3099,10 +3127,11 @@ setLanguage(currentLanguage);
             } else {
                 [...actionHistory.challenges].reverse().forEach((c, ri) => {
                     const i = actionHistory.challenges.length - 1 - ri;
+                    const cColor = getPropFirmColor(c.propFirm);
                     html += `<div class="hp-entry">
                         <div class="hp-entry-info">
                             <strong>#${c.accountNumber}</strong>
-                            <span>${c.propFirm} · ${c.accountSize}</span>
+                            <span><span style="color:${cColor};font-weight:600;">${c.propFirm}</span> · ${c.accountSize}</span>
                             <span>€${c.challengeCost.toLocaleString()} · ${fmtDate(c.purchaseDate)}</span>
                         </div>
                         <button class="hp-del" onclick="deleteHistoryEntry('challenges',${i})" title="${msg('Undo creation', 'Deshacer creación')}">✕</button>
@@ -3117,10 +3146,11 @@ setLanguage(currentLanguage);
             } else {
                 [...actionHistory.statuses].reverse().forEach((s, ri) => {
                     const i = actionHistory.statuses.length - 1 - ri;
+                    const sColor = getPropFirmColor(s.propFirm);
                     html += `<div class="hp-entry">
                         <div class="hp-entry-info">
                             <strong>#${s.accountNumber}</strong>
-                            <span>${s.propFirm}</span>
+                            <span style="color:${sColor};font-weight:600;">${s.propFirm}</span>
                             <span>${s.previousStatus} → ${s.newStatus} · ${fmtDate(s.statusDate)}</span>
                         </div>
                         <button class="hp-del" onclick="deleteHistoryEntry('statuses',${i})" title="${msg('Revert status', 'Revertir estado')}">✕</button>
@@ -3135,10 +3165,11 @@ setLanguage(currentLanguage);
             } else {
                 [...actionHistory.payouts].reverse().forEach((p, ri) => {
                     const i = actionHistory.payouts.length - 1 - ri;
+                    const pColor = getPropFirmColor(p.propFirm);
                     html += `<div class="hp-entry">
                         <div class="hp-entry-info">
                             <strong>#${p.accountNumber}</strong>
-                            <span>${p.propFirm} · €${p.amount.toLocaleString()}</span>
+                            <span><span style="color:${pColor};font-weight:600;">${p.propFirm}</span> · €${p.amount.toLocaleString()}</span>
                             <span>${fmtDate(p.payoutDate)}</span>
                         </div>
                         <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="${msg('Remove payout', 'Eliminar payout')}">✕</button>
@@ -3238,6 +3269,21 @@ setLanguage(currentLanguage);
 
             showAlert(msg('✅ All data has been deleted', '✅ Todos los datos han sido eliminados'), 'success');
         }
+
+        // ─── ROI TOGGLE: % ↔ € al hacer clic ────────────────────────────────
+        function toggleROI(el) {
+            const showing = el.dataset.showing || 'pct';
+            const pct = parseFloat(el.dataset.pct);
+            const amount = parseFloat(el.dataset.amount);
+            if (showing === 'pct') {
+                el.dataset.showing = 'amount';
+                el.innerHTML = `${amount >= 0 ? '+' : ''}${Math.round(amount).toLocaleString()} €`;
+            } else {
+                el.dataset.showing = 'pct';
+                el.innerHTML = `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%`;
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         // Export backup function
         // Mostrar alert
@@ -3695,7 +3741,7 @@ setLanguage(currentLanguage);
             // BUG FIX: si no hay payouts todavía, ROI = 0% (no mostrar -100% desde el inicio)
             const roi = (totalCosts > 0 && totalPayouts > 0) ? ((totalPayouts - totalCosts) / totalCosts * 100) : 0;
 
-            // Capital actiu fondejat (suma dels sizes dels comptes FUNDED actius)
+            // Capital activo fondeado (suma de los sizes de las cuentas FUNDED activas)
             const activeFundedCapital = yearAccounts
                 .filter(a => a.status === 'FUNDED' && a.active)
                 .reduce((sum, a) => {
@@ -3733,8 +3779,11 @@ setLanguage(currentLanguage);
                         <div class="kpi-subtitle" style="margin-top: 0.4rem;">${currentLanguage === 'en' ? 'After deducting' : 'Tras descontar'} ${totalCosts.toLocaleString()} € ${currentLanguage === 'en' ? 'in costs' : 'en costes'}</div>
                     </div>
                     <div style="text-align: right;">
-                        <div class="kpi-label" style="font-size: 0.7rem; letter-spacing: 0.12em; margin-bottom: 0.4rem;">ROI TOTAL</div>
-                        <div style="font-size: 1.8rem; font-weight: 800; color: ${roi > 0 ? '#2ECC71' : roi < 0 ? '#E74C3C' : '#9AA0A6'};">${roi > 0 ? '+' : ''}${roi.toFixed(1)}%</div>
+                        <div class="kpi-label" style="font-size: 0.7rem; letter-spacing: 0.12em; margin-bottom: 0.4rem;">ROI TOTAL <span style="font-size:0.75em;opacity:0.45;">↔</span></div>
+                        <div data-pct="${roi.toFixed(1)}" data-amount="${netProfit}" data-showing="pct"
+                             onclick="toggleROI(this)"
+                             title="${currentLanguage === 'en' ? 'Click to toggle % / €' : 'Clic para alternar % / €'}"
+                             style="font-size: 1.8rem; font-weight: 800; color: ${roi > 0 ? '#2ECC71' : roi < 0 ? '#E74C3C' : '#9AA0A6'}; cursor:pointer; user-select:none;">${roi > 0 ? '+' : ''}${roi.toFixed(1)}%</div>
                         <div class="kpi-subtitle" style="margin-top: 0.4rem;">${yearPayouts.length} ${t('payments')}</div>
                     </div>
                 </div>
@@ -4254,8 +4303,23 @@ setLanguage(currentLanguage);
             }
         };
 
+        // ─── PROP FIRM BRAND COLORS ──────────────────────────────────────────
+        // Colores de marca referentes de cada prop firm (para historial y máx allocation)
+        const PROP_FIRM_COLORS = {
+            'FTMO':                '#E8E8EC',   // blanco/gris plateado (marca clean)
+            'Alpha Capital Group': '#2B74CF',   // azul oscuro corporativo
+            'FundedNext':          '#A855F7',   // lila/violeta
+            'Bullfy':              '#38BDF8',   // azul clarito (sky blue)
+            'Orion Funded':        '#8892A4',   // gris oscuro
+            'The5ers':             '#F59E0B',   // amarillo dorado
+            'MyForexFunds':        '#10B981',   // teal/verde
+        };
+        function getPropFirmColor(firmName) {
+            return PROP_FIRM_COLORS[firmName] || '#9AA0A6';
+        }
+
         // ─── MAX ALLOCATION HELPERS ──────────────────────────────────────────
-        // Retorna el capital total fondeado (en €) per una firma (comptes FUNDED)
+        // Retorna el capital total fondeado (en €) para una firma (cuentas FUNDED)
         function getFirmFundedCapital(firmName) {
             return data.master_comptes
                 .filter(a => a.propFirm === firmName && a.status === 'FUNDED')
@@ -4265,8 +4329,8 @@ setLanguage(currentLanguage);
                 }, 0);
         }
 
-        // Calcula quines firmes han assolit el Max Allocation.
-        // No canvia cap estil global — l'efecte visual el gestiona renderPropFirm() per al tab corresponent.
+        // Calcula qué firmas han alcanzado el Max Allocation.
+        // No cambia ningún estilo global — el efecto visual lo gestiona renderPropFirm() para el tab correspondiente.
         function checkAndApplyGoldenMode() {
             try { if (!PROP_FIRMS_CONFIG) return; } catch(e) { return; }
             window._firmsAtMax = Object.keys(PROP_FIRMS_CONFIG).filter(firm => {
@@ -4311,9 +4375,11 @@ setLanguage(currentLanguage);
                 'SUSPENDED': yearAccounts.filter(a => a.status === 'SUSPENDED').length
             };
 
+            const firmBrandColor = getPropFirmColor(selectedFirm);
+
             const propFirmHtml = `
                 <div class="view-header">
-                    <h2>PROP FIRM · ${selectedFirm}</h2>
+                    <h2>PROP FIRM · <span style="color:${firmBrandColor}">${selectedFirm}</span></h2>
                     ${yearAccounts.length === 0 ? `<div style="display:inline-block;padding:0.25rem 0.75rem;background:rgba(243,156,18,0.1);border-radius:6px;color:#F39C12;font-size:0.8rem;margin-top:0.5rem;">${t('propFirmNoAccounts').replace('{firm}', selectedFirm)}</div>` : ''}
                     <div class="subtitle">${t('rendimiento')} · ${t('updated')} ${new Date().toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES', { month: 'short', year: 'numeric' })}</div>
                     <div class="time-filter">
@@ -4323,8 +4389,8 @@ setLanguage(currentLanguage);
                     </div>
                 </div>
 
-                <div style="margin-bottom: 2rem;">
-                    <select id="firmSelector" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(230, 232, 235, 0.1); border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;">
+                <div style="margin-bottom: 2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+                    <select id="firmSelector" style="padding: 0.75rem 1.5rem; background: #181B20; border: 1px solid rgba(230, 232, 235, 0.1); border-left: 3px solid ${firmBrandColor}; border-radius: 8px; color: #E6E8EB; font-size: 0.95rem; font-weight: 600;">
                         <option value="FTMO" ${selectedFirm === 'FTMO' ? 'selected' : ''}>FTMO</option>
                         <option value="Alpha Capital Group" ${selectedFirm === 'Alpha Capital Group' ? 'selected' : ''}>Alpha Capital Group</option>
                         <option value="Orion Funded" ${selectedFirm === 'Orion Funded' ? 'selected' : ''}>Orion Funded</option>
@@ -4333,7 +4399,7 @@ setLanguage(currentLanguage);
                         <option value="The5ers" ${selectedFirm === 'The5ers' ? 'selected' : ''}>The5ers</option>
                         <option value="MyForexFunds" ${selectedFirm === 'MyForexFunds' ? 'selected' : ''}>MyForexFunds</option>
                     </select>
-                    <span style="margin-left: 2rem; color: #9AA0A6; font-size: 0.8rem;">P1: ${firmConfig.profitTarget_P1}% target · Max loss: ${firmConfig.maxLoss}%</span>
+                    <span style="color: #9AA0A6; font-size: 0.8rem;">P1: ${firmConfig.profitTarget_P1}% target · Max loss: ${firmConfig.maxLoss}%</span>
                 </div>
 
                 <div class="kpi-grid">
@@ -4387,9 +4453,12 @@ setLanguage(currentLanguage);
                     </div>
 
                     <div class="kpi-card">
-                        <div class="kpi-label">ROI</div>
+                        <div class="kpi-label">ROI <span style="font-size:0.7em;opacity:0.45;">↔</span></div>
                         <div style="text-align: center; padding: 2rem 0;">
-                            <div class="kpi-value success" style="font-size: 3.5rem;">+${roi.toFixed(0)}%</div>
+                            <div class="kpi-value success" style="font-size: 3.5rem; cursor:pointer; user-select:none;"
+                                 data-pct="${roi.toFixed(0)}" data-amount="${totalPayouts - totalInvested}" data-showing="pct"
+                                 onclick="toggleROI(this)"
+                                 title="${currentLanguage === 'en' ? 'Click to toggle % / €' : 'Clic para alternar % / €'}">${roi > 0 ? '+' : ''}${roi.toFixed(0)}%</div>
                         </div>
                     </div>
                 </div>
@@ -4423,25 +4492,25 @@ setLanguage(currentLanguage);
                 </div>
 
                 <!-- MAX ALLOCATION PROGRESS -->
-                <div class="table-container" style="${isAtMax ? 'border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.04);' : ''}">
+                <div class="table-container" style="${isAtMax ? 'border-color:rgba(255,215,0,0.4);background:rgba(255,215,0,0.04);' : `border-color:${firmBrandColor}22;`}">
                     <h3 style="margin-bottom: 1rem; font-size: 1.1rem; font-weight: 700; ${isAtMax ? 'color:#FFD700;' : ''}">
-                        ${isAtMax ? '🏆 MAX ALLOCATION ASSOLIT' : '◇ MAX ALLOCATION'}
+                        ${isAtMax ? '🏆 MAX ALLOCATION ALCANZADO' : `◇ MAX ALLOCATION · <span style="color:${firmBrandColor}">${selectedFirm}</span>`}
                     </h3>
 
                     <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#9AA0A6; margin-bottom:0.4rem;">
                         <span>Capital fondeado: <strong style="color:${isAtMax ? '#FFD700' : '#E6E8EB'}">€${fundedCapital.toLocaleString()}</strong></span>
-                        <span>Màxim: <strong style="color:#9AA0A6">€${maxAlloc.toLocaleString()}</strong></span>
+                        <span>Máximo: <strong style="color:#9AA0A6">€${maxAlloc.toLocaleString()}</strong></span>
                     </div>
 
                     <div class="alloc-bar-track">
-                        <div class="alloc-bar-fill ${isAtMax ? 'golden' : ''}" style="width:${allocPct.toFixed(1)}%"></div>
+                        <div class="alloc-bar-fill ${isAtMax ? 'golden' : ''}" style="width:${allocPct.toFixed(1)}%;${!isAtMax ? `background:linear-gradient(90deg,${firmBrandColor}99,${firmBrandColor});` : ''}"></div>
                     </div>
 
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
                         <span style="font-size:0.82rem; color:${isAtMax ? '#FFD700' : '#9AA0A6'}; font-weight:600;">
                             ${isAtMax
-                                ? '✦ Ets al límit màxim amb aquesta prop firm!'
-                                : `Falta: <strong style="color:#E6E8EB">€${remaining.toLocaleString()}</strong> · ${(100 - allocPct).toFixed(0)}% restant`}
+                                ? '✦ ¡Has alcanzado el límite máximo con esta prop firm!'
+                                : `Falta: <strong style="color:#E6E8EB">€${remaining.toLocaleString()}</strong> · ${(100 - allocPct).toFixed(0)}% restante`}
                         </span>
                         <span style="font-size:1rem; font-weight:700; color:${isAtMax ? '#FFD700' : '#2ECC71'};">
                             ${allocPct.toFixed(0)}%
@@ -4453,10 +4522,10 @@ setLanguage(currentLanguage);
             const propfirmEl = document.getElementById('propfirm');
             propfirmEl.innerHTML = propFirmHtml;
 
-            // Efecte golden SCOPED: afecta únicament aquest tab
+            // Efecto golden SCOPED: afecta únicamente este tab
             propfirmEl.classList.toggle('propfirm-golden', isAtMax);
 
-            // Canviar color de les partícules de fons (poligons exteriors)
+            // Cambiar color de las partículas de fondo (polígonos exteriores)
             if (setParticleTheme) setParticleTheme(isAtMax ? 'gold' : 'green');
 
             // Re-attach event listener after re-rendering
@@ -4664,7 +4733,7 @@ setLanguage(currentLanguage);
 
             document.getElementById('ceoview').innerHTML = ceoViewHtml;
 
-            // Aplicar golden mode si alguna firma ha assolit max allocation
+            // Aplicar golden mode si alguna firma ha alcanzado max allocation
             checkAndApplyGoldenMode();
 
             // CEO Line Chart
@@ -5058,8 +5127,14 @@ setLanguage(currentLanguage);
                         <div class="kpi-label">TOTAL PAYOUTS</div>
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.05), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(243, 156, 18, 0.2);">
-                        <div class="kpi-value warning" style="font-size: 2.5rem;">${(totalPayouts > 0 && totalInvested > 0) ? (avgROI >= 0 ? "+" : "") + avgROI.toFixed(0) + "%" : "—"}</div>
-                        <div class="kpi-label">${t('roiAverage')}</div>
+                        <div class="kpi-value warning"
+                             style="font-size: 2.5rem; ${(totalPayouts > 0 && totalInvested > 0) ? 'cursor:pointer; user-select:none;' : ''}"
+                             data-pct="${(totalPayouts > 0 && totalInvested > 0) ? avgROI.toFixed(0) : 'none'}"
+                             data-amount="${totalPayouts - totalInvested}"
+                             data-showing="pct"
+                             onclick="if(this.dataset.pct!=='none') toggleROI(this)"
+                             title="${currentLanguage === 'en' ? 'Click to toggle % / €' : 'Clic para alternar % / €'}">${(totalPayouts > 0 && totalInvested > 0) ? (avgROI >= 0 ? "+" : "") + avgROI.toFixed(0) + "%" : "—"}</div>
+                        <div class="kpi-label">${t('roiAverage')} <span style="font-size:0.7em;opacity:0.45;">${(totalPayouts > 0 && totalInvested > 0) ? '↔' : ''}</span></div>
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(41, 128, 185, 0.05)); border: 1px solid rgba(52, 152, 219, 0.2);">
                         <div class="kpi-value" style="font-size: 2.5rem; color: #F39C12;">${quickestFunding > 0 ? quickestFunding + ' <span style="font-size: 1.2rem;">DAYS</span>' : '—'}</div>
@@ -5456,7 +5531,7 @@ setLanguage(currentLanguage);
                 this.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
 
-                // Reset partícules a verd quan es surt del tab PropFirm
+                // Resetear partículas a verde al salir del tab PropFirm
                 if (tabName !== 'propfirm' && setParticleTheme) setParticleTheme('green');
                 
                 // Renderizar el dashboard correspondiente cuando se hace clic
