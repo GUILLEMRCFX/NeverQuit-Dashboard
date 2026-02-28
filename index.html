@@ -2208,7 +2208,7 @@
                         <input type="date" id="createPurchaseDate">
                     </div>
                     <div class="form-group">
-                        <label>Challenge Cost (€)</label>
+                        <label>Challenge Cost ($)</label>
                         <input type="number" id="createChallengeCost" placeholder="345.00" min="0" step="0.01">
                     </div>
                     <div class="form-group">
@@ -2243,7 +2243,7 @@
                         <select id="payoutAccountId"></select>
                     </div>
                     <div class="form-group">
-                        <label>Amount (€)</label>
+                        <label>Amount ($)</label>
                         <input type="number" id="payoutAmount" placeholder="2500.00" min="0" step="0.01">
                     </div>
                     <div class="form-group">
@@ -3084,7 +3084,7 @@ setLanguage(currentLanguage);
                         if (pi !== -1) actionHistory.payouts.splice(pi, 1);
                         saveData(); saveActionHistory(); updateHistoryBadge();
                         updateUI();
-                        showAlert(msg(`Payout removed: €${action.data.amount.toLocaleString()}`, `Payout eliminado: €${action.data.amount.toLocaleString()}`), 'success');
+                        showAlert(msg(`Payout removed: $${action.data.amount.toLocaleString()}`, `Payout eliminado: $${action.data.amount.toLocaleString()}`), 'success');
                     }
                     break;
                 }
@@ -3132,7 +3132,7 @@ setLanguage(currentLanguage);
                         <div class="hp-entry-info">
                             <strong>#${c.accountNumber}</strong>
                             <span><span style="color:${cColor};font-weight:600;">${c.propFirm}</span> · ${c.accountSize}</span>
-                            <span>€${c.challengeCost.toLocaleString()} · ${fmtDate(c.purchaseDate)}</span>
+                            <span>$${c.challengeCost.toLocaleString()} · ${fmtDate(c.purchaseDate)}</span>
                         </div>
                         <button class="hp-del" onclick="deleteHistoryEntry('challenges',${i})" title="${msg('Undo creation', 'Deshacer creación')}">✕</button>
                     </div>`;
@@ -3169,7 +3169,7 @@ setLanguage(currentLanguage);
                     html += `<div class="hp-entry">
                         <div class="hp-entry-info">
                             <strong>#${p.accountNumber}</strong>
-                            <span><span style="color:${pColor};font-weight:600;">${p.propFirm}</span> · €${p.amount.toLocaleString()}</span>
+                            <span><span style="color:${pColor};font-weight:600;">${p.propFirm}</span> · $${p.amount.toLocaleString()}</span>
                             <span>${fmtDate(p.payoutDate)}</span>
                         </div>
                         <button class="hp-del" onclick="deleteHistoryEntry('payouts',${i})" title="${msg('Remove payout', 'Eliminar payout')}">✕</button>
@@ -3214,7 +3214,7 @@ setLanguage(currentLanguage);
                 if (!entry) return;
                 data.payouts = data.payouts.filter(p => p.id !== entry.id);
                 actionHistory.payouts.splice(index, 1);
-                showAlert(msg(`Payout removed: €${entry.amount.toLocaleString()}`, `Payout eliminado: €${entry.amount.toLocaleString()}`), 'success');
+                showAlert(msg(`Payout removed: $${entry.amount.toLocaleString()}`, `Payout eliminado: $${entry.amount.toLocaleString()}`), 'success');
             }
 
             saveData();
@@ -3270,14 +3270,14 @@ setLanguage(currentLanguage);
             showAlert(msg('✅ All data has been deleted', '✅ Todos los datos han sido eliminados'), 'success');
         }
 
-        // ─── ROI TOGGLE: % ↔ € al hacer clic ────────────────────────────────
+        // ─── ROI TOGGLE: % ↔ $ al hacer clic ────────────────────────────────
         function toggleROI(el) {
             const showing = el.dataset.showing || 'pct';
             const pct = parseFloat(el.dataset.pct);
             const amount = parseFloat(el.dataset.amount);
             if (showing === 'pct') {
                 el.dataset.showing = 'amount';
-                el.innerHTML = `${amount >= 0 ? '+' : ''}${Math.round(amount).toLocaleString()} €`;
+                el.innerHTML = `${amount >= 0 ? '+$' : '-$'}${Math.abs(Math.round(amount)).toLocaleString()}`;
             } else {
                 el.dataset.showing = 'pct';
                 el.innerHTML = `${pct >= 0 ? '+' : ''}${pct.toFixed(1)}%`;
@@ -3621,7 +3621,7 @@ setLanguage(currentLanguage);
             if (account) {
                 const accountSizeNum = parseInt(account.accountSize.replace('K', '')) * 1000;
                 if (amount > accountSizeNum * 2) {
-                    showAlert(msg(`⚠️ Payout (€${amount.toLocaleString()}) exceeds 2x the account size (${account.accountSize}). Check the amount.`, `⚠️ El payout (€${amount.toLocaleString()}) supera 2x el tamaño de la cuenta (${account.accountSize}). Verifica el importe.`), 'error');
+                    showAlert(msg(`⚠️ Payout ($${amount.toLocaleString()}) exceeds 2x the account size (${account.accountSize}). Check the amount.`, `⚠️ El payout ($${amount.toLocaleString()}) supera 2x el tamaño de la cuenta (${account.accountSize}). Verifica el importe.`), 'error');
                     return;
                 }
             }
@@ -3669,7 +3669,7 @@ setLanguage(currentLanguage);
             });
 
             const accountDisplay = account ? (account.accountNumber || account.id) : accountId;
-            showAlert(msg(`Payout registered: €${amount.toLocaleString()} from ${accountDisplay}`, `Payout registrado: €${amount.toLocaleString()} desde ${accountDisplay}`), 'success');
+            showAlert(msg(`Payout registered: $${amount.toLocaleString()} from ${accountDisplay}`, `Payout registrado: $${amount.toLocaleString()} desde ${accountDisplay}`), 'success');
 
             document.getElementById('payoutAmount').value = '';
             clearCertificate();
@@ -3775,14 +3775,14 @@ setLanguage(currentLanguage);
                 <div class="kpi-card" style="background: linear-gradient(135deg, ${netProfit >= 0 ? 'rgba(46,204,113,0.08), rgba(39,174,96,0.04)' : 'rgba(231,76,60,0.08), rgba(192,57,43,0.04)'}); border: 1px solid ${netProfit >= 0 ? 'rgba(46,204,113,0.25)' : 'rgba(231,76,60,0.25)'}; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1.5rem 2rem;">
                     <div>
                         <div class="kpi-label" style="font-size: 0.7rem; letter-spacing: 0.12em; margin-bottom: 0.4rem;">${currentLanguage === 'en' ? 'NET BUSINESS PROFIT' : 'BENEFICIO NETO DEL NEGOCIO'}</div>
-                        <div style="font-size: 2.4rem; font-weight: 800; color: ${netProfit >= 0 ? '#2ECC71' : '#E74C3C'}; line-height: 1;">${netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()} €</div>
-                        <div class="kpi-subtitle" style="margin-top: 0.4rem;">${currentLanguage === 'en' ? 'After deducting' : 'Tras descontar'} ${totalCosts.toLocaleString()} € ${currentLanguage === 'en' ? 'in costs' : 'en costes'}</div>
+                        <div style="font-size: 2.4rem; font-weight: 800; color: ${netProfit >= 0 ? '#2ECC71' : '#E74C3C'}; line-height: 1;">${netProfit >= 0 ? '+' : ''}$${netProfit.toLocaleString()}</div>
+                        <div class="kpi-subtitle" style="margin-top: 0.4rem;">${currentLanguage === 'en' ? 'After deducting' : 'Tras descontar'} $${totalCosts.toLocaleString()} ${currentLanguage === 'en' ? 'in costs' : 'en costes'}</div>
                     </div>
                     <div style="text-align: right;">
                         <div class="kpi-label" style="font-size: 0.7rem; letter-spacing: 0.12em; margin-bottom: 0.4rem;">ROI TOTAL <span style="font-size:0.75em;opacity:0.45;">↔</span></div>
                         <div data-pct="${roi.toFixed(1)}" data-amount="${netProfit}" data-showing="pct"
                              onclick="toggleROI(this)"
-                             title="${currentLanguage === 'en' ? 'Click to toggle % / €' : 'Clic para alternar % / €'}"
+                             title="${currentLanguage === 'en' ? 'Click to toggle % / $' : 'Clic para alternar % / $'}"
                              style="font-size: 1.8rem; font-weight: 800; color: ${roi > 0 ? '#2ECC71' : roi < 0 ? '#E74C3C' : '#9AA0A6'}; cursor:pointer; user-select:none;">${roi > 0 ? '+' : ''}${roi.toFixed(1)}%</div>
                         <div class="kpi-subtitle" style="margin-top: 0.4rem;">${yearPayouts.length} ${t('payments')}</div>
                     </div>
@@ -3791,17 +3791,17 @@ setLanguage(currentLanguage);
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div class="kpi-label">Active Funded Capital</div>
-                        <div class="kpi-value success">${(activeFundedCapital).toLocaleString()} €</div>
+                        <div class="kpi-value success">$${(activeFundedCapital).toLocaleString()}</div>
                         <div class="kpi-subtitle">${activeFunded} ${t('fundedAccounts')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">Total Payouts</div>
-                        <div class="kpi-value success">${totalPayouts.toLocaleString()} €</div>
+                        <div class="kpi-value success">$${totalPayouts.toLocaleString()}</div>
                         <div class="kpi-subtitle">${yearPayouts.length} ${t('payments')}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">${currentLanguage === 'en' ? 'Total Invested' : 'Total Invertido'}</div>
-                        <div class="kpi-value danger">${totalCosts.toLocaleString()} €</div>
+                        <div class="kpi-value danger">$${totalCosts.toLocaleString()}</div>
                         <div class="kpi-subtitle">${yearAccounts.length} ${t('total')} ${currentLanguage === 'en' ? 'accounts' : 'cuentas'}</div>
                     </div>
                     <div class="kpi-card">
@@ -3881,13 +3881,13 @@ setLanguage(currentLanguage);
                             + '<td>' + acc.propFirm + '</td>'
                             + '<td style="font-weight:600;">' + acc.accountSize + '</td>'
                             + '<td><span class="status-badge ' + statusClass + '">' + acc.status + '</span></td>'
-                            + '<td style="color:#E74C3C;">-€' + acc.challengeCost.toLocaleString() + '</td>'
+                            + '<td style="color:#E74C3C;">-$' + acc.challengeCost.toLocaleString() + '</td>'
                             + '<td style="color:#9AA0A6;">' + new Date(acc.purchaseDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES') + '</td>'
                             + '</tr>';
                         if (payoutsForAcc > 0) {
                             row += '<tr style="background:rgba(46,204,113,0.03);' + rowStyle + '">'
                                 + '<td colspan="4" style="padding-top:0.3rem;padding-bottom:0.5rem;color:#9AA0A6;font-size:0.8rem;padding-left:2.5rem;">' + t('payoutsReceived') + '</td>'
-                                + '<td style="color:#2ECC71;padding-top:0.3rem;padding-bottom:0.5rem;">+€' + payoutsForAcc.toLocaleString() + '</td>'
+                                + '<td style="color:#2ECC71;padding-top:0.3rem;padding-bottom:0.5rem;">+$' + payoutsForAcc.toLocaleString() + '</td>'
                                 + '<td></td></tr>';
                         }
                         return row;
@@ -4003,8 +4003,8 @@ setLanguage(currentLanguage);
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">AVG. COST PER FUNDED ACCOUNT</div>
-                        <div class="kpi-value">${avgCostPerFunded.toFixed(0)} €</div>
-                        <div class="kpi-subtitle">Total costs: ${totalCosts.toLocaleString()}€</div>
+                        <div class="kpi-value">$${avgCostPerFunded.toFixed(0)}</div>
+                        <div class="kpi-subtitle">Total costs: $${totalCosts.toLocaleString()}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">BEST PROP FIRM ROI</div>
@@ -4319,7 +4319,7 @@ setLanguage(currentLanguage);
         }
 
         // ─── MAX ALLOCATION HELPERS ──────────────────────────────────────────
-        // Retorna el capital total fondeado (en €) para una firma (cuentas FUNDED)
+        // Retorna el capital total fondeado (en $) para una firma (cuentas FUNDED)
         function getFirmFundedCapital(firmName) {
             return data.master_comptes
                 .filter(a => a.propFirm === firmName && a.status === 'FUNDED')
@@ -4412,12 +4412,12 @@ setLanguage(currentLanguage);
                         <div class="kpi-value success">${cuentasFunded}</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">€ INVERTIDO</div>
-                        <div class="kpi-value">€${totalInvested.toLocaleString()}</div>
+                        <div class="kpi-label">$ INVERTIDO</div>
+                        <div class="kpi-value">$${totalInvested.toLocaleString()}</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">€ PAYOUTS</div>
-                        <div class="kpi-value success">€${totalPayouts.toLocaleString()}</div>
+                        <div class="kpi-label">$ PAYOUTS</div>
+                        <div class="kpi-value success">$${totalPayouts.toLocaleString()}</div>
                     </div>
                 </div>
 
@@ -4458,7 +4458,7 @@ setLanguage(currentLanguage);
                             <div class="kpi-value success" style="font-size: 3.5rem; cursor:pointer; user-select:none;"
                                  data-pct="${roi.toFixed(0)}" data-amount="${totalPayouts - totalInvested}" data-showing="pct"
                                  onclick="toggleROI(this)"
-                                 title="${currentLanguage === 'en' ? 'Click to toggle % / €' : 'Clic para alternar % / €'}">${roi > 0 ? '+' : ''}${roi.toFixed(0)}%</div>
+                                 title="${currentLanguage === 'en' ? 'Click to toggle % / $' : 'Clic para alternar % / $'}">${roi > 0 ? '+' : ''}${roi.toFixed(0)}%</div>
                         </div>
                     </div>
                 </div>
@@ -4498,8 +4498,8 @@ setLanguage(currentLanguage);
                     </h3>
 
                     <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#9AA0A6; margin-bottom:0.4rem;">
-                        <span>Capital fondeado: <strong style="color:${isAtMax ? '#FFD700' : '#E6E8EB'}">€${fundedCapital.toLocaleString()}</strong></span>
-                        <span>Máximo: <strong style="color:#9AA0A6">€${maxAlloc.toLocaleString()}</strong></span>
+                        <span>Capital fondeado: <strong style="color:${isAtMax ? '#FFD700' : '#E6E8EB'}">$${fundedCapital.toLocaleString()}</strong></span>
+                        <span>Máximo: <strong style="color:#9AA0A6">$${maxAlloc.toLocaleString()}</strong></span>
                     </div>
 
                     <div class="alloc-bar-track">
@@ -4510,7 +4510,7 @@ setLanguage(currentLanguage);
                         <span style="font-size:0.82rem; color:${isAtMax ? '#FFD700' : '#9AA0A6'}; font-weight:600;">
                             ${isAtMax
                                 ? '✦ ¡Has alcanzado el límite máximo con esta prop firm!'
-                                : `Falta: <strong style="color:#E6E8EB">€${remaining.toLocaleString()}</strong> · ${(100 - allocPct).toFixed(0)}% restante`}
+                                : `Falta: <strong style="color:#E6E8EB">$${remaining.toLocaleString()}</strong> · ${(100 - allocPct).toFixed(0)}% restante`}
                         </span>
                         <span style="font-size:1rem; font-weight:700; color:${isAtMax ? '#FFD700' : '#2ECC71'};">
                             ${allocPct.toFixed(0)}%
@@ -4618,11 +4618,11 @@ setLanguage(currentLanguage);
                 <div class="kpi-grid">
                     <div class="kpi-card">
                         <div class="kpi-label">◇ TOTAL PAYOUTS</div>
-                        <div class="kpi-value">€${totalPayouts.toLocaleString()}</div>
+                        <div class="kpi-value">$${totalPayouts.toLocaleString()}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">TOTAL INVESTED</div>
-                        <div class="kpi-value success">€${totalInvested.toLocaleString()}</div>
+                        <div class="kpi-value success">$${totalInvested.toLocaleString()}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">${t('capitalMultiple')}</div>
@@ -4687,8 +4687,8 @@ setLanguage(currentLanguage);
                                         <div class="alloc-bar-fill ${atMax ? 'golden' : ''}" style="width:${pct.toFixed(1)}%"></div>
                                     </div>
                                     <div class="kpi-subtitle" style="margin-top:0.4rem;">
-                                        €${funded.toLocaleString()} / €${maxAlloc.toLocaleString()}
-                                        ${atMax ? '' : `· falta €${remaining.toLocaleString()}`}
+                                        $${funded.toLocaleString()} / $${maxAlloc.toLocaleString()}
+                                        ${atMax ? '' : `· falta $${remaining.toLocaleString()}`}
                                     </div>
                                 </div>
                             `;
@@ -4721,7 +4721,7 @@ setLanguage(currentLanguage);
                                                 <td>${new Date(payout.payoutDate).toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'es-ES')}</td>
                                                 <td style="font-weight: 600;">${accountNumber}</td>
                                                 <td>${propFirm}</td>
-                                                <td style="font-weight: 700; color: #2ECC71;">€${payout.amount.toLocaleString()}</td>
+                                                <td style="font-weight: 700; color: #2ECC71;">$${payout.amount.toLocaleString()}</td>
                                             </tr>
                                         `;
                                     }).join('')}
@@ -4769,7 +4769,7 @@ setLanguage(currentLanguage);
                             tooltip: {
                                 backgroundColor: '#181B20',
                                 callbacks: {
-                                    label: (context) => `€${context.parsed.y.toLocaleString()}`
+                                    label: (context) => `$${context.parsed.y.toLocaleString()}`
                                 }
                             }
                         },
@@ -4778,7 +4778,7 @@ setLanguage(currentLanguage);
                                 beginAtZero: true,
                                 ticks: {
                                     color: '#9AA0A6',
-                                    callback: (value) => '€' + (value / 1000).toFixed(0) + 'k'
+                                    callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
                                 },
                                 grid: { color: 'rgba(230, 232, 235, 0.05)' }
                             },
@@ -4848,7 +4848,7 @@ setLanguage(currentLanguage);
 
                 <div class="kpi-grid">
                     <div class="kpi-card">
-                        <div class="kpi-label">€ WITHDRAWN / € INVERTIDO</div>
+                        <div class="kpi-label">$ WITHDRAWN / $ INVERTIDO</div>
                         <div class="kpi-value success">${withdrawnToInvestedRatio.toFixed(2)}x</div>
                     </div>
                     <div class="kpi-card">
@@ -4875,20 +4875,20 @@ setLanguage(currentLanguage);
                                 <div class="bar-label">FUNDED</div>
                                 <div class="bar-track">
                                     <div class="bar-fill" style="width: ${Math.min(withdrawnToInvestedRatio * 20, 100)}%; background: linear-gradient(90deg, #2ECC71, #27AE60);">
-                                        ${withdrawnToInvestedRatio > 0.5 ? '<span class="bar-value">€' + totalWithdrawn.toLocaleString() + '</span>' : ''}
+                                        ${withdrawnToInvestedRatio > 0.5 ? '<span class="bar-value">$' + totalWithdrawn.toLocaleString() + '</span>' : ''}
                                     </div>
                                 </div>
-                                <div class="bar-count">€${totalWithdrawn.toLocaleString()}</div>
+                                <div class="bar-count">$${totalWithdrawn.toLocaleString()}</div>
                             </div>
                             
                             <div class="bar-row">
                                 <div class="bar-label">INVESTED</div>
                                 <div class="bar-track">
                                     <div class="bar-fill" style="width: 50%; background: linear-gradient(90deg, #9AA0A6, #7F8C8D);">
-                                        <span class="bar-value">€${totalInvested.toLocaleString()}</span>
+                                        <span class="bar-value">$${totalInvested.toLocaleString()}</span>
                                     </div>
                                 </div>
-                                <div class="bar-count">€${totalInvested.toLocaleString()}</div>
+                                <div class="bar-count">$${totalInvested.toLocaleString()}</div>
                             </div>
                         </div>
 
@@ -4904,7 +4904,7 @@ setLanguage(currentLanguage);
                             <canvas id="selfFundingGauge"></canvas>
                             <div class="gauge-text">
                                 <div class="gauge-percentage">${selfFundedPercentage.toFixed(0)}%</div>
-                                <div class="gauge-label">€${totalWithdrawn.toLocaleString()} WITHDRAWN</div>
+                                <div class="gauge-label">$${totalWithdrawn.toLocaleString()} WITHDRAWN</div>
                             </div>
                         </div>
                     </div>
@@ -5123,7 +5123,7 @@ setLanguage(currentLanguage);
 
                 <div class="kpi-grid">
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.05), rgba(52, 152, 219, 0.05)); border: 1px solid rgba(46, 204, 113, 0.2);">
-                        <div class="kpi-value success" style="font-size: 2.5rem;">+€${totalPayouts.toLocaleString()}</div>
+                        <div class="kpi-value success" style="font-size: 2.5rem;">+$${totalPayouts.toLocaleString()}</div>
                         <div class="kpi-label">TOTAL PAYOUTS</div>
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.05), rgba(230, 126, 34, 0.05)); border: 1px solid rgba(243, 156, 18, 0.2);">
@@ -5133,7 +5133,7 @@ setLanguage(currentLanguage);
                              data-amount="${totalPayouts - totalInvested}"
                              data-showing="pct"
                              onclick="if(this.dataset.pct!=='none') toggleROI(this)"
-                             title="${currentLanguage === 'en' ? 'Click to toggle % / €' : 'Clic para alternar % / €'}">${(totalPayouts > 0 && totalInvested > 0) ? (avgROI >= 0 ? "+" : "") + avgROI.toFixed(0) + "%" : "—"}</div>
+                             title="${currentLanguage === 'en' ? 'Click to toggle % / $' : 'Clic para alternar % / $'}">${(totalPayouts > 0 && totalInvested > 0) ? (avgROI >= 0 ? "+" : "") + avgROI.toFixed(0) + "%" : "—"}</div>
                         <div class="kpi-label">${t('roiAverage')} <span style="font-size:0.7em;opacity:0.45;">${(totalPayouts > 0 && totalInvested > 0) ? '↔' : ''}</span></div>
                     </div>
                     <div class="kpi-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(41, 128, 185, 0.05)); border: 1px solid rgba(52, 152, 219, 0.2);">
@@ -5344,7 +5344,7 @@ setLanguage(currentLanguage);
                             tooltip: {
                                 backgroundColor: '#181B20',
                                 callbacks: {
-                                    label: (context) => `€${context.parsed.y.toLocaleString()}`
+                                    label: (context) => `$${context.parsed.y.toLocaleString()}`
                                 }
                             }
                         },
@@ -5353,7 +5353,7 @@ setLanguage(currentLanguage);
                                 beginAtZero: true,
                                 ticks: {
                                     color: '#9AA0A6',
-                                    callback: (value) => '€' + (value / 1000).toFixed(0) + 'k'
+                                    callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
                                 },
                                 grid: { color: 'rgba(230, 232, 235, 0.05)' }
                             },
@@ -5412,10 +5412,10 @@ setLanguage(currentLanguage);
                 if (p.certificateBase64) {
                     return `
                         <div class="hof-card">
-                            <img src="${p.certificateBase64}" alt="Certificado €${p.amount.toLocaleString()}" loading="lazy"
+                            <img src="${p.certificateBase64}" alt="Certificado $${p.amount.toLocaleString()}" loading="lazy"
                                  onclick="openHofLightbox('${p.certificateBase64}')">
                             <div class="hof-card-body">
-                                <div class="hof-card-amount">€${p.amount.toLocaleString()}</div>
+                                <div class="hof-card-amount">$${p.amount.toLocaleString()}</div>
                                 <div class="hof-card-meta">${meta}</div>
                             </div>
                         </div>`;
@@ -5424,7 +5424,7 @@ setLanguage(currentLanguage);
                     <div class="hof-no-cert">
                         <div class="hof-no-cert-icon">💰</div>
                         <div>
-                            <div class="hof-no-cert-amount">€${p.amount.toLocaleString()}</div>
+                            <div class="hof-no-cert-amount">$${p.amount.toLocaleString()}</div>
                             <div class="hof-no-cert-meta">${meta}</div>
                         </div>
                     </div>`;
@@ -5438,7 +5438,7 @@ setLanguage(currentLanguage);
                     </div>
                     <div class="hof-stats">
                         <div class="hof-stat">
-                            <div class="hof-stat-value">€${totalAmount.toLocaleString()}</div>
+                            <div class="hof-stat-value">$${totalAmount.toLocaleString()}</div>
                             <div class="hof-stat-label">Total retirado</div>
                         </div>
                         <div class="hof-stat">
@@ -5868,11 +5868,11 @@ setLanguage(currentLanguage);
 
         function drawMetricCard(ctx, x, y, w, h, metric, metrics) {
             const metricData = {
-                payouts:   { label: 'TOTAL PAYOUTS',    value: `€${metrics.payouts.toLocaleString()}`,        sub: null },
-                netprofit: { label: 'NET PROFIT',        value: `${metrics.netprofit >= 0 ? '+' : ''}€${metrics.netprofit.toLocaleString()}`, sub: null },
+                payouts:   { label: 'TOTAL PAYOUTS',    value: `$${metrics.payouts.toLocaleString()}`,        sub: null },
+                netprofit: { label: 'NET PROFIT',        value: `${metrics.netprofit >= 0 ? '+' : ''}$${metrics.netprofit.toLocaleString()}`, sub: null },
                 roi:       { label: 'TOTAL ROI',         value: `${metrics.roi > 0 ? '+' : ''}${metrics.roi.toFixed(1)}%`, sub: null },
                 funded:    { label: 'FUNDED ACCOUNTS',   value: metrics.funded.toString(),                    sub: null },
-                invested:  { label: 'TOTAL INVESTED',    value: `€${metrics.invested.toLocaleString()}`,      sub: null },
+                invested:  { label: 'TOTAL INVESTED',    value: `$${metrics.invested.toLocaleString()}`,      sub: null },
                 winrate:   { label: 'PHASE 1 WIN RATE',  value: `${metrics.winrate.toFixed(0)}%`,             sub: null },
                 winrate2:  { label: 'PHASE 2 WIN RATE',  value: `${metrics.winrate2.toFixed(0)}%`,            sub: null },
                 fastest:   { label: 'FASTEST FUNDING',   value: `${metrics.fastest}d`,                       sub: null },
