@@ -1968,6 +1968,74 @@
         @media (max-width: 480px) {
             .user-menu-dropdown { width: 230px; }
         }
+
+        /* ─── P&L CHART ZOOM BUTTONS ─── */
+        .pnl-zoom-btns {
+            display: flex;
+            gap: 0.4rem;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        .pnl-zoom-btn {
+            padding: 0.3rem 0.75rem;
+            background: rgba(230,232,235,0.05);
+            border: 1px solid rgba(230,232,235,0.12);
+            border-radius: 6px;
+            color: #9AA0A6;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .pnl-zoom-btn:hover { color: #E6E8EB; border-color: rgba(230,232,235,0.3); }
+        .pnl-zoom-btn.active {
+            background: rgba(46,204,113,0.12);
+            border-color: rgba(46,204,113,0.4);
+            color: #2ECC71;
+        }
+
+        /* ─── LIGHT MODE ─── */
+        body.light-mode { background: #F0F2F5; color: #1A1D21; }
+        body.light-mode .header { border-bottom-color: rgba(0,0,0,0.08); }
+        body.light-mode .kpi-card,
+        body.light-mode .table-container { background: #FFFFFF; border-color: rgba(0,0,0,0.07); }
+        body.light-mode .kpi-label,
+        body.light-mode .kpi-subtitle,
+        body.light-mode .header p,
+        body.light-mode .view-header .subtitle { color: #6B7280; }
+        body.light-mode .kpi-value { color: #1A1D21; }
+        body.light-mode th { color: #6B7280; border-bottom-color: rgba(0,0,0,0.1); }
+        body.light-mode td { color: #1A1D21; border-bottom-color: rgba(0,0,0,0.05); }
+        body.light-mode tr:hover { background: rgba(46,204,113,0.05); }
+        body.light-mode .tabs-wrapper { background: #FFFFFF; border-bottom-color: rgba(0,0,0,0.08); }
+        body.light-mode .tab { color: #6B7280; }
+        body.light-mode .tab:hover { color: #1A1D21; background: rgba(0,0,0,0.03); }
+        body.light-mode .tab.active { color: #2ECC71; border-bottom-color: #2ECC71; }
+        body.light-mode .time-filter select { background: #FFFFFF; color: #1A1D21; border-color: rgba(0,0,0,0.12); }
+        body.light-mode .view-header { border-bottom-color: rgba(0,0,0,0.08); }
+        body.light-mode .view-header h2 { color: #1A1D21; }
+        body.light-mode .user-menu-btn { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); }
+        body.light-mode .user-menu-btn .hb-line { background: #6B7280; }
+        body.light-mode .user-menu-dropdown { background: #FFFFFF; border-color: rgba(0,0,0,0.1); box-shadow: 0 16px 48px rgba(0,0,0,0.15); }
+        body.light-mode .user-menu-item { color: #374151; }
+        body.light-mode .user-menu-item:hover { background: rgba(0,0,0,0.04); color: #1A1D21; }
+        body.light-mode .user-menu-email { color: #1A1D21; }
+        body.light-mode .user-menu-divider { background: rgba(0,0,0,0.07); height: 1px; }
+        body.light-mode .user-menu-header { border-bottom-color: rgba(0,0,0,0.07); }
+        body.light-mode .bar-track { background: rgba(0,0,0,0.08); }
+        body.light-mode #historyPanel { background: #FFFFFF; border-color: rgba(0,0,0,0.1); }
+        body.light-mode .hp-header { background: #FFFFFF; border-bottom-color: rgba(0,0,0,0.07); color: #1A1D21; }
+        body.light-mode .hp-entry { border-bottom-color: rgba(0,0,0,0.05); color: #374151; }
+        body.light-mode .modal-content { background: #FFFFFF; border-color: rgba(0,0,0,0.1); }
+        body.light-mode .modal-header { color: #1A1D21; }
+        body.light-mode .modal-body { color: #6B7280; }
+        body.light-mode .pnl-zoom-btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: #374151; }
+        body.light-mode .pnl-zoom-btn:hover { color: #1A1D21; border-color: rgba(0,0,0,0.25); }
+        body.light-mode .pnl-zoom-btn.active { background: rgba(46,204,113,0.12); border-color: rgba(46,204,113,0.4); color: #2ECC71; }
+        body.light-mode .lang-opt { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); color: #6B7280; }
+        body.light-mode .lang-opt:hover { color: #1A1D21; }
+        body.light-mode .lang-opt.active { background: rgba(46,204,113,0.12); border-color: rgba(46,204,113,0.4); color: #2ECC71; }
     </style>
     <!-- Supabase JS v2 — exposes window.supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2101,11 +2169,10 @@
                             <span class="user-menu-label" data-i18n="userMenu.subscription">Subscripción</span>
                             <span class="user-menu-soon">SOON</span>
                         </div>
-                        <div class="user-menu-item disabled">
-                            <span class="user-menu-icon">🎨</span>
-                            <span class="user-menu-label" data-i18n="userMenu.appearance">Apariencia</span>
-                            <span class="user-menu-soon">SOON</span>
-                        </div>
+                        <button class="user-menu-item" id="themeToggleItem" onclick="toggleTheme(); closeUserMenu();">
+                            <span class="user-menu-icon" id="themeToggleIcon">☀️</span>
+                            <span class="user-menu-label" id="themeToggleLabel">Light Mode</span>
+                        </button>
                     </div>
 
                     <div class="user-menu-divider"></div>
@@ -2804,6 +2871,27 @@ setLanguage(currentLanguage);
         });
         window.toggleUserMenu = toggleUserMenu;
         window.closeUserMenu  = closeUserMenu;
+
+        // ── Theme (Dark / Light) ──────────────────────────────────────────────
+        function _applyTheme(theme) {
+            const isLight = theme === 'light';
+            document.body.classList.toggle('light-mode', isLight);
+            const icon  = document.getElementById('themeToggleIcon');
+            const label = document.getElementById('themeToggleLabel');
+            if (icon)  icon.textContent  = isLight ? '🌙' : '☀️';
+            if (label) label.textContent = isLight ? 'Dark Mode' : 'Light Mode';
+        }
+        function toggleTheme() {
+            const current = localStorage.getItem('nq_theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('nq_theme', next);
+            _applyTheme(next);
+        }
+        function initTheme() {
+            _applyTheme(localStorage.getItem('nq_theme') || 'dark');
+        }
+        window.toggleTheme = toggleTheme;
+        initTheme();
 
         // ============================================
         // INICIALIZACIÓN - Esperar a que el DOM esté listo
@@ -4102,6 +4190,25 @@ setLanguage(currentLanguage);
                         </div>
                     </div>
                 </div>
+
+                <div class="table-container">
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.75rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin:0;">◇ ${msg('CUMULATIVE P&L EVOLUTION', 'EVOLUCIÓN P&L ACUMULADO')}</h3>
+                        <div class="pnl-zoom-btns" id="pnlZoomBtns">
+                            <button class="pnl-zoom-btn" data-range="1M" onclick="setPnlZoom('1M')">1M</button>
+                            <button class="pnl-zoom-btn" data-range="3M" onclick="setPnlZoom('3M')">3M</button>
+                            <button class="pnl-zoom-btn" data-range="6M" onclick="setPnlZoom('6M')">6M</button>
+                            <button class="pnl-zoom-btn active" data-range="ALL" onclick="setPnlZoom('ALL')">ALL</button>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="max-width: none; position:relative;">
+                        <canvas id="pnlEvolutionChart"></canvas>
+                        <div id="pnlEmptyState" style="display:none; text-align:center; padding:3rem; color:#9AA0A6;">
+                            <div style="font-size:2rem; margin-bottom:0.5rem;">📈</div>
+                            <div>${msg('Add payouts and challenges to see your P&L evolution', 'Añade payouts y challenges para ver tu evolución P&L')}</div>
+                        </div>
+                    </div>
+                </div>
             `;
 
             document.getElementById('performance').innerHTML = performanceHtml;
@@ -4209,6 +4316,132 @@ setLanguage(currentLanguage);
                     }
                 });
             }
+
+            // ─── CUMULATIVE P&L EVOLUTION CHART ────────────────────────────
+            // Build monthly events: costs (negative) + payouts (positive)
+            const pnlEvents = [];
+            yearAccounts.forEach(a => {
+                if (a.purchaseDate) pnlEvents.push({ date: a.purchaseDate, amount: -a.challengeCost });
+            });
+            yearPayouts.forEach(p => {
+                if (p.payoutDate) pnlEvents.push({ date: p.payoutDate, amount: p.amount });
+            });
+
+            // Group by month "YYYY-MM"
+            const pnlMonthMap = {};
+            pnlEvents.forEach(e => {
+                const key = e.date.substring(0, 7);
+                pnlMonthMap[key] = (pnlMonthMap[key] || 0) + e.amount;
+            });
+
+            const pnlMonths = Object.keys(pnlMonthMap).sort();
+            let pnlCumulative = 0;
+            const pnlAllData = pnlMonths.map(m => {
+                pnlCumulative += pnlMonthMap[m];
+                return { x: m, y: parseFloat(pnlCumulative.toFixed(2)) };
+            });
+
+            window._pnlAllData = pnlAllData;
+            window._pnlZoomRange = 'ALL';
+
+            function _renderPnlChart(data) {
+                const ctx = document.getElementById('pnlEvolutionChart');
+                const empty = document.getElementById('pnlEmptyState');
+                if (!ctx) return;
+
+                if (data.length === 0) {
+                    ctx.style.display = 'none';
+                    if (empty) empty.style.display = 'block';
+                    return;
+                }
+                ctx.style.display = '';
+                if (empty) empty.style.display = 'none';
+
+                if (window.pnlEvolutionChart && typeof window.pnlEvolutionChart.destroy === 'function') {
+                    window.pnlEvolutionChart.destroy();
+                }
+
+                const isLight = document.body.classList.contains('light-mode');
+                const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(230,232,235,0.05)';
+                const tickColor = isLight ? '#6B7280' : '#9AA0A6';
+                const tooltipBg = isLight ? '#FFFFFF' : '#181B20';
+                const tooltipText = isLight ? '#1A1D21' : '#E6E8EB';
+
+                const finalValue = data[data.length - 1]?.y || 0;
+                const lineColor = finalValue >= 0 ? '#2ECC71' : '#E74C3C';
+                const fillColor = finalValue >= 0 ? 'rgba(46,204,113,0.08)' : 'rgba(231,76,60,0.08)';
+
+                window.pnlEvolutionChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.map(d => d.x),
+                        datasets: [{
+                            data: data.map(d => d.y),
+                            borderColor: lineColor,
+                            backgroundColor: fillColor,
+                            borderWidth: 2.5,
+                            pointRadius: data.length <= 12 ? 5 : 3,
+                            pointBackgroundColor: lineColor,
+                            pointBorderColor: isLight ? '#FFFFFF' : '#121417',
+                            pointBorderWidth: 2,
+                            tension: 0.35,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: tooltipBg,
+                                titleColor: tooltipText,
+                                bodyColor: tooltipText,
+                                borderColor: lineColor,
+                                borderWidth: 1,
+                                callbacks: {
+                                    title: (items) => items[0].label,
+                                    label: (ctx) => {
+                                        const v = ctx.parsed.y;
+                                        return ` ${v >= 0 ? '+' : ''}$${v.toLocaleString('en-US', { minimumFractionDigits: 0 })}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: tickColor,
+                                    callback: (v) => `${v >= 0 ? '+' : ''}$${(v/1000).toFixed(0)}k`
+                                },
+                                grid: { color: gridColor }
+                            },
+                            x: {
+                                ticks: { color: tickColor, maxRotation: 45 },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            window.setPnlZoom = function(range) {
+                window._pnlZoomRange = range;
+                // Update active button
+                document.querySelectorAll('.pnl-zoom-btn').forEach(b => {
+                    b.classList.toggle('active', b.dataset.range === range);
+                });
+                // Filter data
+                let filtered = window._pnlAllData || [];
+                if (range !== 'ALL' && filtered.length > 0) {
+                    const months = parseInt(range);
+                    filtered = filtered.slice(-months);
+                }
+                _renderPnlChart(filtered);
+            };
+
+            // Initial render
+            _renderPnlChart(pnlAllData);
         }
 
         // CONFIGURACIÓN DE PROP FIRMS CON REGLAS REALES (2025-2026)
